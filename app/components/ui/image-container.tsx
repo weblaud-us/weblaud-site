@@ -83,12 +83,11 @@ export const ImageContainer = ({
           ></div>
         </div>
 
-        {/* Image Container - Responsive */}
         <div className="relative p-8 sm:p-12 md:p-16">
           <img
             src={image}
             alt={alt}
-            className={`w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 object-contain drop-shadow-2xl ${color.imageShadow} transition-all duration-500`}
+            className={`w-48 h-48 sm:w-56 sm:h-56 md:w-96 md:h-96 object-contain drop-shadow-2xl ${color.imageShadow} transition-all duration-500`}
           />
         </div>
       </div>
