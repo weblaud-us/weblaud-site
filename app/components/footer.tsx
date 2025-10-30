@@ -1,6 +1,7 @@
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
+import IconTile from "./ui/icon-tile";
 
 const Footer: React.FC = () => {
   const menuItems: string[] = [
@@ -65,16 +66,9 @@ const Footer: React.FC = () => {
 
           <div className="flex justify-center md:justify-end gap-3 border border-light-black p-4 rounded-xl">
             {socialLinks.map(({ icon, url }, index) => (
-              <a
-                key={index}
-                href={url}
-                target="_blank"
-                className="p-px size-16 rounded-md bg-linear-to-b from-light-black from-55% to-black to-100%"
-              >
-                <span className="rounded-md h-full w-full flex justify-center items-center bg-linear-to-b from-[#292929] to-black">
-                  {icon}
-                </span>
-              </a>
+              <IconTile key={index} href={url} ariaLabel={`Visit ${url}`}>
+                {icon}
+              </IconTile>
             ))}
           </div>
         </div>

@@ -7,13 +7,13 @@
   --font-sans:
     "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-barlow: Barlow, ui-sans-serif, system-ui, sans-serif;
+  --font-barlow: Barlow, sans-serif;
   --font-poppins: Poppins, sans-serif;
 }
 
 html,
 body {
-  @apply bg-black;
+  @apply bg-dark-gray;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
