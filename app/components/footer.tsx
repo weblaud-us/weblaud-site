@@ -43,7 +43,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-black text-white py-10">
-      <div className="max-w-7xl border-t border-[#858585] mx-auto py-4 px-4 md:py-10 md:px-16">
+      <div className="max-w-7xl border-t border-light-black mx-auto py-4 px-4 md:py-10 md:px-16">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="text-center md:text-left">
             <h2 className="text-3xl font-semibold font-poppins">
@@ -99,7 +99,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col mb-20 md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4">
+        <div className="flex flex-col mb-10 md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4">
           <p>Design By Hridoy Hossain 2025 (Mkt)</p>
         </div>
       </div>

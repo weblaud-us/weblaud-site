@@ -9,6 +9,7 @@
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-barlow: Barlow, sans-serif;
   --font-poppins: Poppins, sans-serif;
+  --font-lexend: Lexend, sans-serif;
 }
 
 html,
@@ -25,9 +26,10 @@ body {
   --color-black: #000000;
   --color-light-black: #2c2b2b;
   --color-white: #ffffff;
-  --color-gray:#E6E6E6;
-  --color-dark-gray:#98989A;
+  --color-gray: #e6e6e6;
+  --color-dark-gray: #98989a;
   --color-secondary: #141414;
+  --color-card-bg: #0e0e0e;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

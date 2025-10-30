@@ -11,33 +11,34 @@ type FAQItem = {
 const items: FAQItem[] = [
   {
     id: 1,
-    question: "What services does Catalyst Analytics provide?",
+    question: "What services does your company offer?",
     answer:
-      "Catalyst Analytics offers a range of services including design, engineering, and project management. We specialize in user experience design, web development, mobile app development, custom software development, branding and identity, and more.",
+      "We provide comprehensive digital solutions including custom web development, mobile app development, UI/UX design, cloud infrastructure setup, API development, and ongoing maintenance and support. Our team specializes in modern technologies like React, Next.js, Node.js, and cloud platforms to deliver scalable, high-performance applications tailored to your business needs.",
   },
   {
     id: 2,
-    question: "Lorem Ipsum is simply dummy text of the printing",
+    question: "How long does a typical project take to complete?",
     answer:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.",
+      "Project timelines vary based on complexity and scope. A simple website typically takes 4-6 weeks, while a full-featured web application may require 3-6 months. We provide detailed timelines during the discovery phase and keep you updated throughout development with regular milestone reviews and demos.",
   },
   {
     id: 3,
-    question: "Lorem Ipsum is simply dummy text of the printing",
+    question: "Do you offer post-launch support and maintenance?",
     answer:
-      "Suspendisse potenti. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.",
+      "Yes, we provide comprehensive post-launch support including bug fixes, security updates, performance monitoring, and feature enhancements. We offer flexible maintenance packages tailored to your needs, from basic monitoring to full ongoing development partnerships with dedicated support teams.",
   },
   {
     id: 4,
-    question: "Lorem Ipsum is simply dummy text of the printing",
+    question: "What is your development process like?",
     answer:
-      "Curabitur blandit tempus porttitor. Donec id elit non mi porta gravida at eget metus.",
+      "We follow an agile development methodology with clear phases: discovery and planning, design and prototyping, development with regular sprints, quality assurance testing, and deployment. You'll have full visibility throughout with regular check-ins, demos, and the ability to provide feedback at every stage to ensure the final product exceeds your expectations.",
   },
   {
     id: 5,
-    question: "Lorem Ipsum is simply dummy text of the printing",
+    question:
+      "Can you work with our existing tech stack or integrate with our systems?",
     answer:
-      "Etiam porta sem malesuada magna mollis euismod. Aenean lacinia bibendum nulla sed consectetur.",
+      "Absolutely! We're experienced in working with diverse tech stacks and can seamlessly integrate with your existing systems, APIs, databases, and third-party services. Whether you need to modernize legacy systems, add new features, or build complementary tools, we'll work within your technical ecosystem while recommending best practices for optimal results.",
   },
 ];
 
@@ -65,7 +66,7 @@ export default function FAQ() {
               <li
                 key={item.id}
                 className={`rounded-2xl border border-light-black ${
-                  isOpen ? "bg-[#1b1b1b]" : "bg-[#111]"
+                  isOpen ? "bg-card-bg" : "bg-card-bg"
                 }`}
               >
                 <div className="flex items-start gap-4 p-4 md:p-6">
