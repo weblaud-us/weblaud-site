@@ -59,7 +59,6 @@ export default function OurSay() {
         </h2>
 
         <div className="relative">
-          {/* Custom arrows */}
           <button
             className="why-prev cursor-pointer hidden md:flex absolute md:-left-3 lg:-left-5 top-1/2 -translate-y-1/2 z-20 size-12 items-center justify-center rounded-full bg-card-bg border border-light-black text-primary hover:text-blue-400 transition-colors"
             aria-label="Previous slide"

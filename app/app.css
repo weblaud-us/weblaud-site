@@ -142,3 +142,34 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 48px 50px;
+}
+
+.grid-fade-mask {
+  mask-image: radial-gradient(
+    ellipse 90% 100% at center,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 0.6) 60%,
+    rgba(0, 0, 0, 0.2) 85%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 90% 100% at center,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 0.6) 60%,
+    rgba(0, 0, 0, 0.2) 85%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.grid-ripple-box {
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.2s ease;
+}
