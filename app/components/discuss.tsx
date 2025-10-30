@@ -5,10 +5,12 @@ import { motion } from "framer-motion";
 const Discuss = () => {
   const defaultGrayCells = [
     { x: 2, y: 1 },
+    { x: 6, y: 3 },
     { x: 25, y: 3 },
     { x: 15, y: 1 },
     { x: 4, y: 6 },
     { x: 11, y: 5 },
+    { x: 19, y: 4 },
     { x: 23, y: 1 },
   ];
   const [hoveredCell, setHoveredCell] = useState<{
