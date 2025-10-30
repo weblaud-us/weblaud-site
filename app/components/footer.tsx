@@ -1,0 +1,116 @@
+import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { IoIosMail } from "react-icons/io";
+import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
+
+const Footer: React.FC = () => {
+  const menuItems: string[] = [
+    "Home",
+    "Services",
+    "Portfolio",
+    "About Us",
+    "Careers",
+  ];
+
+  const socialLinks: { icon: React.ReactNode; url: string }[] = [
+    {
+      icon: <FaFacebook className="text-blue-500 text-2xl" />,
+      url: "https://facebook.com",
+    },
+    {
+      icon: <FaTwitter className="text-blue-500 text-2xl" />,
+      url: "https://twitter.com",
+    },
+    {
+      icon: <FaLinkedin className="text-blue-500 text-2xl" />,
+      url: "https://linkedin.com",
+    },
+  ];
+
+  const contactItems: { icon: React.ReactNode; text: string }[] = [
+    {
+      icon: <IoIosMail className="text-blue-500 text-xl" />,
+      text: "Hridoy162476@gmail.com",
+    },
+    { icon: <IoCallSharp />, text: "01774521320" },
+    { icon: <IoLocationSharp />, text: "Dhaka, Bangladesh" },
+  ];
+
+  const legalLinks: { label: string; href: string }[] = [
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms of Service", href: "/terms-of-service" },
+  ];
+
+  return (
+    <footer className="bg-black text-white py-10">
+      <div className="max-w-7xl border-t border-[#858585] mx-auto py-4 px-4 md:py-10 md:px-16">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="text-center md:text-left">
+            <h2 className="text-3xl font-semibold font-poppins">
+              <span className="text-blue-500">Dev</span> Nest
+            </h2>
+          </div>
+
+          <div className="text-center md:text-left">
+            <ul className="flex flex-col md:flex-row font-barlow gap-6 font-medium">
+              {menuItems.map((item) => (
+                <li
+                  key={item}
+                  className="hover:text-blue-500 text-gray font-barlow cursor-pointer transition duration-200"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex justify-center md:justify-end gap-3 border border-light-black p-4 rounded-xl">
+            {socialLinks.map(({ icon, url }, index) => (
+              <a
+                key={index}
+                href={url}
+                target="_blank"
+                className="p-px size-16 rounded-md bg-linear-to-b from-light-black from-55% to-black to-100%"
+              >
+                <span className="rounded-md h-full w-full flex justify-center items-center bg-linear-to-b from-[#292929] to-black">
+                  {icon}
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center  justify-between mt-10">
+          <div className="flex gap-6 items-center mt-4 text-sm">
+            {contactItems.map(({ icon, text }) => (
+              <div
+                key={text}
+                className="flex justify-center items-center text-gray font-barlow gap-2"
+              >
+                <span className="text-blue-500 text-lg">{icon}</span>
+                <p>{text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-4">
+            {legalLinks.map(({ label, href }) => (
+              <a
+                key={label}
+                href={href}
+                className="hover:text-blue-500 text-sm font-barlow text-dark-gray transition duration-200"
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col mb-20 md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4">
+          <p>Design By Hridoy Hossain 2025 (Mkt)</p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
