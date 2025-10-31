@@ -12,9 +12,9 @@ export type IconTileProps = {
 };
 
 const sizeClass: Record<NonNullable<IconTileProps["size"]>, string> = {
-  sm: "size-10",
-  md: "size-12",
-  lg: "size-16",
+  sm: "size-8 md:size-10",
+  md: "size-10 md:size-12",
+  lg: "size-12 md:size-14 lg:size-16",
 };
 
 export default function IconTile({
