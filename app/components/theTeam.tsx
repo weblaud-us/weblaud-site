@@ -2,8 +2,32 @@ import person01 from "~/assets/person-01.svg";
 import person02 from "~/assets/person-02.svg";
 import person03 from "~/assets/person-03.svg";
 import person04 from "~/assets/person-04.svg";
+import { useState, useEffect, useRef } from "react";
 
 const TheTeam = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
   const teamMembers = [
     {
       id: 1,
@@ -32,10 +56,16 @@ const TheTeam = () => {
   ];
 
   return (
-    <section className="bg-black text-white py-20 px-4">
+    <section ref={containerRef} className="bg-black text-white py-20 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-5">
-          <div className="lg:max-w-md space-y-4">
+          <div
+            className={`lg:max-w-md space-y-4 transition-all duration-1000 ${
+              isVisible
+                ? "opacity-100 blur-0 translate-x-0"
+                : "opacity-0 blur-[10px] -translate-x-5"
+            }`}
+          >
             <h3 className="text-blue-500 md:text-lg font-semibold font-barlow">
               The team
             </h3>
@@ -45,10 +75,15 @@ const TheTeam = () => {
           </div>
 
           <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {teamMembers.map((member) => (
+            {teamMembers.map((member, index) => (
               <div
                 key={member.id}
-                className="group relative overflow-hidden rounded-2xl bg-light-black"
+                className={`group relative overflow-hidden rounded-2xl bg-light-black transition-all duration-1000 ${
+                  isVisible
+                    ? "opacity-100 blur-0 translate-y-0"
+                    : "opacity-0 blur-[10px] translate-y-5"
+                }`}
+                style={{ transitionDelay: `${200 + index * 100}ms` }}
               >
                 <div className="relative">
                   <img

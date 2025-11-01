@@ -29,7 +29,7 @@ function AnimatedCounter({
     damping: 50,
     stiffness: 100,
   });
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-10px" });
 
   useEffect(() => {
     if (isInView) {
@@ -54,21 +54,31 @@ function AnimatedCounter({
 
 const OurAchievement = () => {
   return (
-    <div className="bg-black py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="bg-black pt-3 sm:pt-4 md:pt-5 lg:pt-6 pb-12 sm:pb-16 md:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="absolute inset-0 opacity-20" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+      <motion.div
+        className="max-w-7xl mx-auto relative z-10"
+        initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
+        whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
           {achievements.map((achievement, index) => (
             <motion.div
               key={achievement.label}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.3 }}
+              transition={{
+                duration: 0.6,
+                delay: index * 0.1,
+                ease: "easeOut",
+              }}
               className="group h-full sm:hover:scale-[1.03] sm:hover:-translate-y-1 transition-transform duration-300"
             >
-              <div className="relative bg-linear-to-br from-gray-800/50 via-gray-900/50 to-gray-800/50 rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-7 lg:p-8 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 backdrop-blur-sm overflow-hidden h-full flex flex-col justify-center min-h-[140px] sm:min-h-40">
+              <div className="relative bg-linear-to-br bg-card-bg rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-7 border border-light-black hover:border-gray-600/50 transition-all duration-300 backdrop-blur-sm overflow-hidden h-full flex flex-col justify-center min-h-[100px] sm:min-h-10">
                 <div className="relative z-10 text-center space-y-1.5 sm:space-y-2">
                   <p className="text-gray-400 text-[10px] sm:text-xs md:text-sm lg:text-xs xl:text-sm font-medium tracking-wider uppercase whitespace-nowrap overflow-hidden text-ellipsis px-1">
                     {achievement.label}
@@ -88,7 +98,7 @@ const OurAchievement = () => {
             </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
