@@ -126,7 +126,7 @@ const OurServices = () => {
   };
 
   return (
-    <div className="bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-6 md:py-6 lg:py-9">
+    <div className="bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-6 md:py-6 lg:py-15">
       <div className="max-w-7xl mx-auto">
         <div className="text-center my-12 md:my-16">
           <h2
