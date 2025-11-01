@@ -1,3 +1,4 @@
+import { useLocation } from "react-router";
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
@@ -6,13 +7,38 @@ import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 
 const Footer: React.FC = () => {
-  const [logoRef, isLogoVisible] = useBlurAnimation<HTMLDivElement>(0.3);
-  const [menuRef, isMenuVisible] = useBlurAnimation<HTMLDivElement>(0.3);
-  const [socialRef, isSocialVisible] = useBlurAnimation<HTMLDivElement>(0.3);
-  const [contactRef, isContactVisible] = useBlurAnimation<HTMLDivElement>(0.3);
-  const [legalRef, isLegalVisible] = useBlurAnimation<HTMLDivElement>(0.3);
-  const [copyrightRef, isCopyrightVisible] =
-    useBlurAnimation<HTMLDivElement>(0.3);
+  const location = useLocation();
+
+  const [logoRef, isLogoVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [menuRef, isMenuVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [socialRef, isSocialVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [contactRef, isContactVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [legalRef, isLegalVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [copyrightRef, isCopyrightVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
 
   const menuItems: string[] = [
     "Home",
