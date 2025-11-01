@@ -79,9 +79,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
               ))}
             </h3>
             <div className="relative shrink-0">
-              <span className="absolute sm:block hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-primary opacity-0 group-hover:opacity-100 group-hover:scale-130 transition-all duration-600 pointer-events-none"></span>
+              <span className="absolute sm:block hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-primary opacity-0 group-hover:opacity-100 group-hover:scale-120 transition-all duration-600 pointer-events-none"></span>
               <span
-                className="absolute hidden sm:block top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-primary opacity-0 group-hover:opacity-70 group-hover:scale-150 transition-all duration-800 pointer-events-none"
+                className="absolute hidden sm:block top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-primary opacity-0 group-hover:opacity-70 group-hover:scale-140 transition-all duration-800 pointer-events-none"
                 style={{ transitionDelay: "150ms" }}
               ></span>
 
