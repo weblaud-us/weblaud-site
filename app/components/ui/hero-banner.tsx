@@ -70,10 +70,10 @@ const HeroBanner = ({
   return (
     <div
       ref={containerRef}
-      className={`bg-black px-4 sm:px-6 lg:px-8 xl:px-10 pt-3 sm:pt-4 md:pt-6 lg:pt-8 ${className}`}
+      className={`bg-black px-4 sm:px-6 lg:px-8 xl:px-10 pt-22 sm:pt-22.5 md:pt-26 lg:pt-26 ${className}`}
     >
       <div
-        className={`relative max-w-7xl mx-auto bg-card-bg border border-light-black px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 md:py-10 lg:py-12 xl:py-16 rounded-xl overflow-hidden group transition-all duration-1000 ${
+        className={`relative max-w-7xl mx-auto bg-card-bg border border-light-black px-4 sm:px-6 md:px-8 lg:px-8 xl:px-10 py-5 sm:py-6 md:py-8 lg:py-14 rounded-xl overflow-hidden group transition-all duration-1000 ${
           isVisible
             ? "opacity-100 blur-0 translate-y-0"
             : "opacity-0 blur-[10px] translate-y-5"
@@ -88,13 +88,13 @@ const HeroBanner = ({
           <>
             <img
               src={pattern}
-              className="w-44 sm:w-56 md:w-64 lg:w-80 xl:w-96 absolute bottom-0 left-0 opacity-10 z-10"
+              className="w-44 sm:w-56 md:w-64 lg:w-80 absolute bottom-0 left-0 opacity-10 z-10"
               alt="Pattern decoration"
             />
 
             <img
               src={pattern}
-              className="w-44 sm:w-56 md:w-64 lg:w-80 xl:w-96 absolute top-0 right-0 opacity-10 z-10 rotate-180"
+              className="w-44 sm:w-56 md:w-64 lg:w-80 absolute top-0 right-0 opacity-10 z-10 rotate-180"
               alt="Pattern decoration"
             />
           </>
@@ -189,7 +189,7 @@ const HeroBanner = ({
               }`}
             >
               <img
-                className="w-72 max-w-full h-auto hover:scale-105 transition-transform duration-500"
+                className="w-64 max-w-full h-auto hover:scale-105 transition-transform duration-500"
                 src={image.src}
                 alt={image.alt}
               />
