@@ -142,7 +142,7 @@ const NavBar = () => {
                 ? "translate-x-0 opacity-100"
                 : "translate-x-full opacity-0"
             }`}
-            style={{ top: isScrolled ? "88px" : "100px" }}
+            style={{ top: isScrolled ? "85px" : "100px" }}
           >
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>

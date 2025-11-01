@@ -2,7 +2,8 @@ import bg from "~/assets/bg-pattern.svg";
 import pattern from "~/assets/geometric-pattern.svg";
 import { Button } from "./button";
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useBlurAnimation } from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 interface HeroBannerProps {
   badge?: {
@@ -36,29 +37,7 @@ const HeroBanner = ({
   className = "",
   contentAlignment = "left",
 }: HeroBannerProps) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
-    };
-  }, []);
+  const [containerRef, isVisible] = useBlurAnimation<HTMLDivElement>();
 
   const textAlign =
     contentAlignment === "center" ? "text-center" : "text-center lg:text-left";
@@ -73,11 +52,7 @@ const HeroBanner = ({
       className={`bg-black px-4 sm:px-6 lg:px-8 xl:px-10 pt-22 sm:pt-22.5 md:pt-26 lg:pt-26 ${className}`}
     >
       <div
-        className={`relative max-w-7xl mx-auto bg-card-bg border border-light-black px-4 sm:px-6 md:px-8 lg:px-8 xl:px-10 py-5 sm:py-6 md:py-8 lg:py-14 rounded-xl overflow-hidden group transition-all duration-1000 ${
-          isVisible
-            ? "opacity-100 blur-0 translate-y-0"
-            : "opacity-0 blur-[10px] translate-y-5"
-        }`}
+        className={`relative max-w-7xl mx-auto bg-card-bg border border-light-black px-4 sm:px-6 md:px-8 lg:px-8 xl:px-10 py-5 sm:py-6 md:py-8 lg:py-14 rounded-xl overflow-hidden group ${getBlurAnimationClasses(isVisible)}`}
         style={{
           backgroundImage: `url(${bg})`,
           backgroundRepeat: "repeat",
@@ -108,11 +83,8 @@ const HeroBanner = ({
           >
             {badge && (
               <div
-                className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 mb-4 bg-white/7 border border-white/20 rounded-full transition-all duration-1000 delay-200 ${
-                  isVisible
-                    ? "opacity-100 blur-0 translate-y-0"
-                    : "opacity-0 blur-sm translate-y-5"
-                }`}
+                className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 mb-4 bg-white/7 border border-white/20 rounded-full ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+                style={{ transitionDelay: "200ms" }}
               >
                 {badge.showPulse !== false && (
                   <span className="relative flex h-1.5 w-1.5">
@@ -127,11 +99,8 @@ const HeroBanner = ({
             )}
 
             <h1
-              className={`text-2xl sm:text-3xl md:text-4xl lg:text-[2.8rem] font-barlow font-bold leading-tight mb-4 sm:mb-6 transition-all duration-1000 delay-400 ${
-                isVisible
-                  ? "opacity-100 blur-0 translate-y-0"
-                  : "opacity-0 blur-sm translate-y-5"
-              }`}
+              className={`text-2xl text-white sm:text-3xl md:text-4xl lg:text-[2.8rem] font-barlow font-bold leading-tight mb-4 sm:mb-6 ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+              style={{ transitionDelay: "400ms" }}
             >
               {typeof title === "string" ? (
                 <span className="text-white">{title}</span>
@@ -141,14 +110,13 @@ const HeroBanner = ({
             </h1>
 
             <div
-              className={`my-6 sm:my-7 max-w-2xl mx-auto lg:mx-0 text-xs sm:text-base text-white font-barlow transition-all duration-1000 delay-600 ${
-                isVisible
-                  ? "opacity-100 blur-0 translate-y-0"
-                  : "opacity-0 blur-sm translate-y-5"
-              }`}
+              className={`mt-6 sm:mt-7 max-w-2xl mx-auto lg:mx-0 text-sm sm:text-base text-white font-barlow ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+              style={{ transitionDelay: "600ms" }}
             >
               {typeof description === "string" ? (
-                <p>{description}</p>
+                <p className="leading-relaxed md:leading-normal">
+                  {description}
+                </p>
               ) : (
                 description
               )}
@@ -156,11 +124,8 @@ const HeroBanner = ({
 
             {button && (
               <div
-                className={`flex flex-col sm:flex-row gap-3 sm:gap-4 items-center lg:items-start ${justifyContent} transition-all duration-1000 delay-800 ${
-                  isVisible
-                    ? "opacity-100 blur-0 translate-y-0"
-                    : "opacity-0 blur-sm translate-y-5"
-                }`}
+                className={`flex mt-6 sm:mt-7 flex-col sm:flex-row gap-3 sm:gap-4 items-center lg:items-start ${justifyContent} ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+                style={{ transitionDelay: "800ms" }}
               >
                 {button.href ? (
                   <a href={button.href}>
@@ -182,11 +147,8 @@ const HeroBanner = ({
 
           {image && (
             <div
-              className={`${image.showOnMobile ? "flex" : "hidden lg:flex"} shrink-0 w-auto justify-end relative transition-all duration-1000 delay-1000 ${
-                isVisible
-                  ? "opacity-100 blur-0 translate-y-0"
-                  : "opacity-0 blur-sm translate-y-5"
-              }`}
+              className={`${image.showOnMobile ? "flex" : "hidden lg:flex"} shrink-0 w-auto justify-end relative ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+              style={{ transitionDelay: "1000ms" }}
             >
               <img
                 className="w-64 max-w-full h-auto hover:scale-105 transition-transform duration-500"

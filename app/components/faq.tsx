@@ -1,6 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import IconTile from "./ui/icon-tile";
+import {
+  useBlurAnimation,
+  useBlurAnimationList,
+} from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 type FAQItem = {
   id: number;
@@ -44,56 +49,12 @@ const items: FAQItem[] = [
 
 export default function FAQ() {
   const [openId, setOpenId] = React.useState<number | null>(1);
-  const [isTitleVisible, setIsTitleVisible] = useState(false);
-  const [visibleItems, setVisibleItems] = useState<Set<number>>(new Set());
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const itemRefs = useRef<Map<number, HTMLLIElement>>(new Map());
 
-  useEffect(() => {
-    const titleObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsTitleVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (titleRef.current) {
-      titleObserver.observe(titleRef.current);
-    }
-
-    const itemObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const itemId = parseInt(
-              entry.target.getAttribute("data-item-id") || "0"
-            );
-            setVisibleItems((prev) => new Set(prev).add(itemId));
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    itemRefs.current.forEach((element) => {
-      if (element) {
-        itemObserver.observe(element);
-      }
-    });
-
-    return () => {
-      if (titleRef.current) {
-        titleObserver.unobserve(titleRef.current);
-      }
-      itemRefs.current.forEach((element) => {
-        if (element) {
-          itemObserver.unobserve(element);
-        }
-      });
-    };
-  }, []);
+  const [titleRef, isTitleVisible] = useBlurAnimation<HTMLHeadingElement>();
+  const { itemRefs, isItemVisible } = useBlurAnimationList(
+    items.map((item) => item.id),
+    0.1
+  );
 
   const toggle = (id: number) => {
     setOpenId((cur) => (cur === id ? null : id));
@@ -104,11 +65,7 @@ export default function FAQ() {
       <div className="max-w-5xl mx-auto px-4 md:px-6">
         <h2
           ref={titleRef}
-          className={`text-center font-barlow text-2xl md:text-3xl font-semibold mb-8 md:mb-12 transition-all duration-1000 ${
-            isTitleVisible
-              ? "opacity-100 blur-0 translate-y-0"
-              : "opacity-0 blur-[10px] translate-y-5"
-          }`}
+          className={`text-center font-barlow text-2xl md:text-3xl font-semibold mb-8 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
         >
           Frequently Asked Questions
         </h2>
@@ -119,21 +76,16 @@ export default function FAQ() {
             const number = String(idx + 1).padStart(2, "0");
             const panelId = `faq-panel-${item.id}`;
             const buttonId = `faq-button-${item.id}`;
-            const isItemVisible = visibleItems.has(item.id);
+            const itemVisible = isItemVisible(item.id);
             return (
               <li
                 key={item.id}
                 ref={(el) => {
                   if (el) itemRefs.current.set(item.id, el);
                 }}
-                data-item-id={item.id}
                 className={`rounded-2xl border border-light-black ${
                   isOpen ? "bg-card-bg" : "bg-card-bg"
-                } transition-all duration-1000 ${
-                  isItemVisible
-                    ? "opacity-100 blur-0 translate-y-0"
-                    : "opacity-0 blur-[10px] translate-y-5"
-                }`}
+                } ${getBlurAnimationClasses(itemVisible)}`}
               >
                 <div className="flex items-start gap-4 p-4 md:p-6">
                   <IconTile size="lg" className="shrink-0">

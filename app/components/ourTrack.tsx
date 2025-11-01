@@ -1,5 +1,7 @@
 import { motion, useInView, animate } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useBlurAnimation } from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 interface TrackRecord {
   id: number;
@@ -83,42 +85,14 @@ function Counter({ value, suffix }: { value: string; suffix: string }) {
 }
 
 const OurTrack = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
-    };
-  }, []);
+  const [titleRef, isVisible] = useBlurAnimation<HTMLHeadingElement>();
 
   return (
-    <section
-      ref={containerRef}
-      className="bg-black text-white py-16 md:py-20 px-4 md:px-8"
-    >
+    <section className="bg-black text-white py-16 md:py-20 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         <h2
-          className={`text-center text-2xl md:text-3xl font-semibold mb-12 md:mb-16 font-barlow transition-all duration-1000 ${
-            isVisible
-              ? "opacity-100 blur-0 translate-y-0"
-              : "opacity-0 blur-[10px] translate-y-5"
-          }`}
+          ref={titleRef}
+          className={`text-center text-2xl md:text-3xl font-semibold mb-12 md:mb-16 font-barlow ${getBlurAnimationClasses(isVisible)}`}
         >
           Our Track Record
         </h2>

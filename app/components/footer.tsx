@@ -2,32 +2,18 @@ import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
 import IconTile from "./ui/icon-tile";
-import { useState, useEffect, useRef } from "react";
+import { useBlurAnimation } from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 const Footer: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [logoRef, isLogoVisible] = useBlurAnimation<HTMLDivElement>(0.3);
+  const [menuRef, isMenuVisible] = useBlurAnimation<HTMLDivElement>(0.3);
+  const [socialRef, isSocialVisible] = useBlurAnimation<HTMLDivElement>(0.3);
+  const [contactRef, isContactVisible] = useBlurAnimation<HTMLDivElement>(0.3);
+  const [legalRef, isLegalVisible] = useBlurAnimation<HTMLDivElement>(0.3);
+  const [copyrightRef, isCopyrightVisible] =
+    useBlurAnimation<HTMLDivElement>(0.3);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
-    };
-  }, []);
   const menuItems: string[] = [
     "Home",
     "Services",
@@ -66,15 +52,12 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer ref={containerRef} className="bg-black text-white py-10">
+    <footer className="bg-black text-white py-10">
       <div className="max-w-7xl border-t border-light-black mx-auto py-4 px-4 md:py-10 md:px-16">
         <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
           <div
-            className={`text-center lg:text-left transition-all duration-1000 ${
-              isVisible
-                ? "opacity-100 blur-0 translate-y-0"
-                : "opacity-0 blur-[10px] translate-y-5"
-            }`}
+            ref={logoRef}
+            className={`text-center lg:text-left ${getBlurAnimationClasses(isLogoVisible)}`}
           >
             <h2 className="text-2xl md:text-3xl font-semibold font-poppins">
               <span className="text-blue-500">Dev</span> Nest
@@ -82,11 +65,8 @@ const Footer: React.FC = () => {
           </div>
 
           <div
-            className={`text-center lg:text-left transition-all duration-1000 delay-200 ${
-              isVisible
-                ? "opacity-100 blur-0 translate-y-0"
-                : "opacity-0 blur-[10px] translate-y-5"
-            }`}
+            ref={menuRef}
+            className={`text-center lg:text-left ${getBlurAnimationClasses(isMenuVisible)}`}
           >
             <ul className="flex flex-wrap justify-center lg:flex-row font-barlow gap-4 md:gap-6 font-medium">
               {menuItems.map((item) => (
@@ -101,11 +81,8 @@ const Footer: React.FC = () => {
           </div>
 
           <div
-            className={`flex justify-center lg:justify-end gap-3 border border-light-black p-4 rounded-xl transition-all duration-1000 delay-400 ${
-              isVisible
-                ? "opacity-100 blur-0 translate-y-0"
-                : "opacity-0 blur-[10px] translate-y-5"
-            }`}
+            ref={socialRef}
+            className={`flex justify-center lg:justify-end gap-3 border border-light-black p-4 rounded-xl ${getBlurAnimationClasses(isSocialVisible)}`}
           >
             {socialLinks.map(({ icon, url }, index) => (
               <IconTile key={index} href={url} ariaLabel={`Visit ${url}`}>
@@ -117,11 +94,8 @@ const Footer: React.FC = () => {
 
         <div className="flex flex-col lg:flex-row items-center justify-between mt-10 gap-6">
           <div
-            className={`flex flex-col sm:flex-row gap-4 sm:gap-6 items-center text-sm transition-all duration-1000 delay-600 ${
-              isVisible
-                ? "opacity-100 blur-0 translate-y-0"
-                : "opacity-0 blur-[10px] translate-y-5"
-            }`}
+            ref={contactRef}
+            className={`flex flex-col sm:flex-row gap-4 sm:gap-6 items-center text-sm ${getBlurAnimationClasses(isContactVisible)}`}
           >
             {contactItems.map(({ icon, text }) => (
               <div
@@ -134,11 +108,8 @@ const Footer: React.FC = () => {
             ))}
           </div>
           <div
-            className={`flex gap-4 flex-wrap justify-center transition-all duration-1000 delay-700 ${
-              isVisible
-                ? "opacity-100 blur-0 translate-y-0"
-                : "opacity-0 blur-[10px] translate-y-5"
-            }`}
+            ref={legalRef}
+            className={`flex gap-4 flex-wrap justify-center ${getBlurAnimationClasses(isLegalVisible)}`}
           >
             {legalLinks.map(({ label, href }) => (
               <a
@@ -153,11 +124,8 @@ const Footer: React.FC = () => {
         </div>
 
         <div
-          className={`flex flex-col md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4 transition-all duration-1000 delay-800 ${
-            isVisible
-              ? "opacity-100 blur-0 translate-y-0"
-              : "opacity-0 blur-[10px] translate-y-5"
-          }`}
+          ref={copyrightRef}
+          className={`flex flex-col md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4 ${getBlurAnimationClasses(isCopyrightVisible)}`}
         >
           <p className="text-center">Design By Hridoy Hossain 2025 (Mkt)</p>
         </div>

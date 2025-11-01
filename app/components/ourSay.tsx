@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import { Button } from "./ui/button";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useBlurAnimation } from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 type WhyItem = {
   id: number;
@@ -51,49 +53,20 @@ const items: WhyItem[] = [
 ];
 
 export default function OurSay() {
-  const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
-    };
-  }, []);
+  const [containerRef, isVisible] = useBlurAnimation<HTMLDivElement>();
 
   return (
     <section ref={containerRef} className="bg-black text-white py-16 md:py-24">
       <div className="max-w-5xl mx-auto px-4 md:px-6">
         <h2
-          className={`text-center text-2xl md:text-3xl font-semibold mb-10 transition-all duration-1000 ${
-            isVisible
-              ? "opacity-100 blur-0 translate-y-0"
-              : "opacity-0 blur-[10px] translate-y-5"
-          }`}
+          className={`text-center text-2xl md:text-3xl font-semibold mb-10 ${getBlurAnimationClasses(isVisible)}`}
         >
           Why We Started
         </h2>
 
         <div
-          className={`relative transition-all duration-1000 delay-200 ${
-            isVisible
-              ? "opacity-100 blur-0 translate-y-0"
-              : "opacity-0 blur-[10px] translate-y-5"
-          }`}
+          className={`relative ${getBlurAnimationClasses(isVisible)}`}
+          style={{ transitionDelay: "200ms" }}
         >
           <button
             className="why-prev cursor-pointer hidden md:flex absolute md:-left-3 lg:-left-5 top-1/2 -translate-y-1/2 z-20 size-12 items-center justify-center rounded-full bg-card-bg border border-light-black text-primary hover:text-blue-400 transition-colors"
@@ -152,11 +125,8 @@ export default function OurSay() {
         </div>
 
         <div
-          className={`mt-10 flex justify-center transition-all duration-1000 delay-400 ${
-            isVisible
-              ? "opacity-100 blur-0 translate-y-0"
-              : "opacity-0 blur-[10px] translate-y-5"
-          }`}
+          className={`mt-10 flex justify-center ${getBlurAnimationClasses(isVisible)}`}
+          style={{ transitionDelay: "400ms" }}
         >
           <Button className="text-xs font-bold px-9 py-4.5">Learn More</Button>
         </div>
