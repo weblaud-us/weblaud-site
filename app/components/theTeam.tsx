@@ -43,7 +43,7 @@ const TheTeam = () => {
   );
 
   const titleAnimation = blurAnimation(isTitleVisible, undefined, {
-    className: "-translate-x-5",
+    
     variant: "default",
   });
 
@@ -68,7 +68,7 @@ const TheTeam = () => {
             {teamMembers.map((member, index) => {
               const animation = blurAnimation(isItemVisible(member.id), index, {
                 baseDelay: 200,
-                staggerDelay: 100,
+                staggerDelay: 200,
               });
 
               return (

@@ -140,7 +140,7 @@ const NavBar = () => {
             className={`lg:hidden fixed right-6.5 top-0 bottom-4 h-fit w-[80%] max-w-sm bg-linear-to-br from-card-bg via-card-bg to-black border border-light-black rounded-xl shadow-2xl shadow-blue-500/10 z-50 transition-all duration-500 ease-out ${
               isMobileMenuOpen
                 ? "translate-x-0 opacity-100"
-                : "translate-x-full opacity-0"
+                : "translate-x-[120%] opacity-0"
             }`}
             style={{ top: isScrolled ? "85px" : "100px" }}
           >
