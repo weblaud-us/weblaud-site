@@ -94,7 +94,6 @@ const NavBar = () => {
                   >
                     <span className="relative">
                       {link.name}
-                      {/* Underline animation */}
                       <span
                         className={`absolute rounded-full left-0 -bottom-1 h-[1.5px] bg-primary transition-all duration-300 origin-left ${
                           isActive
