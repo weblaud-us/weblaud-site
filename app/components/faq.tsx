@@ -61,7 +61,7 @@ export default function FAQ() {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-black text-white">
+    <section className="py-16 bg-black text-white">
       <div className="max-w-5xl mx-auto px-4 md:px-6">
         <h2
           ref={titleRef}
