@@ -17,7 +17,7 @@ const BannerHome = () => {
         <div className="absolute bottom-20 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 lg:pb-24 xl:pb-28 pt-40  md:pt-45">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 lg:pb-24 xl:pb-28 pt-44  md:pt-50">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-0 items-center">
           <div className="flex  ">
             <div className="flex items-start relative top-5 sm:top-0">
