@@ -3,6 +3,8 @@ import target from "~/assets/target.svg";
 import { SectionBackground } from "./ui/section-background";
 import { ContentCard } from "./ui/content-card";
 import { ImageContainer } from "./ui/image-container";
+import { useBlurAnimation } from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 const sectionsData = {
   story: {
@@ -30,10 +32,18 @@ const sectionsData = {
 };
 
 const OurMissionAndStory = () => {
+  const [storyRef, isStoryVisible] = useBlurAnimation<HTMLDivElement>();
+  const [missionRef, isMissionVisible] = useBlurAnimation<HTMLDivElement>();
+
   return (
     <SectionBackground>
-      <div className="relative max-w-7xl mx-auto mb-16 sm:mb-24 md:mb-32 lg:mb-40">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
+      <div
+        ref={storyRef}
+        className="relative max-w-7xl mx-auto mb-16 sm:mb-24 md:mb-32 lg:mb-40"
+      >
+        <div
+          className={`grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center ${getBlurAnimationClasses(isStoryVisible)}`}
+        >
           <ContentCard
             badge={sectionsData.story.badge}
             title={sectionsData.story.title}
@@ -51,8 +61,10 @@ const OurMissionAndStory = () => {
         </div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
+      <div ref={missionRef} className="relative max-w-7xl mx-auto">
+        <div
+          className={`grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center ${getBlurAnimationClasses(isMissionVisible)}`}
+        >
           <div className="order-2 lg:order-1">
             <ImageContainer
               image={sectionsData.mission.image}

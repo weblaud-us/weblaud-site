@@ -1,5 +1,7 @@
 import { motion, useInView, animate } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useBlurAnimation } from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 interface TrackRecord {
   id: number;
@@ -83,10 +85,15 @@ function Counter({ value, suffix }: { value: string; suffix: string }) {
 }
 
 const OurTrack = () => {
+  const [titleRef, isVisible] = useBlurAnimation<HTMLHeadingElement>();
+
   return (
     <section className="bg-black text-white py-16 md:py-20 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-center text-2xl md:text-3xl font-semibold mb-12 md:mb-16 font-barlow">
+        <h2
+          ref={titleRef}
+          className={`text-center text-2xl md:text-3xl font-semibold mb-12 md:mb-16 font-barlow ${getBlurAnimationClasses(isVisible)}`}
+        >
           Our Track Record
         </h2>
 
@@ -94,8 +101,8 @@ const OurTrack = () => {
           {trackRecords.map((record, index) => (
             <motion.div
               key={record.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="border border-light-black rounded-3xl p-6 md:p-8 bg-card-bg"
@@ -104,11 +111,13 @@ const OurTrack = () => {
                 <h3
                   className="text-5xl md:text-6xl lg:text-7xl font-bold font-barlow tracking-tight relative"
                   style={{
-                    background: "linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%)",
+                    background:
+                      "linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
-                    filter: "drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))",
+                    filter:
+                      "drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))",
                   }}
                 >
                   <span
@@ -117,7 +126,8 @@ const OurTrack = () => {
                       top: 0,
                       left: 0,
                       right: 0,
-                      background: "linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%,  white)",
+                      background:
+                        "linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%,  white)",
                       WebkitBackgroundClip: "text",
                       WebkitTextFillColor: "transparent",
                       backgroundClip: "text",

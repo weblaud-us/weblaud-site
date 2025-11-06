@@ -1,9 +1,45 @@
+import { useLocation } from "react-router";
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
 import IconTile from "./ui/icon-tile";
+import { useBlurAnimation } from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 const Footer: React.FC = () => {
+  const location = useLocation();
+
+  const [logoRef, isLogoVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [menuRef, isMenuVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [socialRef, isSocialVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [contactRef, isContactVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [legalRef, isLegalVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+  const [copyrightRef, isCopyrightVisible] = useBlurAnimation<HTMLDivElement>(
+    0.3,
+    false,
+    location.pathname
+  );
+
   const menuItems: string[] = [
     "Home",
     "Services",
@@ -45,13 +81,19 @@ const Footer: React.FC = () => {
     <footer className="bg-black text-white py-10">
       <div className="max-w-7xl border-t border-light-black mx-auto py-4 px-4 md:py-10 md:px-16">
         <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
-          <div className="text-center lg:text-left">
+          <div
+            ref={logoRef}
+            className={`text-center lg:text-left ${getBlurAnimationClasses(isLogoVisible)}`}
+          >
             <h2 className="text-2xl md:text-3xl font-semibold font-poppins">
               <span className="text-blue-500">Dev</span> Nest
             </h2>
           </div>
 
-          <div className="text-center lg:text-left">
+          <div
+            ref={menuRef}
+            className={`text-center lg:text-left ${getBlurAnimationClasses(isMenuVisible)}`}
+          >
             <ul className="flex flex-wrap justify-center lg:flex-row font-barlow gap-4 md:gap-6 font-medium">
               {menuItems.map((item) => (
                 <li
@@ -64,7 +106,10 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          <div className="flex justify-center lg:justify-end gap-3 border border-light-black p-4 rounded-xl">
+          <div
+            ref={socialRef}
+            className={`flex justify-center lg:justify-end gap-3 border border-light-black p-4 rounded-xl ${getBlurAnimationClasses(isSocialVisible)}`}
+          >
             {socialLinks.map(({ icon, url }, index) => (
               <IconTile key={index} href={url} ariaLabel={`Visit ${url}`}>
                 {icon}
@@ -74,7 +119,10 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row items-center justify-between mt-10 gap-6">
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center text-sm">
+          <div
+            ref={contactRef}
+            className={`flex flex-col sm:flex-row gap-4 sm:gap-6 items-center text-sm ${getBlurAnimationClasses(isContactVisible)}`}
+          >
             {contactItems.map(({ icon, text }) => (
               <div
                 key={text}
@@ -85,7 +133,10 @@ const Footer: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="flex gap-4 flex-wrap justify-center">
+          <div
+            ref={legalRef}
+            className={`flex gap-4 flex-wrap justify-center ${getBlurAnimationClasses(isLegalVisible)}`}
+          >
             {legalLinks.map(({ label, href }) => (
               <a
                 key={label}
@@ -98,7 +149,10 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4">
+        <div
+          ref={copyrightRef}
+          className={`flex flex-col md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4 ${getBlurAnimationClasses(isCopyrightVisible)}`}
+        >
           <p className="text-center">Design By Hridoy Hossain 2025 (Mkt)</p>
         </div>
       </div>

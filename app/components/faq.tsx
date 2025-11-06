@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import IconTile from "./ui/icon-tile";
+import {
+  useBlurAnimation,
+  useBlurAnimationList,
+} from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 type FAQItem = {
   id: number;
@@ -45,6 +50,12 @@ const items: FAQItem[] = [
 export default function FAQ() {
   const [openId, setOpenId] = React.useState<number | null>(1);
 
+  const [titleRef, isTitleVisible] = useBlurAnimation<HTMLHeadingElement>();
+  const { itemRefs, isItemVisible } = useBlurAnimationList(
+    items.map((item) => item.id),
+    0.1
+  );
+
   const toggle = (id: number) => {
     setOpenId((cur) => (cur === id ? null : id));
   };
@@ -52,7 +63,10 @@ export default function FAQ() {
   return (
     <section className="py-16 md:py-24 bg-black text-white">
       <div className="max-w-5xl mx-auto px-4 md:px-6">
-        <h2 className="text-center font-barlow text-2xl md:text-3xl font-semibold mb-8 md:mb-12">
+        <h2
+          ref={titleRef}
+          className={`text-center font-barlow text-2xl md:text-3xl font-semibold mb-8 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
+        >
           Frequently Asked Questions
         </h2>
 
@@ -62,12 +76,16 @@ export default function FAQ() {
             const number = String(idx + 1).padStart(2, "0");
             const panelId = `faq-panel-${item.id}`;
             const buttonId = `faq-button-${item.id}`;
+            const itemVisible = isItemVisible(item.id);
             return (
               <li
                 key={item.id}
+                ref={(el) => {
+                  if (el) itemRefs.current.set(item.id, el);
+                }}
                 className={`rounded-2xl border border-light-black ${
                   isOpen ? "bg-card-bg" : "bg-card-bg"
-                }`}
+                } ${getBlurAnimationClasses(itemVisible)}`}
               >
                 <div className="flex items-start gap-4 p-4 md:p-6">
                   <IconTile size="lg" className="shrink-0">

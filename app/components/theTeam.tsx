@@ -2,6 +2,11 @@ import person01 from "~/assets/person-01.svg";
 import person02 from "~/assets/person-02.svg";
 import person03 from "~/assets/person-03.svg";
 import person04 from "~/assets/person-04.svg";
+import {
+  useBlurAnimation,
+  useBlurAnimationList,
+} from "~/hooks/useBlurAnimation";
+import { blurAnimation } from "~/lib/animations";
 
 const TheTeam = () => {
   const teamMembers = [
@@ -31,11 +36,26 @@ const TheTeam = () => {
     },
   ];
 
+  const [titleRef, isTitleVisible] = useBlurAnimation<HTMLDivElement>();
+  const { itemRefs, isItemVisible } = useBlurAnimationList(
+    teamMembers.map((m) => m.id),
+    0.1
+  );
+
+  const titleAnimation = blurAnimation(isTitleVisible, undefined, {
+    
+    variant: "default",
+  });
+
   return (
     <section className="bg-black text-white py-20 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-5">
-          <div className="lg:max-w-md space-y-4">
+          <div
+            ref={titleRef}
+            className={`lg:max-w-md space-y-4 ${titleAnimation.className}`}
+            style={titleAnimation.style}
+          >
             <h3 className="text-blue-500 md:text-lg font-semibold font-barlow">
               The team
             </h3>
@@ -45,29 +65,40 @@ const TheTeam = () => {
           </div>
 
           <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {teamMembers.map((member) => (
-              <div
-                key={member.id}
-                className="group relative overflow-hidden rounded-2xl bg-light-black"
-              >
-                <div className="relative">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h4 className="md:text-lg text-sm font-bold font-barlow mb-1">
-                      {member.name}
-                    </h4>
-                    <p className="md:text-sm text-xs text-gray-300 font-barlow">
-                      {member.role}
-                    </p>
+            {teamMembers.map((member, index) => {
+              const animation = blurAnimation(isItemVisible(member.id), index, {
+                baseDelay: 200,
+                staggerDelay: 200,
+              });
+
+              return (
+                <div
+                  key={member.id}
+                  ref={(el) => {
+                    if (el) itemRefs.current.set(member.id, el);
+                  }}
+                  className={`group relative overflow-hidden rounded-2xl bg-light-black ${animation.className}`}
+                  style={animation.style}
+                >
+                  <div className="relative">
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 className="md:text-lg text-sm font-bold font-barlow mb-1">
+                        {member.name}
+                      </h4>
+                      <p className="md:text-sm text-xs text-gray-300 font-barlow">
+                        {member.role}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

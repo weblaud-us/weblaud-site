@@ -1,8 +1,12 @@
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useBlurAnimation } from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 
 const Discuss = () => {
+  const [containerRef, isVisible] = useBlurAnimation<HTMLDivElement>();
+
   const defaultGrayCells = [
     { x: 2, y: 1 },
     { x: 6, y: 3 },
@@ -35,9 +39,11 @@ const Discuss = () => {
   };
 
   return (
-    <section className="bg-black text-white py-20 px-4">
+    <section ref={containerRef} className="bg-black text-white py-20 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="relative border border-light-black rounded-3xl p-12 md:p-16 lg:p-[90px] overflow-hidden bg-linear-to-b from-[#1a1a28]  to-[#1a1a28]/5">
+        <div
+          className={`relative border border-light-black rounded-3xl p-12 md:p-16 lg:p-[90px] overflow-hidden bg-linear-to-b from-primary/15 to-primary/3 ${getBlurAnimationClasses(isVisible)}`}
+        >
           <div className="absolute inset-0 bg-grid-pattern grid-fade-mask"></div>
 
           <div
@@ -78,11 +84,17 @@ const Discuss = () => {
           <div className="absolute inset-0 bg-linear-to-r from-black/60 via-transparent to-black/60"></div>
 
           <div className="relative z-10 flex w-fit mx-auto flex-col items-center justify-center text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold font-barlow">
+            <h2
+              className={`text-3xl md:text-4xl font-bold font-barlow ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+              style={{ transitionDelay: "200ms" }}
+            >
               READY TO DISCUSS
             </h2>
 
-            <p className="text-base md:text-lg font-barlow text-gray-300 max-w-2xl">
+            <p
+              className={`text-base md:text-lg font-barlow text-gray-300 max-w-2xl ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+              style={{ transitionDelay: "400ms" }}
+            >
               Your Product Needs With{" "}
               <span className="text-blue-500 font-semibold">
                 Catalyst Analytic
@@ -90,9 +102,16 @@ const Discuss = () => {
               Experts?
             </p>
 
-            <Button className="text-xs font-bold px-9 py-4.5 mt-4">
-              Get In Touch
-            </Button>
+            <div
+              className={getBlurAnimationClasses(isVisible, {
+                variant: "light",
+              })}
+              style={{ transitionDelay: "600ms" }}
+            >
+              <Button className="text-xs font-bold px-9 py-4.5 mt-4">
+                Get In Touch
+              </Button>
+            </div>
           </div>
         </div>
       </div>

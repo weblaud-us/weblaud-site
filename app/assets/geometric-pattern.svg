@@ -1,0 +1,65 @@
+<svg width="410" height="350" viewBox="0 0 410 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- LEFT PATTERN -->
+    <!-- Top stem -->
+    <!-- <path d="M 102.5 0 L 102.5 30" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+    <path d="M 102.5 30 L 37.5 30 M 102.5 30 L 102.5 30" stroke="rgba(255, 255, 255, 1)" stroke-width="2" /> -->
+
+    Top two boxes
+    <rect x="5" y="30" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+    <rect x="70" y="30" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+
+    <!-- Connector down and right -->
+    <path d="M 102.5 95 L 102.5 160" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+    <path d="M 135 62.5 L 167.5 62.5 L 167.5 95" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+
+    <!-- Right box -->
+    <rect x="135" y="95" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+
+    <!-- Connector down from right box -->
+    <path d="M 167.5 160 L 167.5 225" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+
+    <!-- Connector down and left -->
+    <path d="M 102.5 160 L 102.5 192.5 L 37.5 192.5 L 37.5 225" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+
+    <!-- Bottom left box -->
+    <rect x="5" y="225" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+
+    <!-- Bottom stem -->
+    <path d="M 37.5 290 L 37.5 320" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+
+    <!-- RIGHT PATTERN -->
+    <!-- Top stem
+    <path d="M 305 0 L 305 30" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+    <path d="M 305 30 L 272.5 30 M 305 30 L 337.5 30" stroke="rgba(255, 255, 255, 1)" stroke-width="2" /> -->
+
+    <!-- Top two boxes -->
+    <rect x="272.5" y="30" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+    <rect x="337.5" y="30" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+
+    <!-- Connector down from left box -->
+    <path d="M 272.5 95 L 272.5 135 L 207.5 135 L 207.5 170" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+
+    <!-- Three boxes in a row -->
+    <rect x="207.5" y="170" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+    <rect x="272.5" y="170" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+    <rect x="337.5" y="170" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+
+    <!-- Connector down from right box -->
+    <path d="M 370 235 L 370 272.5 L 337.5 272.5 L 337.5 305" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+
+    <!-- Bottom box -->
+    <rect x="305" y="305" width="65" height="65" rx="8" stroke="rgba(255, 255, 255, 1)" stroke-width="2"
+        fill="none" />
+
+    <!-- Bottom stem -->
+    <path d="M 337.5 370 L 337.5 400" stroke="rgba(255, 255, 255, 1)" stroke-width="2" />
+</svg>
