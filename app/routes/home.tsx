@@ -8,8 +8,37 @@ import LetsDiscuss from "~/components/home/letsDiscuss";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Weblaud - Digital Solutions & Web Development Services" },
+    {
+      name: "description",
+      content:
+        "Transform your ideas into reality with Weblaud. Expert digital solutions, web development, UI/UX design, and custom software for your business.",
+    },
+    {
+      name: "keywords",
+      content:
+        "web development, digital solutions, UI/UX design, custom software, web design, app development",
+    },
+    {
+      name: "og:title",
+      content: "Weblaud - Digital Solutions & Web Development Services",
+    },
+    {
+      name: "og:description",
+      content:
+        "Transform your ideas into reality with Weblaud. Expert digital solutions, web development, UI/UX design, and custom software for your business.",
+    },
+    { name: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    {
+      name: "twitter:title",
+      content: "Weblaud - Digital Solutions & Web Development Services",
+    },
+    {
+      name: "twitter:description",
+      content:
+        "Transform your ideas into reality with Weblaud. Expert digital solutions, web development, UI/UX design, and custom software.",
+    },
   ];
 }
 

@@ -189,12 +189,12 @@ const OurSpeciality = () => {
                   >
                     <motion.p
                       ref={descriptionRef}
-                      initial={{ opacity: 0, y: 10, filter: "blur(30px)" }}
-                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{
-                        duration: 0.6,
-                        delay: 0.1,
-                        ease: "easeInOut",
+                        duration: 0.4,
+                        delay: 0.08,
+                        ease: "easeOut",
                       }}
                       className={`text-gray-300 text-sm md:text-base leading-relaxed mb-8 ${getBlurAnimationClasses(isDescriptionVisible)}`}
                     >

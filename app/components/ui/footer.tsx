@@ -82,15 +82,15 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-black text-white py-10 relative overflow-hidden">
       <motion.div
-        className="absolute w-96 h-96 top-20 -left-32 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"
+        className="absolute w-50 h-50 top-20 -left-32 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"
         
       />
       <motion.div
-        className="absolute w-80 h-80 bottom-10 right-10 bg-primary/15 rounded-full blur-3xl pointer-events-none"
+        className="absolute w-60 h-60 bottom-10 right-10 bg-primary/15 rounded-full blur-3xl pointer-events-none"
         
       />
       <motion.div
-        className="absolute w-64 h-64 top-1/2 right-1/4 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"
+        className="absolute w-40 h-40 top-1/2 right-1/4 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"
         
       />
 
@@ -172,7 +172,7 @@ const Footer: React.FC = () => {
           >
             {contactItems.map(({ icon, text }, index) => (
               <div className="flex justify-center items-center text-gray font-barlow gap-2 relative group">
-                <span className="text-blue-500 text-lg relative">{icon}</span>
+                <span className="text-primary text-lg relative">{icon}</span>
                 <p className="text-center sm:text-left">{text}</p>
               </div>
             ))}
@@ -197,7 +197,7 @@ const Footer: React.FC = () => {
           ref={copyrightRef}
           className={`flex flex-col md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4 ${getBlurAnimationClasses(isCopyrightVisible)}`}
         >
-          <p className="text-center">Design By Hridoy Hossain 2025 (Mkt)</p>
+          <p className="text-center">Developed By Shuvo Chandra &copy; {new Date().getFullYear()}</p>
         </motion.div>
       </div>
     </footer>

@@ -36,7 +36,7 @@ const LetsDiscuss = () => {
       <div className="relative max-w-7xl mx-auto">
         <div
           ref={containerRef}
-          className={`relative bg-card-bg border border-light-black rounded-3xl p-8 sm:p-12 md:p-16 lg:p-20 overflow-hidden backdrop-blur-xl ${getBlurAnimationClasses(
+          className={`relative bg-black border border-light-black rounded-3xl p-8 sm:p-12 md:p-16 lg:p-20 overflow-hidden backdrop-blur-xl ${getBlurAnimationClasses(
             isContainerVisible,
             { variant: "heavy" }
           )}`}
