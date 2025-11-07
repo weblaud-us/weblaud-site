@@ -7,6 +7,7 @@ import {
   useBlurAnimationList,
 } from "~/hooks/useBlurAnimation";
 import { blurAnimation } from "~/lib/animations";
+import { motion } from "framer-motion";
 
 const TheTeam = () => {
   const teamMembers = [
@@ -43,13 +44,22 @@ const TheTeam = () => {
   );
 
   const titleAnimation = blurAnimation(isTitleVisible, undefined, {
-    
     variant: "default",
   });
 
   return (
-    <section className="bg-black text-white py-20 px-4">
-      <div className="max-w-6xl mx-auto">
+    <section className="relative bg-black text-white py-20 px-4 overflow-hidden">
+      <motion.div
+        className="absolute top-10 left-10 w-50 h-50 rounded-full bg-primary/30 blur-3xl pointer-events-none"
+      />
+
+      
+      <motion.div
+        className="absolute bottom-10 right-10 w-50 h-50 rounded-full bg-primary/30 blur-3xl  pointer-events-none"
+       
+      />
+
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="flex flex-col lg:flex-row gap-5">
           <div
             ref={titleRef}

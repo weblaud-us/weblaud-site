@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { Button } from "./button";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
+import weblaudLogo from "~/assets/weblaud-logo.svg";
 
 const NavBar = () => {
   const location = useLocation();
@@ -72,12 +73,15 @@ const NavBar = () => {
             <div className="shrink-0">
               <Link
                 to="/"
-                className={`text-xl md:text-2xl font-semibold font-poppins transition-all duration-300 ${
-                  isScrolled ? "text-lg md:text-xl" : "text-xl md:text-2xl"
+                className={`transition-all duration-300 flex items-center ${
+                  isScrolled ? "h-8" : "h-10"
                 }`}
               >
-                <span className="text-blue-500">Dev</span>{" "}
-                <span className="text-white">Nest</span>
+                <img
+                  src={weblaudLogo}
+                  alt="Weblaud"
+                  className="h-full w-auto object-contain"
+                />
               </Link>
             </div>
 

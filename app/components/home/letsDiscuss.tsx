@@ -29,11 +29,7 @@ const LetsDiscuss = () => {
     false,
     location.pathname
   );
-  const [dividerRef, isDividerVisible] = useBlurAnimation<HTMLDivElement>(
-    0.3,
-    false,
-    location.pathname
-  );
+
 
   return (
     <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-black overflow-hidden">
