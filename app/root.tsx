@@ -63,7 +63,7 @@ export default function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(false);
-    }, 3000); // Duration for intro animation
+    }, 5000); 
 
     return () => clearTimeout(timer);
   }, []);
