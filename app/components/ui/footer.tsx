@@ -83,57 +83,21 @@ const Footer: React.FC = () => {
     <footer className="bg-black text-white py-10 relative overflow-hidden">
       <motion.div
         className="absolute w-96 h-96 top-20 -left-32 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.3, 0.5, 0.3],
-          x: [0, 30, 0],
-          y: [0, -20, 0],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: [0.22, 1, 0.36, 1],
-        }}
+        
       />
       <motion.div
         className="absolute w-80 h-80 bottom-10 right-10 bg-primary/15 rounded-full blur-3xl pointer-events-none"
-        animate={{
-          scale: [1, 1.4, 1],
-          opacity: [0.25, 0.45, 0.25],
-          x: [0, -40, 0],
-          y: [0, 30, 0],
-        }}
-        transition={{
-          duration: 9,
-          repeat: Infinity,
-          ease: [0.22, 1, 0.36, 1],
-          delay: 1.5,
-        }}
+        
       />
       <motion.div
         className="absolute w-64 h-64 top-1/2 right-1/4 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.2, 0.4, 0.2],
-          x: [0, 20, 0],
-          y: [0, -30, 0],
-        }}
-        transition={{
-          duration: 7,
-          repeat: Infinity,
-          ease: [0.22, 1, 0.36, 1],
-          delay: 3,
-        }}
+        
       />
 
       <div className="max-w-7xl border-t border-light-black mx-auto py-4 px-4 md:py-10 md:px-16 relative z-10">
         <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
           <motion.div
             ref={logoRef}
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className={`text-center lg:text-left ${getBlurAnimationClasses(isLogoVisible)}`}
           >
             <motion.img
@@ -146,23 +110,12 @@ const Footer: React.FC = () => {
 
           <motion.div
             ref={menuRef}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className={`text-center lg:text-left ${getBlurAnimationClasses(isMenuVisible)}`}
           >
             <ul className="flex flex-wrap justify-center lg:flex-row font-barlow gap-4 md:gap-6 font-medium">
               {menuItems.map(({ label, href }, index) => (
                 <motion.li
                   key={label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.4,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
                   className="text-gray hover:text-primary font-barlow cursor-pointer transition-all duration-200 relative group"
                 >
                   <Link to={href}>{label}</Link>
@@ -174,10 +127,6 @@ const Footer: React.FC = () => {
 
           <motion.div
             ref={socialRef}
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className={`flex justify-center lg:justify-end gap-3 border border-light-black p-4 rounded-xl relative ${getBlurAnimationClasses(isSocialVisible)}`}
           >
             <motion.div
@@ -219,10 +168,6 @@ const Footer: React.FC = () => {
         <div className="flex flex-col lg:flex-row items-center justify-between mt-10 gap-6">
           <motion.div
             ref={contactRef}
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className={`flex flex-col sm:flex-row gap-4 sm:gap-6 items-center text-sm ${getBlurAnimationClasses(isContactVisible)}`}
           >
             {contactItems.map(({ icon, text }, index) => (
@@ -234,10 +179,6 @@ const Footer: React.FC = () => {
           </motion.div>
           <motion.div
             ref={legalRef}
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className={`flex gap-4 flex-wrap justify-center ${getBlurAnimationClasses(isLegalVisible)}`}
           >
             {legalLinks.map(({ label, href }, index) => (
@@ -254,10 +195,6 @@ const Footer: React.FC = () => {
 
         <motion.div
           ref={copyrightRef}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className={`flex flex-col md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4 ${getBlurAnimationClasses(isCopyrightVisible)}`}
         >
           <p className="text-center">Design By Hridoy Hossain 2025 (Mkt)</p>

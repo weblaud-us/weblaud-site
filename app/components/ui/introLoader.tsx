@@ -223,7 +223,6 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
               }}
             />
 
-
             <motion.img
               src={weblaudLogo}
               alt="Weblaud"
@@ -454,42 +453,17 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
             />
 
             <motion.div
-              className="relative h-full rounded-full overflow-hidden"
+              className="relative h-full rounded-full bg-linear-to-r from-blue-600 via-blue-500 to-blue-400"
               style={{ width: `${progress}%` }}
               transition={{
-                duration: 0.25,
+                duration: 0.4,
                 ease: "easeOut",
               }}
             >
-              <div
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background:
-                    "linear-gradient(90deg, #1d4ed8 0%, #0a84ff 50%, #3b82f6 100%)",
-                }}
-              />
-
               <motion.div
                 className="absolute inset-0 rounded-full"
                 animate={{
-                  x: ["-100%", "100%"],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-                style={{
-                  background:
-                    "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%)",
-                  width: "50%",
-                }}
-              />
-
-              <motion.div
-                className="absolute inset-0 rounded-full"
-                animate={{
-                  opacity: [0.2, 0.6, 0.2],
+                  opacity: [0.4, 0.8, 0.4],
                 }}
                 transition={{
                   duration: 2,
@@ -498,39 +472,16 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                 }}
                 style={{
                   background:
-                    "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%)",
+                    "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%)",
                 }}
               />
             </motion.div>
-
-            {[25, 50, 75].map((milestone) => (
-              <motion.div
-                key={milestone}
-                className="absolute top-1/2 -translate-y-1/2 z-10"
-                style={{ left: `${milestone}%` }}
-              >
-                <motion.div
-                  className="w-1.5 h-4 rounded-full"
-                  animate={{
-                    backgroundColor:
-                      progress >= milestone
-                        ? "#0a84ff"
-                        : "rgba(255, 255, 255, 0.1)",
-                    boxShadow:
-                      progress >= milestone
-                        ? "0 0 8px rgba(10, 132, 255, 0.6)"
-                        : "none",
-                  }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.div>
-            ))}
 
             <motion.div
               className="absolute inset-0 rounded-full pointer-events-none"
               style={{
                 width: `${progress}%`,
-                boxShadow: `0 0 15px rgba(10, 132, 255, ${progress > 0 ? 0.5 : 0})`,
+                boxShadow: `0 0 12px rgba(10, 132, 255, ${Math.max(progress / 100, 0.3)})`,
               }}
             />
           </div>
@@ -595,7 +546,6 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
         </motion.div>
       </div>
 
-
       <motion.div
         className="absolute top-6 left-6 w-24 h-24"
         initial={{ opacity: 0, scale: 0, rotate: -45 }}
@@ -614,7 +564,6 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
         transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
         <svg className="w-full h-full" viewBox="0 0 100 100">
-
           <circle cx="95" cy="5" r="3" fill="#0a84ff" opacity="0.8" />
         </svg>
       </motion.div>
@@ -626,7 +575,6 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
         transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
         <svg className="w-full h-full" viewBox="0 0 100 100">
-
           <circle cx="5" cy="95" r="3" fill="#0a84ff" opacity="0.8" />
         </svg>
       </motion.div>

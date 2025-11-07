@@ -15,6 +15,7 @@ import "./app.css";
 import NavBar from "./components/ui/navBar";
 import { Toaster } from "./components/ui/sonner";
 import IntroLoader from "./components/ui/introLoader";
+import { useLenis } from "./hooks/useLenis";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -60,10 +61,12 @@ export default function App() {
   const [showLoader, setShowLoader] = useState(true);
   const [isLoaderComplete, setIsLoaderComplete] = useState(false);
 
+  useLenis();
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(false);
-    }, 5000); 
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, []);

@@ -170,9 +170,9 @@ const OurSpeciality = () => {
                 <motion.div
                   ref={cardRef}
                   key={activeContent.id}
-                  initial={{ opacity: 0, x: 50}}
+                  initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50}}
+                  exit={{ opacity: 0, x: -50 }}
                   transition={{
                     duration: 0.1,
                     ease: [0.22, 1, 0.36, 1],
@@ -189,10 +189,11 @@ const OurSpeciality = () => {
                   >
                     <motion.p
                       ref={descriptionRef}
-                      initial={{ opacity: 0, y: -10, filter: "blur(20px)" }}
+                      initial={{ opacity: 0, y: 10, filter: "blur(30px)" }}
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                       transition={{
-                        duration: 0.4,
+                        duration: 0.6,
+                        delay: 0.1,
                         ease: "easeInOut",
                       }}
                       className={`text-gray-300 text-sm md:text-base leading-relaxed mb-8 ${getBlurAnimationClasses(isDescriptionVisible)}`}
