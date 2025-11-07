@@ -1,5 +1,5 @@
-import HeroBanner from "./ui/hero-banner";
 import contactImage from "~/assets/contact-us.png";
+import HeroBanner from "../ui/hero-banner";
 
 const BannerContactUs = () => {
   const handleGetInTouch = () => {

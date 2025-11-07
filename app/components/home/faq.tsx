@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FiPlus } from "react-icons/fi";
-import IconTile from "./ui/icon-tile";
+import IconTile from "../ui/icon-tile";
 import {
   useBlurAnimation,
   useBlurAnimationList,

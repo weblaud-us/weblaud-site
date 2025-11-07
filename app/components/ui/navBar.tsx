@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
-import { Button } from "./ui/button";
+import { Button } from "./button";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 
 const NavBar = () => {

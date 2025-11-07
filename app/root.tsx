@@ -10,11 +10,11 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import type { Route } from "./+types/root";
-import Footer from "./components/footer";
+import Footer from "./components/ui/footer";
 import "./app.css";
-import NavBar from "./components/navBar";
+import NavBar from "./components/ui/navBar";
 import { Toaster } from "./components/ui/sonner";
-import IntroLoader from "./components/introLoader";
+import IntroLoader from "./components/ui/introLoader";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

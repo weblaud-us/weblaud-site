@@ -1,5 +1,5 @@
-import BannerContactUs from "~/components/bannerContactUs";
-import ContactFormAndInfo from "~/components/contactFormAndInfo";
+import BannerContactUs from "~/components/contact/bannerContactUs";
+import ContactFormAndInfo from "~/components/contact/contactFormAndInfo";
 
 const ContactUs = () => {
   return (
@@ -7,7 +7,7 @@ const ContactUs = () => {
       <BannerContactUs />
       <ContactFormAndInfo />
     </div>
-  )
+  );
 };
 
 export default ContactUs;

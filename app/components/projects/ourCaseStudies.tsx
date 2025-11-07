@@ -3,7 +3,7 @@ import {
   useBlurAnimationList,
 } from "~/hooks/useBlurAnimation";
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
-import { ProjectCard } from "./ui/project-card";
+import { ProjectCard } from "../ui/project-card";
 import pimg01 from "~/assets/pimg-01.png";
 import pimg02 from "~/assets/pimg-02.png";
 import pimg03 from "~/assets/pimg-03.png";

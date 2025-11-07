@@ -1,8 +1,8 @@
 import globe from "~/assets/globe.svg";
 import target from "~/assets/target.svg";
-import { SectionBackground } from "./ui/section-background";
-import { ContentCard } from "./ui/content-card";
-import { ImageContainer } from "./ui/image-container";
+import { SectionBackground } from "../ui/section-background";
+import { ContentCard } from "../ui/content-card";
+import { ImageContainer } from "../ui/image-container";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 

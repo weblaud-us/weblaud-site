@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { Button } from "./ui/button";
-import GlassButton from "./ui/glass-button";
+import { Button } from "../ui/button";
+import GlassButton from "../ui/glass-button";
 import { HiMail, HiPhone } from "react-icons/hi";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import {

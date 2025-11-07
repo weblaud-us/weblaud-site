@@ -1,9 +1,9 @@
-import BannerAboutUs from "~/components/bannerAboutUs";
-import Discuss from "~/components/discuss";
-import OurAchievement from "~/components/ourAchievement";
-import OurMissionAndStory from "~/components/ourMissionAndStory";
-import OurTrack from "~/components/ourTrack";
-import TheTeam from "~/components/theTeam";
+import BannerAboutUs from "~/components/aboutUs/bannerAboutUs";
+import Discuss from "~/components/aboutUs/discuss";
+import OurAchievement from "~/components/aboutUs/ourAchievement";
+import OurMissionAndStory from "~/components/aboutUs/ourMissionAndStory";
+import OurTrack from "~/components/aboutUs/ourTrack";
+import TheTeam from "~/components/aboutUs/theTeam";
 
 const AboutUs = () => {
   return (

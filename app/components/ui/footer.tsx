@@ -2,7 +2,7 @@ import { useLocation } from "react-router";
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
-import IconTile from "./ui/icon-tile";
+import IconTile from "./icon-tile";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 

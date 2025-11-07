@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import AnimatedGridBg, { type AnimatedGridBgRef } from "./ui/animated-grid-bg";
-import VerticalTabs from "./ui/vertical-tabs";
+import AnimatedGridBg, { type AnimatedGridBgRef } from "../ui/animated-grid-bg";
+import VerticalTabs from "../ui/vertical-tabs";
 import {
   useBlurAnimation,
   useBlurAnimationList,

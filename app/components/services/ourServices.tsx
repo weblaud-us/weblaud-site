@@ -9,7 +9,7 @@ import {
   useBlurAnimationList,
 } from "~/hooks/useBlurAnimation";
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
-import { ServiceCard } from "./ui/service-card";
+import { ServiceCard } from "../ui/service-card";
 
 interface Service {
   id: number;

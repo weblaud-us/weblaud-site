@@ -3,8 +3,8 @@ import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import heroBanner from "~/assets/hero-icon.png";
 import dashedArrow from "~/assets/dashed-arrow.svg";
-import { Button } from "./ui/button";
-import GlassButton from "./ui/glass-button";
+import { Button } from "../ui/button";
+import GlassButton from "../ui/glass-button";
 
 const BannerHome = () => {
   const [contentRef, isContentVisible] = useBlurAnimation();
@@ -60,7 +60,7 @@ const BannerHome = () => {
 
           <div
             ref={imageRef}
-            className={`relative mt-6 sm:mt-8 lg:mt-0 ${getBlurAnimationClasses(isImageVisible, { variant: "scale" })}`}
+            className={`relative mt-10 lg:mt-0 ${getBlurAnimationClasses(isImageVisible, { variant: "scale" })}`}
             style={{ transitionDelay: "200ms" }}
           >
             <div className="relative z-10 animate-float">

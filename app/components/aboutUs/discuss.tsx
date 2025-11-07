@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { Button } from "./ui/button";
-import AnimatedGridBg, { type AnimatedGridBgRef } from "./ui/animated-grid-bg";
+import { Button } from "../ui/button";
+import AnimatedGridBg, { type AnimatedGridBgRef } from "../ui/animated-grid-bg";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 

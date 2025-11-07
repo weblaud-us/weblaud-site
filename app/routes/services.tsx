@@ -1,11 +1,13 @@
-import BannerOurServices from "~/components/bannerOurServices";
-import OurServices from "~/components/ourServices";
+import BannerOurServices from "~/components/services/bannerOurServices";
+import OurServices from "~/components/services/ourServices";
 
 const Services = () => {
-    return <>
-        <BannerOurServices />
-        <OurServices />
+  return (
+    <>
+      <BannerOurServices />
+      <OurServices />
     </>
+  );
 };
 
 export default Services;
