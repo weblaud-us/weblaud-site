@@ -30,7 +30,7 @@ const WhyChooseUs = () => {
   ];
 
   return (
-    <section className="bg-linear-to-b from-black via-[#0a0a0a] to-black px-4 sm:px-6 md:px-8 lg:px-6 xl:px-10 py-16 sm:py-20 md:py-24 lg:py-28 xl:py-32 relative overflow-hidden">
+    <section className="bg-black px-4 sm:px-6 md:px-8 lg:px-6 xl:px-10 py-16 sm:py-20 md:py-24 lg:py-28 xl:py-32 relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
         <div
           ref={titleRef}

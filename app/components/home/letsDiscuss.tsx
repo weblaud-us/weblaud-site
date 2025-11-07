@@ -142,18 +142,6 @@ const LetsDiscuss = () => {
               </GlassButton>
             </div>
 
-            <div
-              ref={dividerRef}
-              className={`mt-12 flex items-center justify-center gap-4 ${getBlurAnimationClasses(
-                isDividerVisible,
-                { variant: "light" }
-              )}`}
-              style={getBlurAnimationDelay(900)}
-            >
-              <div className="h-px bg-linear-to-r from-transparent via-primary to-transparent w-32 sm:w-48" />
-              <motion.div className="w-2 h-2 rounded-full bg-primary" />
-              <div className="h-px bg-linear-to-r from-transparent via-primary to-transparent w-32 sm:w-48" />
-            </div>
           </div>
         </div>
       </div>

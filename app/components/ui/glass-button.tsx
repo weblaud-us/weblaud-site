@@ -37,7 +37,7 @@ const GlassButton = ({
     </>
   );
 
-  const baseClasses = `group relative w-fit sm:w-auto inline-flex items-center justify-center gap-2.5 overflow-hidden bg-white/3 backdrop-blur-md border border-white/15 hover:border-primary/50 text-white px-6 sm:px-7 py-3 sm:py-2 rounded-lg text-xs font-barlow font-semibold transition-all duration-500 hover:-translate-y-0.5 active:translate-y-0 ${className}`;
+  const baseClasses = `group relative w-fit sm:w-auto inline-flex items-center justify-center gap-2.5 overflow-hidden bg-white/3 backdrop-blur-md border border-white/15 hover:border-primary/50 text-white px-6 sm:px-7 py-3 sm:py-2 rounded-lg text-xs font-barlow font-semibold transition-all duration-500 active:translate-y-0 ${className}`;
 
   if (to) {
     return (

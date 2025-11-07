@@ -122,6 +122,11 @@ const OurSpeciality = () => {
   const [containerRef, isVisible] = useBlurAnimation<HTMLDivElement>();
   const gridBgRef = useRef<AnimatedGridBgRef>(null);
   const [titleRef, isTitleVisible] = useBlurAnimation<HTMLHeadingElement>();
+  const [cardRef, isCardVisible] = useBlurAnimation<HTMLDivElement>();
+  const [descriptionRef, isDescriptionVisible] =
+    useBlurAnimation<HTMLParagraphElement>();
+  const [featuresRef, isFeaturesVisible] = useBlurAnimation<HTMLDivElement>();
+  const [imageRef, isImageVisible] = useBlurAnimation<HTMLDivElement>();
 
   const activeContent = tabsData.find((tab) => tab.id === activeTab);
 
@@ -163,89 +168,94 @@ const OurSpeciality = () => {
             <AnimatePresence mode="wait">
               {activeContent && (
                 <motion.div
+                  ref={cardRef}
                   key={activeContent.id}
-                  initial={{ opacity: 0, x: 30, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -30, scale: 0.95 }}
+                  initial={{ opacity: 0, x: 50}}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50}}
                   transition={{
-                    duration: 0.6,
-                    ease: [0.4, 0, 0.2, 1],
+                    duration: 0.1,
+                    ease: [0.22, 1, 0.36, 1],
                   }}
-                  className="relative border border-light-black rounded-3xl overflow-hidden bg-linear-to-b from-primary/10 to-primary/5 w-full"
+                  className={`relative border border-light-black rounded-3xl overflow-hidden bg-linear-to-b from-primary/10 to-primary/5 w-full ${getBlurAnimationClasses(isCardVisible)}`}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
                 >
                   <AnimatedGridBg ref={gridBgRef} />
-
-                  <motion.div
-                    className="absolute inset-0 rounded-3xl pointer-events-none"
-                    animate={{
-                      boxShadow: [
-                        "0 0 0px rgba(10, 132, 255, 0)",
-                        "0 0 20px rgba(10, 132, 255, 0.3)",
-                        "0 0 0px rgba(10, 132, 255, 0)",
-                      ],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  />
 
                   <div
                     className="relative z-10 p-8 md:p-12 lg:p-16"
                     style={{ pointerEvents: "auto" }}
                   >
                     <motion.p
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      ref={descriptionRef}
+                      initial={{ opacity: 0, y: -10, filter: "blur(20px)" }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                       transition={{
-                        duration: 0.6,
-                        delay: 0.2,
-                        ease: [0.4, 0, 0.2, 1],
+                        duration: 0.4,
+                        ease: "easeInOut",
                       }}
-                      className="text-gray-300 text-sm md:text-base leading-relaxed mb-8"
+                      className={`text-gray-300 text-sm md:text-base leading-relaxed mb-8 ${getBlurAnimationClasses(isDescriptionVisible)}`}
                     >
                       {activeContent.description}
                     </motion.p>
 
                     <div className="grid md:grid-cols-2 gap-8 md:gap-12">
                       <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        ref={featuresRef}
+                        initial={{ opacity: 0, x: -20, filter: "blur(20px)" }}
+                        animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                         transition={{
-                          duration: 0.7,
-                          delay: 0.3,
-                          ease: [0.4, 0, 0.2, 1],
+                          duration: 0.4,
+                          delay: 0.15,
+                          ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="space-y-4"
+                        className={`space-y-4 ${getBlurAnimationClasses(isFeaturesVisible)}`}
                       >
                         {activeContent.features.map((feature, index) => (
                           <motion.div
                             key={feature.name}
-                            initial={{ opacity: 0, x: -30, scale: 0.9 }}
-                            animate={{ opacity: 1, x: 0, scale: 1 }}
-                            transition={{
-                              duration: 0.5,
-                              ease: [0.4, 0, 0.2, 1],
+                            initial={{
+                              opacity: 0,
+                              x: -20,
+                              scale: 0.8,
+                              filter: "blur(25px)",
                             }}
-                            whileHover={{ x: 10, scale: 1.02 }}
+                            animate={{
+                              opacity: 1,
+                              x: 0,
+                              scale: 1,
+                              filter: "blur(0px)",
+                            }}
+                            transition={{
+                              duration: 0.3,
+                              delay: 0.2 + index * 0.2,
+                              ease: [0.22, 1, 0.36, 1],
+                            }}
+                            whileHover={{
+                              x: 12,
+                              scale: 1.05,
+                              transition: { duration: 0.15, ease: "easeOut" },
+                            }}
                             className="flex items-center gap-3 group cursor-pointer"
                           >
                             <motion.div
                               className="relative w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 overflow-hidden p-2"
-                              transition={{ duration: 0.5, ease: "easeOut" }}
+                              whileHover={{
+                                scale: 1.2,
+                                backgroundColor: "rgba(10, 132, 255, 0.3)",
+                                transition: { duration: 0.3, ease: "easeOut" },
+                              }}
                             >
                               <motion.div
-                                className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
+                                className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent"
                                 animate={{
-                                  x: ["-100%", "200%"],
+                                  x: ["-150%", "250%"],
                                 }}
                                 transition={{
-                                  duration: 2,
+                                  duration: 2.5,
                                   repeat: Infinity,
-                                  repeatDelay: 1,
+                                  repeatDelay: 2,
                                   ease: "easeInOut",
                                 }}
                               />
@@ -254,12 +264,13 @@ const OurSpeciality = () => {
                                 alt={feature.name}
                                 className="w-full h-full object-contain relative z-10 brightness-0 invert"
                                 animate={{
-                                  scale: [1, 1.1, 1],
+                                  scale: [1, 1.15, 1],
+                                  rotate: [0, 5, -5, 0],
                                 }}
                                 transition={{
-                                  duration: 2,
+                                  duration: 3,
                                   repeat: Infinity,
-                                  delay: index * 0.2,
+                                  ease: "easeInOut",
                                 }}
                               />
                             </motion.div>
@@ -271,35 +282,74 @@ const OurSpeciality = () => {
                       </motion.div>
 
                       <motion.div
-                        initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                        transition={{
-                          duration: 0.8,
-                          delay: 0.5,
-                          ease: [0.4, 0, 0.2, 1],
+                        ref={imageRef}
+                        initial={{
+                          opacity: 0,
+                          scale: 0.7,
+                          rotate: -10,
+                          filter: "blur(20px)",
                         }}
-                        className="flex items-center justify-center"
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          rotate: 0,
+                          filter: "blur(0px)",
+                        }}
+                        transition={{
+                          duration: 0.5,
+                          ease: "easeIn",
+                        }}
+                        className={`flex items-center justify-center ${getBlurAnimationClasses(isImageVisible)}`}
                       >
-                        <motion.div className="relative w-full max-w-sm">
+                        <motion.div
+                          className="relative w-full max-w-sm"
+                          whileHover={{ scale: 1.05, rotate: 2 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                        >
                           <motion.img
                             src={activeContent.image}
                             alt={activeContent.title}
                             className="relative z-10 w-full h-auto object-contain drop-shadow-2xl"
-                            initial={{ opacity: 0, y: 30, rotateX: -20 }}
+                            initial={{
+                              opacity: 0,
+                              rotateX: -25,
+                              scale: 0.9,
+                            }}
                             animate={{
                               opacity: 1,
-                              y: 0,
                               rotateX: 0,
+                              scale: 1,
                             }}
                             transition={{
-                              duration: 0.8,
-                              delay: 0.6,
-                              ease: [0.4, 0, 0.2, 1],
+                              duration: 0.1,
+                              ease: "easeInOut",
                             }}
                           />
 
-                          <motion.div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-primary/40 blur-2xl" />
-                          <motion.div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-purple-500/40 blur-2xl" />
+                          <motion.div
+                            className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-primary/40 blur-2xl"
+                            animate={{
+                              scale: [1, 1.3, 1],
+                              opacity: [0.4, 0.6, 0.4],
+                            }}
+                            transition={{
+                              duration: 4,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                          />
+                          <motion.div
+                            className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-purple-500/40 blur-2xl"
+                            animate={{
+                              scale: [1, 1.4, 1],
+                              opacity: [0.3, 0.5, 0.3],
+                            }}
+                            transition={{
+                              duration: 5,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                          />
                         </motion.div>
                       </motion.div>
                     </div>

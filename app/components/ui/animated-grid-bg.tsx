@@ -68,18 +68,15 @@ const AnimatedGridBg = forwardRef<AnimatedGridBgRef, AnimatedGridBgProps>(
 
     return (
       <>
-        {/* Grid pattern background */}
         {showGrid && (
           <div className="absolute inset-0 bg-grid-pattern grid-fade-mask pointer-events-none" />
         )}
 
-        {/* Interactive grid cells - captures mouse through the parent */}
         <div
           ref={containerRef}
           className={`absolute inset-0 grid-fade-mask ${className}`}
           style={{ zIndex: 0 }}
         >
-          {/* Static gray cells */}
           {defaultGrayCells.map((cell) => (
             <div
               key={`gray-${cell.x}-${cell.y}`}
@@ -93,7 +90,6 @@ const AnimatedGridBg = forwardRef<AnimatedGridBgRef, AnimatedGridBgProps>(
             />
           ))}
 
-          {/* Hover cell */}
           {hoveredCell && (
             <motion.div
               className="absolute pointer-events-none bg-white/12 border border-white/25"
@@ -111,7 +107,6 @@ const AnimatedGridBg = forwardRef<AnimatedGridBgRef, AnimatedGridBgProps>(
           )}
         </div>
 
-        {/* Gradient overlay */}
         {showOverlay && (
           <div
             className="absolute inset-0 bg-linear-to-r from-black/60 via-transparent to-black/60 pointer-events-none"
