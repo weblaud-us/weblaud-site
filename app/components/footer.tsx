@@ -5,6 +5,7 @@ import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
 import IconTile from "./ui/icon-tile";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
+import logo from "~/assets/weblaud.com.svg";
 
 const Footer: React.FC = () => {
   const location = useLocation();
@@ -89,9 +90,7 @@ const Footer: React.FC = () => {
             ref={logoRef}
             className={`text-center lg:text-left ${getBlurAnimationClasses(isLogoVisible)}`}
           >
-            <h2 className="text-2xl md:text-3xl font-semibold font-poppins">
-              <span className="text-blue-500">Web</span>laud
-            </h2>
+            <img src={logo} alt="Weblaud Logo" className="h-8 md:h-10" />
           </div>
 
           <div

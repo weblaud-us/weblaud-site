@@ -25,11 +25,11 @@ const projects: Project[] = [
     id: 1,
     title: "Machine Learning Platform",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since",
+      "Advanced AI-powered platform leveraging cutting-edge machine learning algorithms to deliver predictive analytics, automated decision-making, and intelligent data processing for enterprise solutions.",
     features: [
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
+      "Neural network training & optimization",
+      "Real-time predictive analytics",
+      "Automated model deployment pipeline",
     ],
     image: pimg01,
     imageAlt: "AI Machine Learning Project",
@@ -38,11 +38,11 @@ const projects: Project[] = [
     id: 2,
     title: "Blockchain Integration",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since",
+      "Secure and scalable blockchain solutions featuring smart contract development, decentralized applications, and distributed ledger technology for transparent and immutable transaction processing.",
     features: [
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
+      "Smart contract development & audit",
+      "Decentralized app (DApp) architecture",
+      "Multi-chain integration support",
     ],
     image: pimg02,
     imageAlt: "Blockchain Technology Project",
@@ -51,11 +51,11 @@ const projects: Project[] = [
     id: 3,
     title: "Algorithmic Trading",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since",
+      "High-frequency trading platform utilizing sophisticated algorithms and real-time market data analysis to execute automated trading strategies with precision and minimal latency.",
     features: [
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
+      "Real-time market data processing",
+      "Automated strategy execution",
+      "Risk management & backtesting",
     ],
     image: pimg03,
     imageAlt: "Trading Algorithm Project",
@@ -64,11 +64,11 @@ const projects: Project[] = [
     id: 4,
     title: "Data Analytics Platform",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since",
+      "Comprehensive data analytics solution providing deep insights through advanced visualization, statistical analysis, and big data processing capabilities for data-driven decision making.",
     features: [
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
+      "Interactive data visualization",
+      "Big data processing engine",
+      "Custom reporting & dashboards",
     ],
     image: pimg04,
     imageAlt: "Data Analytics Project",
@@ -77,11 +77,11 @@ const projects: Project[] = [
     id: 5,
     title: "Business Intelligence",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since",
+      "Enterprise-grade business intelligence platform delivering actionable insights through powerful analytics, KPI tracking, and comprehensive reporting tools for strategic business growth.",
     features: [
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
+      "Executive dashboard & KPI tracking",
+      "Predictive business analytics",
+      "Multi-source data integration",
     ],
     image: pimg05,
     imageAlt: "Business Intelligence Dashboard",
@@ -90,11 +90,11 @@ const projects: Project[] = [
     id: 6,
     title: "Enterprise Infrastructure",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since",
+      "Robust and scalable enterprise infrastructure solutions featuring cloud-native architecture, microservices, and DevOps automation for high-performance and reliable business operations.",
     features: [
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
-      "Lorem Ipsum is simply dummy text",
+      "Cloud-native architecture design",
+      "Automated CI/CD pipelines",
+      "High availability & disaster recovery",
     ],
     image: pimg06,
     imageAlt: "Enterprise Infrastructure Project",
@@ -131,9 +131,10 @@ const OurCaseStudies = () => {
             className={`text-white/70 font-barlow text-base md:text-lg max-w-3xl mx-auto ${getBlurAnimationClasses(isDescVisible)}`}
             style={{ transitionDelay: "200ms" }}
           >
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since
+            Explore our portfolio of innovative technology solutions spanning
+            blockchain, machine learning, and enterprise platforms. Each project
+            demonstrates our commitment to excellence and cutting-edge
+            innovation.
           </p>
         </div>
 

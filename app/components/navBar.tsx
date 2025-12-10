@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import { BookingModal } from "~/components/ui/booking-modal";
+import logo from "~/assets/weblaud.com.svg";
 
 const NavBar = () => {
   const location = useLocation();
@@ -72,14 +73,14 @@ const NavBar = () => {
             }`}
           >
             <div className="shrink-0">
-              <Link
-                to="/"
-                className={`text-xl md:text-2xl font-semibold font-poppins transition-all duration-300 ${
-                  isScrolled ? "text-lg md:text-xl" : "text-xl md:text-2xl"
-                }`}
-              >
-                <span className="text-blue-500">Web</span>{" "}
-                <span className="text-white">laud</span>
+              <Link to="/" className="block">
+                <img
+                  src={logo}
+                  alt="Weblaud Logo"
+                  className={`transition-all duration-300 ${
+                    isScrolled ? "h-6 md:h-7" : "h-7 md:h-8"
+                  }`}
+                />
               </Link>
             </div>
 
