@@ -1,5 +1,5 @@
 import { useLocation } from "react-router";
-import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
 import IconTile from "./ui/icon-tile";
@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
   const socialLinks: { icon: React.ReactNode; url: string }[] = [
     {
       icon: <FaFacebook className="text-blue-500 text-2xl" />,
-      url: "https://facebook.com",
+      url: "https://www.facebook.com/weblaud",
     },
     {
       icon: <FaTwitter className="text-blue-500 text-2xl" />,
@@ -61,14 +61,18 @@ const Footer: React.FC = () => {
       icon: <FaLinkedin className="text-blue-500 text-2xl" />,
       url: "https://linkedin.com",
     },
+    {
+      icon: <FaInstagram className="text-blue-500 text-2xl" />,
+      url: "https://www.instagram.com/weblaud",
+    },
   ];
 
   const contactItems: { icon: React.ReactNode; text: string }[] = [
     {
       icon: <IoIosMail className="text-blue-500 text-xl" />,
-      text: "Hridoy162476@gmail.com",
+      text: "info@weblaud.com",
     },
-    { icon: <IoCallSharp />, text: "01774521320" },
+    { icon: <IoCallSharp />, text: "+880 1577 466217" },
     { icon: <IoLocationSharp />, text: "Dhaka, Bangladesh" },
   ];
 
