@@ -12,8 +12,8 @@ const achievements: Achievement[] = [
   { label: "CLIENTS", value: 200, suffix: "+", duration: 2 },
   { label: "PROJECTS", value: 280, suffix: "+", duration: 2.2 },
   { label: "HAPPY CLIENTS", value: 100, suffix: "%", duration: 1.8 },
-  { label: "FOLLOWER", value: 420, suffix: "K", duration: 2.5 },
-  { label: "Years of Experience", value: 10, suffix: "+", duration: 1.5 },
+  { label: "FOLLOWER", value: 45, suffix: "K", duration: 2.5 },
+  { label: "Years of Experience", value: 4, suffix: "+", duration: 1.5 },
 ];
 
 function AnimatedCounter({

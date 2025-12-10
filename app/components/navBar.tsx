@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { Button } from "./ui/button";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
+import { BookingModal } from "~/components/ui/booking-modal";
 
 const NavBar = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
@@ -109,6 +111,7 @@ const NavBar = () => {
 
             <div className="hidden lg:flex items-center">
               <Button
+                onClick={() => setIsModalOpen(true)}
                 className={`text-xs font-bold transition-all duration-300 ${
                   isScrolled ? "px-6 py-2.5 text-xs" : "px-8 py-3 text-sm"
                 }`}
@@ -191,7 +194,13 @@ const NavBar = () => {
                 }`}
                 style={{ transitionDelay: isMobileMenuOpen ? "500ms" : "0ms" }}
               >
-                <Button className="w-full text-sm font-bold px-8 py-4 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-shadow duration-300">
+                <Button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsModalOpen(true);
+                  }}
+                  className="w-full text-sm font-bold px-8 py-4 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-shadow duration-300"
+                >
                   Contact Us
                 </Button>
               </div>
@@ -199,6 +208,10 @@ const NavBar = () => {
           </div>
         </div>
       </nav>
+      <BookingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 };

@@ -10,6 +10,9 @@ import {
 } from "~/hooks/useBlurAnimation";
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
 import { ServiceCard } from "./ui/service-card";
+import { BOOKING_URL } from "~/lib/constants";
+import { BookingModal } from "~/components/ui/booking-modal";
+import { useState } from "react";
 
 interface Service {
   id: number;
@@ -121,8 +124,10 @@ const OurServices = () => {
     0.1
   );
 
-  const handleBookNow = (serviceId: number) => {
-    console.log(`Booking service ${serviceId}`);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleBookNow = () => {
+    setIsModalOpen(true);
   };
 
   return (
@@ -168,13 +173,17 @@ const OurServices = () => {
                   imageAlt={service.imageAlt}
                   className={animation.className}
                   style={animation.style}
-                  onBookNow={() => handleBookNow(service.id)}
+                  onBookNow={handleBookNow}
                 />
               </div>
             );
           })}
         </div>
       </div>
+      <BookingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

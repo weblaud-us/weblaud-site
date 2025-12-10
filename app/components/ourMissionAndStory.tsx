@@ -13,9 +13,7 @@ const sectionsData = {
     badge: "Who We Are",
     number: "01",
     paragraphs: [
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,",
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries.",
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley",
+      "Weblaud started with a simple belief: great digital products begin with understanding people. We were a small team driven by curiosity and the desire to make technology feel clear and approachable. As we grew, that mindset shaped every project—listen first, build with intention, and treat clients like partners. Today, we help businesses turn ideas into meaningful digital experiences through thoughtful design, reliable engineering, and genuine collaboration.",
     ],
   },
   mission: {
@@ -24,9 +22,7 @@ const sectionsData = {
     badge: "What We Do",
     number: "02",
     paragraphs: [
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,",
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries.",
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry",
+      "Our mission is to build technology that’s practical, human, and built to last. We aim to simplify complex challenges through honest communication, clean development, and solutions that support real business growth. Whether it’s AI, mobile apps, blockchain, or cloud systems, we focus on making the process feel smooth and supportive at every step. We’re here to help you move forward with clarity and confidence.",
     ],
   },
 };
