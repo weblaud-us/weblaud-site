@@ -128,7 +128,7 @@ export default function OurSay() {
           className={`mt-10 flex justify-center ${getBlurAnimationClasses(isVisible)}`}
           style={{ transitionDelay: "400ms" }}
         >
-          <Button className="text-xs font-bold px-9 py-4.5">Learn More</Button>
+          {/* <Button className="text-xs font-bold px-9 py-4.5">Learn More</Button> */}
         </div>
       </div>
     </section>

@@ -86,7 +86,7 @@ const Footer: React.FC = () => {
             className={`text-center lg:text-left ${getBlurAnimationClasses(isLogoVisible)}`}
           >
             <h2 className="text-2xl md:text-3xl font-semibold font-poppins">
-              <span className="text-blue-500">Dev</span> Nest
+              <span className="text-blue-500">Web</span>laud
             </h2>
           </div>
 
@@ -153,7 +153,9 @@ const Footer: React.FC = () => {
           ref={copyrightRef}
           className={`flex flex-col md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4 ${getBlurAnimationClasses(isCopyrightVisible)}`}
         >
-          <p className="text-center">Design By Hridoy Hossain 2025 (Mkt)</p>
+          <p className="text-center">
+            © {new Date().getFullYear()} Weblaud. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

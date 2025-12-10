@@ -78,8 +78,8 @@ const NavBar = () => {
                   isScrolled ? "text-lg md:text-xl" : "text-xl md:text-2xl"
                 }`}
               >
-                <span className="text-blue-500">Dev</span>{" "}
-                <span className="text-white">Nest</span>
+                <span className="text-blue-500">Web</span>{" "}
+                <span className="text-white">laud</span>
               </Link>
             </div>
 
