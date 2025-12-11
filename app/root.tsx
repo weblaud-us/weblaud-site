@@ -18,6 +18,7 @@ import IntroLoader from "./components/ui/introLoader";
 import { useLenis } from "./hooks/useLenis";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", href: "/app/assets/fav_icon.png", type: "image/png" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -37,6 +38,16 @@ export const links: Route.LinksFunction = () => [
       ].join("&"),
   },
 ];
+
+export const meta: Route.MetaFunction = () => {
+  return [
+    { title: "WebLaud - Your Digital Partner" },
+    {
+      name: "description",
+      content: "WebLaud - Professional web development and digital solutions",
+    },
+  ];
+};
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

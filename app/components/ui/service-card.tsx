@@ -10,6 +10,7 @@ export interface ServiceCardProps {
   className?: string;
   style?: React.CSSProperties;
   onBookNow?: () => void;
+  href?: string;
 }
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -21,6 +22,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   className = "",
   style,
   onBookNow,
+  href,
 }) => {
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(
     null
@@ -102,7 +104,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
 
           <div className="flex justify-center mt-auto">
             <button
-              onClick={onBookNow}
+              onClick={onBookNow || (() => href && window.open(href, "_blank"))}
               className="group/btn relative overflow-hidden bg-transparent hover:bg-white/5 text-white font-barlow font-semibold text-sm px-6 py-3 rounded-full flex items-center justify-between border border-white/20 hover:border-white/5 transition-all duration-500 min-w-[140px] h-11 cursor-pointer"
             >
               <span className="absolute transition-all duration-500 group-hover/btn:translate-x-8">

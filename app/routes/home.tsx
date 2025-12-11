@@ -38,6 +38,11 @@ export function meta({}: Route.MetaArgs) {
       name: "twitter:description",
       content:
         "Transform your ideas into reality with Weblaud. Expert digital solutions, web development, UI/UX design, and custom software.",
+        },
+    { title: "WebLaud - Your Digital Partner" },
+    {
+      name: "description",
+      content: "WebLaud - Professional web development and digital solutions",
     },
   ];
 }
