@@ -47,7 +47,7 @@ const TheTeam = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % teamMembers.length);
-    }, 2500); // Change slide every 2.5 seconds
+    }, 3000); // Change slide every 3 seconds
 
     return () => clearInterval(interval);
   }, [teamMembers.length]);
