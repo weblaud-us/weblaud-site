@@ -1,5 +1,4 @@
-import NavBar from "~/components/navBar";
-import Footer from "~/components/footer";
+import NavBar from "~/components/ui/navBar";
 import { motion } from "framer-motion";
 
 export default function PrivacyPolicy() {
@@ -105,7 +104,6 @@ export default function PrivacyPolicy() {
           </motion.div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
