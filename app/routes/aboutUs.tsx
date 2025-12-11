@@ -46,7 +46,7 @@ const AboutUs = () => {
       <OurAchievement />
       <OurMissionAndStory />
       <OurTrack />
-      {/* <TheTeam /> */}
+      <TheTeam />
       <Discuss />
     </div>
   );

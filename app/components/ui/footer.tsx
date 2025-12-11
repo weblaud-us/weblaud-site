@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
 import { motion } from "framer-motion";
@@ -63,14 +63,18 @@ const Footer: React.FC = () => {
       icon: <FaLinkedin className="text-blue-500 text-2xl" />,
       url: "https://linkedin.com",
     },
+    {
+      icon: <FaInstagram className="text-blue-500 text-2xl" />,
+      url: "https://instagram.com",
+    },
   ];
 
   const contactItems: { icon: React.ReactNode; text: string }[] = [
     {
       icon: <IoIosMail className="text-blue-500 text-xl" />,
-      text: "Hridoy162476@gmail.com",
+      text: "info@weblaud.com",
     },
-    { icon: <IoCallSharp />, text: "01774521320" },
+    { icon: <IoCallSharp />, text: "+880 1577 466217" },
     { icon: <IoLocationSharp />, text: "Dhaka, Bangladesh" },
   ];
 
@@ -81,18 +85,9 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-black text-white py-10 relative overflow-hidden">
-      <motion.div
-        className="absolute w-50 h-50 top-20 -left-32 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"
-        
-      />
-      <motion.div
-        className="absolute w-60 h-60 bottom-10 right-10 bg-primary/15 rounded-full blur-3xl pointer-events-none"
-        
-      />
-      <motion.div
-        className="absolute w-40 h-40 top-1/2 right-1/4 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"
-        
-      />
+      <motion.div className="absolute w-50 h-50 top-20 -left-32 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+      <motion.div className="absolute w-60 h-60 bottom-10 right-10 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+      <motion.div className="absolute w-40 h-40 top-1/2 right-1/4 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl border-t border-light-black mx-auto py-4 px-4 md:py-10 md:px-16 relative z-10">
         <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
@@ -197,7 +192,9 @@ const Footer: React.FC = () => {
           ref={copyrightRef}
           className={`flex flex-col md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4 ${getBlurAnimationClasses(isCopyrightVisible)}`}
         >
-          <p className="text-center">Developed By Shuvo Chandra &copy; {new Date().getFullYear()}</p>
+          <p className="text-center">
+            &copy; {new Date().getFullYear()} Weblaud. All rights reserved.
+          </p>
         </motion.div>
       </div>
     </footer>
