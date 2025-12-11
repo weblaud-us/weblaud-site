@@ -3,6 +3,7 @@ import person01 from "~/assets/person-01.svg";
 import person02 from "~/assets/person-02.svg";
 import person03 from "~/assets/person-03.svg";
 import person04 from "~/assets/person-04.svg";
+import shuvo from "~/assets/shuvo.png";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { blurAnimation } from "~/lib/animations";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,9 +14,9 @@ const TheTeam = () => {
   const teamMembers = [
     {
       id: 1,
-      name: "Sarah Johnson",
-      role: "Co-Founder & CEO",
-      image: person01,
+      name: "Shuvo Chandra Debnath",
+      role: "Software Engineer",
+      image: shuvo,
     },
     {
       id: 2,
