@@ -54,7 +54,7 @@ function AnimatedCounter({
 
 const OurAchievement = () => {
   return (
-    <div className="bg-black pt-3 sm:pt-4 md:pt-4 pb-0 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="bg-black pt-3 sm:pt-4 md:pt-4 pb-0 px-4 sm:px-6 lg:px-8 relative">
       <div className="absolute inset-0 opacity-20" />
 
       <motion.div

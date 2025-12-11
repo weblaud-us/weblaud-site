@@ -15,7 +15,7 @@ import "./app.css";
 import NavBar from "./components/ui/navBar";
 import { Toaster } from "./components/ui/sonner";
 import IntroLoader from "./components/ui/introLoader";
-import { useLenis } from "./hooks/useLenis";
+
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/app/assets/fav_icon.png", type: "image/png" },
@@ -72,7 +72,7 @@ export default function App() {
   const [showLoader, setShowLoader] = useState(true);
   const [isLoaderComplete, setIsLoaderComplete] = useState(false);
 
-  useLenis();
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
