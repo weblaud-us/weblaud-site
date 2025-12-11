@@ -9,7 +9,7 @@ import {
   useBlurAnimationList,
 } from "~/hooks/useBlurAnimation";
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
-import { ServiceCard } from "./ui/service-card";
+import { ServiceCard } from "../ui/service-card";
 import { BOOKING_URL } from "~/lib/constants";
 import { BookingModal } from "~/components/ui/booking-modal";
 import { useState } from "react";

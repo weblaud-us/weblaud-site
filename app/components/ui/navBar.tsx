@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
-import { Button } from "./ui/button";
+import { Button } from "./button";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
+import weblaudLogo from "~/assets/weblaud-logo.svg";
 import { BookingModal } from "~/components/ui/booking-modal";
 import logo from "~/assets/weblaud.com.svg";
 
@@ -73,15 +74,20 @@ const NavBar = () => {
             }`}
           >
             <div className="shrink-0">
-              <Link to="/" className="block">
+              <Link
+                to="/"
+                className={`transition-all duration-300 flex items-center ${
+                  isScrolled ? "h-8" : "h-10"
+                }`}
+              >
                 <img
-                  src={logo}
+                  src={weblaudLogo}
                   alt="Weblaud Logo"
-                  className={`transition-all duration-300 ${
-                    isScrolled ? "h-6 md:h-7" : "h-7 md:h-8"
-                  }`}
+                  className="h-full w-auto object-contain"
+                  style={{ transitionDelay: "100ms" }}
                 />
               </Link>
+
             </div>
 
             <div className="hidden lg:flex items-center space-x-1">

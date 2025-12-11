@@ -6,12 +6,16 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import type { Route } from "./+types/root";
-import Footer from "./components/footer";
+import Footer from "./components/ui/footer";
 import "./app.css";
-import NavBar from "./components/navBar";
+import NavBar from "./components/ui/navBar";
 import { Toaster } from "./components/ui/sonner";
+import IntroLoader from "./components/ui/introLoader";
+import { useLenis } from "./hooks/useLenis";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/app/assets/fav_icon.png", type: "image/png" },
@@ -65,11 +69,42 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const [showLoader, setShowLoader] = useState(true);
+  const [isLoaderComplete, setIsLoaderComplete] = useState(false);
+
+  useLenis();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLoaderComplete = () => {
+    setIsLoaderComplete(true);
+  };
+
   return (
     <>
-      <NavBar />
-      <Outlet />
-      <Footer />
+      <AnimatePresence mode="wait">
+        {showLoader && <IntroLoader onComplete={handleLoaderComplete} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isLoaderComplete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <NavBar />
+            <Outlet />
+            <Footer />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

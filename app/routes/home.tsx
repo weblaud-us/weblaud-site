@@ -1,8 +1,44 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import BannerHome from "~/components/home/bannerHome";
+import OurSpeciality from "~/components/home/ourSpeciality";
+import WhyChooseUs from "~/components/home/whyChooseUs";
+import OurSay from "~/components/home/ourSay";
+import FAQ from "~/components/home/faq";
+import LetsDiscuss from "~/components/home/letsDiscuss";
 
 export function meta({}: Route.MetaArgs) {
   return [
+    { title: "Weblaud - Digital Solutions & Web Development Services" },
+    {
+      name: "description",
+      content:
+        "Transform your ideas into reality with Weblaud. Expert digital solutions, web development, UI/UX design, and custom software for your business.",
+    },
+    {
+      name: "keywords",
+      content:
+        "web development, digital solutions, UI/UX design, custom software, web design, app development",
+    },
+    {
+      name: "og:title",
+      content: "Weblaud - Digital Solutions & Web Development Services",
+    },
+    {
+      name: "og:description",
+      content:
+        "Transform your ideas into reality with Weblaud. Expert digital solutions, web development, UI/UX design, and custom software for your business.",
+    },
+    { name: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    {
+      name: "twitter:title",
+      content: "Weblaud - Digital Solutions & Web Development Services",
+    },
+    {
+      name: "twitter:description",
+      content:
+        "Transform your ideas into reality with Weblaud. Expert digital solutions, web development, UI/UX design, and custom software.",
+        },
     { title: "WebLaud - Your Digital Partner" },
     {
       name: "description",
@@ -12,5 +48,14 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <Welcome />;
+  return (
+    <>
+      <BannerHome />
+      <OurSpeciality />
+      <WhyChooseUs />
+      <OurSay />
+      <FAQ />
+      <LetsDiscuss />
+    </>
+  );
 }

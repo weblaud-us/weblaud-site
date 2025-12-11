@@ -1,4 +1,4 @@
-import HeroBanner from "./ui/hero-banner";
+import HeroBanner from "../ui/hero-banner";
 import techCube from "~/assets/about-us.png";
 import { BookingModal } from "~/components/ui/booking-modal";
 import { useState } from "react";

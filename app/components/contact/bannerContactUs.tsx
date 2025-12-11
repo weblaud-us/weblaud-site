@@ -1,5 +1,5 @@
-import HeroBanner from "./ui/hero-banner";
 import contactImage from "~/assets/contact-us.png";
+import HeroBanner from "../ui/hero-banner";
 import { BookingModal } from "~/components/ui/booking-modal";
 import { useState } from "react";
 

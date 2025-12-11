@@ -8,12 +8,12 @@ import {
 } from "react-icons/fi";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Select } from "./ui/select";
-import { ContactInfo } from "./ui/contact-info";
-import { BookMeeting } from "./ui/book-meeting";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Select } from "../ui/select";
+import { ContactInfo } from "../ui/contact-info";
+import { BookMeeting } from "../ui/book-meeting";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 

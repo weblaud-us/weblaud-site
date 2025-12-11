@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { FiPlus } from "react-icons/fi";
-import IconTile from "./ui/icon-tile";
+import IconTile from "../ui/icon-tile";
 import {
   useBlurAnimation,
   useBlurAnimationList,
 } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
+import { motion } from "framer-motion";
 
 type FAQItem = {
   id: number;
@@ -61,8 +62,12 @@ export default function FAQ() {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-black text-white">
-      <div className="max-w-5xl mx-auto px-4 md:px-6">
+    <section className="relative py-16 pb-32 bg-black text-white overflow-hidden">
+
+      <motion.div className="absolute top-20 left-30 w-40 h-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
+      <motion.div className="absolute md:block hidden bottom-20 right-30 w-40 h-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto px-4 md:px-6 relative z-10">
         <h2
           ref={titleRef}
           className={`text-center font-barlow text-2xl md:text-3xl font-semibold mb-8 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
