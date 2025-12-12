@@ -7,6 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -15,12 +16,10 @@ jobs:
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VPS_HOST }}
-          username: deployer
+          username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
             export NVM_DIR="/home/deployer/.nvm"
             source "$NVM_DIR/nvm.sh"
-            source "$NVM_DIR/bash_completion"
-
             cd /var/www/weblaud-site
             ./deploy.sh
