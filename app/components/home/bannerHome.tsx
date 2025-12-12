@@ -42,7 +42,7 @@ const BannerHome = () => {
               </h1>
 
               <p className="text-sm sm:text-base md:text-lg text-gray-300 font-barlow  sm:max-w-md max-w-sm lg:max-w-xl leading-relaxed">
-                A talented team to help you in your journey on creating usefull
+                A talented team to help you in your journey of creating useful
                 and easy to use product
               </p>
 

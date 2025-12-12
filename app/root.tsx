@@ -49,6 +49,24 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "WebLaud",
+    url: "https://weblaud.com",
+    logo: "https://weblaud.com/logo.png",
+    sameAs: [
+      "https://facebook.com/weblaud",
+      "https://instagram.com/weblaud",
+      "https://linkedin.com/company/weblaud",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+880-1577-466217",
+      contactType: "customer service",
+    },
+  };
+
   return (
     <html lang="en">
       <head>
@@ -56,6 +74,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body>
         {children}

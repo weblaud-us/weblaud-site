@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router";
-import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from "react-icons/fa";
+import { FaFacebook, FaLinkedin, FaInstagram } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
 import { motion } from "framer-motion";
@@ -53,19 +54,19 @@ const Footer: React.FC = () => {
   const socialLinks: { icon: React.ReactNode; url: string }[] = [
     {
       icon: <FaFacebook className="text-blue-500 text-2xl" />,
-      url: "https://facebook.com",
+      url: "https://facebook.com/weblaud",
     },
-    {
-      icon: <FaTwitter className="text-blue-500 text-2xl" />,
-      url: "https://twitter.com",
-    },
+    // {
+    //   icon: <FaXTwitter className="text-blue-500 text-2xl" />,
+    //   url: "https://x.com/weblaud",
+    // },
     {
       icon: <FaLinkedin className="text-blue-500 text-2xl" />,
-      url: "https://linkedin.com",
+      url: "https://linkedin.com/company/weblaud",
     },
     {
       icon: <FaInstagram className="text-blue-500 text-2xl" />,
-      url: "https://instagram.com",
+      url: "https://instagram.com/weblaud",
     },
   ];
 

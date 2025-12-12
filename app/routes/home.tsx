@@ -17,7 +17,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "keywords",
       content:
-        "web development, digital solutions, UI/UX design, custom software, web design, app development",
+        "WebLaud, digital solutions, web development, UI/UX design, custom software, React development, Next.js, software agency, app development, mobile app development,",
     },
     {
       name: "og:title",
@@ -38,11 +38,6 @@ export function meta({}: Route.MetaArgs) {
       name: "twitter:description",
       content:
         "Transform your ideas into reality with Weblaud. Expert digital solutions, web development, UI/UX design, and custom software.",
-        },
-    { title: "WebLaud - Your Digital Partner" },
-    {
-      name: "description",
-      content: "WebLaud - Professional web development and digital solutions",
     },
   ];
 }
