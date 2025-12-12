@@ -8,9 +8,12 @@ import {
   getBlurAnimationDelay,
 } from "~/lib/animations";
 import { Link, useLocation } from "react-router";
+import { useState } from "react";
+import { BookingModal } from "~/components/ui/booking-modal";
 
 const LetsDiscuss = () => {
   const location = useLocation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [containerRef, isContainerVisible] = useBlurAnimation<HTMLDivElement>(
     0.3,
@@ -29,7 +32,6 @@ const LetsDiscuss = () => {
     false,
     location.pathname
   );
-
 
   return (
     <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-black overflow-hidden">
@@ -123,11 +125,12 @@ const LetsDiscuss = () => {
               )}`}
               style={getBlurAnimationDelay(600)}
             >
-              <Link to="/contact">
-                <Button className="text-xs font-bold px-9 py-4.5">
-                  Contact Us
-                </Button>
-              </Link>
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                className="text-xs font-bold px-9 py-4.5"
+              >
+                Contact Us
+              </Button>
 
               <GlassButton
                 icon={HiMail}
@@ -137,10 +140,13 @@ const LetsDiscuss = () => {
                 Send Mail
               </GlassButton>
             </div>
-
           </div>
         </div>
       </div>
+      <BookingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };

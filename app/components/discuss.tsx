@@ -93,7 +93,6 @@ const Discuss = () => {
               >
                 READY TO DISCUSS
               </h2>
-
               <p
                 className={`text-base md:text-lg font-barlow text-gray-300 max-w-2xl ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
                 style={{ transitionDelay: "400ms" }}

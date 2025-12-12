@@ -16,9 +16,8 @@ import NavBar from "./components/ui/navBar";
 import { Toaster } from "./components/ui/sonner";
 import IntroLoader from "./components/ui/introLoader";
 
-
 export const links: Route.LinksFunction = () => [
-  { rel: "icon", href: "/app/assets/fav_icon.png", type: "image/png" },
+  { rel: "icon", href: "/favicon.png", type: "image/png" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -71,8 +70,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   const [showLoader, setShowLoader] = useState(true);
   const [isLoaderComplete, setIsLoaderComplete] = useState(false);
-
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
