@@ -13,7 +13,7 @@ const achievements: Achievement[] = [
   { label: "PROJECTS", value: 50, suffix: "+", duration: 2.5 },
   { label: "HAPPY CLIENTS", value: 98, suffix: "%", duration: 2.2 },
   { label: "COUNTRIES SERVED", value: 8, suffix: "+", duration: 2.5 },
-  { label: "YEARS OF EXPERIENCE", value: 1.5, suffix: "+", duration: 1.2 },
+  { label: "YEARS OF EXPERIENCE", value: 1, suffix: "+", duration: 1.2 },
 ];
 
 function AnimatedCounter({
