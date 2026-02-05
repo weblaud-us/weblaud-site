@@ -73,25 +73,29 @@ const ContactInfo = () => {
         <div
           onClick={() =>
             copyToClipboard(
-              "dhaka, bangladesh, post code:1207, Dhaka",
+              "1621 Central Ave, Cheyenne, WY 82001, USA",
               "Office Address"
             )
           }
           className="group/item flex items-start gap-3 sm:gap-4 p-3 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
         >
-          <div className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover/item:scale-110 group-hover/item:rotate-6 group-hover/item:bg-primary/20 transition-all duration-300">
+          <a
+            href="https://www.google.com/maps/search/1621+Central+Ave,+Cheyenne,+WY+82001,+USA"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover/item:scale-110 group-hover/item:rotate-6 group-hover/item:bg-primary/20 transition-all duration-300 hover:bg-primary/30"
+          >
             <FiMapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary group-hover/item:scale-110 group-hover/item:animate-bounce transition-transform duration-300" />
-          </div>
+          </a>
           <div className="min-w-0 flex-1">
             <h3 className="text-white font-barlow font-semibold text-sm sm:text-base mb-1 group-hover/item:text-primary transition-colors duration-300">
               Office
             </h3>
             <p className="text-white/70 font-barlow text-xs sm:text-sm group-hover/item:text-white transition-colors duration-300">
-              dhaka,bangladesh
+              1621 Central Ave, Cheyenne
               <br />
-              post code:1207
-              <br />
-              Dhaka
+              WY 82001, USA
             </p>
           </div>
         </div>

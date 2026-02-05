@@ -9,11 +9,11 @@ interface Achievement {
 }
 
 const achievements: Achievement[] = [
-  { label: "CLIENTS", value: 200, suffix: "+", duration: 2 },
-  { label: "PROJECTS", value: 280, suffix: "+", duration: 2.2 },
-  { label: "HAPPY CLIENTS", value: 100, suffix: "%", duration: 1.8 },
-  { label: "FOLLOWER", value: 45, suffix: "K", duration: 2.5 },
-  { label: "Years of Experience", value: 4, suffix: "+", duration: 1.5 },
+  { label: "CLIENTS", value: 40, suffix: "+", duration: 2.5 },
+  { label: "PROJECTS", value: 65, suffix: "+", duration: 2.5 },
+  { label: "HAPPY CLIENTS", value: 98, suffix: "%", duration: 2.2 },
+  { label: "COUNTRIES SERVED", value: 8, suffix: "+", duration: 2.5 },
+  { label: "YEARS OF EXPERIENCE", value: 1.5, suffix: "+", duration: 1.2 },
 ];
 
 function AnimatedCounter({

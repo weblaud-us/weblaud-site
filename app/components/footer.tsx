@@ -68,14 +68,24 @@ const Footer: React.FC = () => {
     },
   ];
 
-  const contactItems: { icon: React.ReactNode; text: string }[] = [
-    {
-      icon: <IoIosMail className="text-blue-500 text-xl" />,
-      text: "info@weblaud.com",
-    },
-    { icon: <IoCallSharp />, text: "+880 1577 466217" },
-    { icon: <IoLocationSharp />, text: "Dhaka, Bangladesh" },
-  ];
+  const contactItems: { icon: React.ReactNode; text: string; href?: string }[] =
+    [
+      {
+        icon: <IoIosMail className="text-blue-500 text-xl" />,
+        text: "info@weblaud.com",
+        href: "mailto:info@weblaud.com",
+      },
+      {
+        icon: <IoCallSharp />,
+        text: "+880 1577 466217",
+        href: "tel:+8801577466217",
+      },
+      {
+        icon: <IoLocationSharp />,
+        text: "1621 Central Ave, Cheyenne, WY 82001, USA",
+        href: "https://www.google.com/maps/search/1621+Central+Ave,+Cheyenne,+WY+82001,+USA",
+      },
+    ];
 
   const legalLinks: { label: string; href: string }[] = [
     { label: "Privacy Policy", href: "/privacy-policy" },
@@ -126,13 +136,28 @@ const Footer: React.FC = () => {
             ref={contactRef}
             className={`flex flex-col sm:flex-row gap-4 sm:gap-6 items-center text-sm ${getBlurAnimationClasses(isContactVisible)}`}
           >
-            {contactItems.map(({ icon, text }) => (
+            {contactItems.map(({ icon, text, href }) => (
               <div
                 key={text}
                 className="flex justify-center items-center text-gray font-barlow gap-2"
               >
                 <span className="text-blue-500 text-lg">{icon}</span>
-                <p className="text-center sm:text-left">{text}</p>
+                {href ? (
+                  <a
+                    href={href}
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel={
+                      href.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
+                    className="text-center sm:text-left hover:text-blue-500 transition-colors"
+                  >
+                    {text}
+                  </a>
+                ) : (
+                  <p className="text-center sm:text-left">{text}</p>
+                )}
               </div>
             ))}
           </div>
