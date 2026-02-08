@@ -77,8 +77,8 @@ const Footer: React.FC = () => {
       },
       {
         icon: <IoCallSharp />,
-        text: "+880 1577 466217",
-        href: "tel:+8801577466217",
+        text: "+1 (307) 220 9766",
+        href: "tel:+13072209766",
       },
       {
         icon: <IoLocationSharp />,
