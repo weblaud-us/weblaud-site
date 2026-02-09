@@ -59,7 +59,7 @@ const ContactInfo = () => {
             className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover/item:scale-110 group-hover/item:rotate-6 group-hover/item:bg-primary/20 transition-all duration-300 hover:bg-primary/30 cursor-pointer"
           >
             <FiPhone className="w-4 h-4 sm:w-5 sm:h-5 text-primary group-hover/item:scale-110 group-hover/item:animate-pulse transition-transform duration-300" />
-          </>
+          </a>
           <div className="min-w-0 flex-1">
             <h3 className="text-white font-barlow font-semibold text-sm sm:text-base mb-1 group-hover/item:text-primary transition-colors duration-300">
               Phone
