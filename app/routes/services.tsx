@@ -4,27 +4,31 @@ import OurServices from "~/components/services/ourServices";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Our Services - Strategy, Design, Development & More | Weblaud" },
+    { title: "Expert Services – Weblaud LLC Software Development Company" },
     {
       name: "description",
       content:
-        "Explore Weblaud's comprehensive services: strategy, design, custom development, maintenance, and scaling solutions for your digital transformation.",
+        "Explore Weblaud LLC's comprehensive software services: custom engineering, mobile app development, UI/UX design, and AI solutions for digital transformation.",
     },
     {
       name: "keywords",
       content:
-        "web development services, UI/UX design, custom software, strategy, digital services, app development, maintenance",
+        "software services, software agency, Weblaud LLC, custom engineering, UI/UX design, AI solutions, web development",
     },
+    { tagName: "link", rel: "canonical", href: "https://weblaud.com/services" },
     {
-      name: "og:title",
+      property: "og:title",
       content: "Our Services - Strategy, Design, Development & More | Weblaud",
     },
     {
-      name: "og:description",
+      property: "og:description",
       content:
-        "Comprehensive digital services including strategy, design, development, maintenance, and scaling solutions.",
+        "Comprehensive digital services including web development, mobile apps, UI/UX design, AI solutions, and custom software.",
     },
-    { name: "og:type", content: "website" },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: "https://weblaud.com/services" },
+    { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
+    { property: "og:image:alt", content: "Weblaud Services" },
     { name: "twitter:card", content: "summary_large_image" },
     {
       name: "twitter:title",
@@ -35,6 +39,7 @@ export function meta({}: Route.MetaArgs) {
       content:
         "From strategy to scaling, we provide end-to-end digital solutions for your business needs.",
     },
+    { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
   ];
 }
 

@@ -8,24 +8,31 @@ import TheTeam from "~/components/aboutUs/theTeam";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "About Weblaud - Our Mission, Story & Team" },
+    { title: "About Us – Weblaud LLC Software Development Company" },
     {
       name: "description",
       content:
-        "Learn about Weblaud's mission, vision, and talented team. Discover our journey in transforming digital ideas into reality with innovative solutions.",
+        "Weblaud LLC is an innovation-driven software company. From building proprietary products to delivering expert engineering services, our mission is to solve complex problems through code.",
     },
     {
       name: "keywords",
       content:
-        "about us, company mission, digital agency, web development team, innovation",
+        "about us, Weblaud LLC, software agency, software engineering team, innovation, company mission",
     },
-    { name: "og:title", content: "About Weblaud - Our Mission, Story & Team" },
+    { tagName: "link", rel: "canonical", href: "https://weblaud.com/aboutus" },
     {
-      name: "og:description",
+      property: "og:title",
+      content: "About Weblaud - Our Mission, Story & Team",
+    },
+    {
+      property: "og:description",
       content:
         "Learn about Weblaud's mission, vision, and talented team. Discover our journey in transforming digital ideas into reality.",
     },
-    { name: "og:type", content: "website" },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: "https://weblaud.com/aboutus" },
+    { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
+    { property: "og:image:alt", content: "About Weblaud - Our Team" },
     { name: "twitter:card", content: "summary_large_image" },
     {
       name: "twitter:title",
@@ -36,6 +43,7 @@ export function meta({}: Route.MetaArgs) {
       content:
         "Learn about Weblaud's mission, vision, and talented team dedicated to digital transformation.",
     },
+    { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
   ];
 }
 

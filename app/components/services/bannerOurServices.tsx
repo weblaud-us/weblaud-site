@@ -14,7 +14,7 @@ const BannerOurServices = () => {
           <span className="text-primary">Digital Solutions</span>
         </>
       }
-      description="At Catalyst Analytics, we offer a comprehensive suite of digital solutions designed to propel your business to new heights in the digital realm. With a team of skilled professionals, cutting-edge technology, and a passion for innovation, we are committed to delivering exceptional results for every project we undertake. From captivating web design that leaves a lasting impression to seamless web development that ensures optimal functionality, we cover every aspect of your online presence."
+      description="At Weblaud LLC, we are a software development company dedicated to building the future of digital innovation. Our skilled team combines deep engineering expertise with a passion for excellence — delivering exceptional results in web design, mobile development, AI integrations, and custom software solutions."
       image={{
         src: ourServicesImg,
         alt: "Our Digital Solutions",

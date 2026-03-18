@@ -40,11 +40,16 @@ export const links: Route.LinksFunction = () => [
 
 export const meta: Route.MetaFunction = () => {
   return [
-    { title: "WebLaud - Your Digital Partner" },
+    { title: "Weblaud LLC – Software Development Company" },
     {
       name: "description",
-      content: "WebLaud - Professional web development and digital solutions",
+      content:
+        "Weblaud LLC — a software company and innovation lab building the future of digital products and providing premium engineering services for global businesses.",
     },
+    { property: "og:site_name", content: "Weblaud LLC" },
+    { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
   ];
 };
 
@@ -52,18 +57,31 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "WebLaud",
+    name: "Weblaud LLC – Software Development Company",
+    legalName: "Weblaud LLC",
     url: "https://weblaud.com",
-    logo: "https://weblaud.com/logo.png",
+    logo: "https://weblaud.com/favicon.png",
+    image: "https://weblaud.com/og-image.jpg",
     sameAs: [
-      "https://facebook.com/weblaud",
-      "https://instagram.com/weblaud",
-      "https://linkedin.com/company/weblaud",
+      "https://www.facebook.com/weblaud",
+      "https://www.instagram.com/weblaud",
+      "https://www.linkedin.com/company/weblaud",
     ],
-    contactPoint: {
-      "@type": "ContactPoint",
-      telephone: "+880-1577-466217",
-      contactType: "customer service",
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        telephone: "+1-307-220-9766",
+        contactType: "customer service",
+        email: "info@weblaud.com",
+      },
+    ],
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "1621 Central Ave",
+      addressLocality: "Cheyenne",
+      addressRegion: "WY",
+      postalCode: "82001",
+      addressCountry: "US",
     },
   };
 
@@ -90,18 +108,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const [showLoader, setShowLoader] = useState(true);
-  const [isLoaderComplete, setIsLoaderComplete] = useState(false);
+  // TEMPORARILY DISABLED (Change back to 'true', 'false' to re-enable loader in 5 months)
+  const [showLoader, setShowLoader] = useState(false);
+  const [isLoaderComplete, setIsLoaderComplete] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowLoader(false);
-    }, 5000);
-
-    return () => clearTimeout(timer);
+    if (typeof window !== "undefined") {
+      const hasSeenIntro = sessionStorage.getItem("hasSeenIntro");
+      if (hasSeenIntro) {
+        setShowLoader(false);
+        setIsLoaderComplete(true);
+      } else {
+        sessionStorage.setItem("hasSeenIntro", "true");
+      }
+    }
   }, []);
 
   const handleLoaderComplete = () => {
+    setShowLoader(false);
     setIsLoaderComplete(true);
   };
 

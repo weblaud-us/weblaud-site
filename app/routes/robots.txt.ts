@@ -8,6 +8,37 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
 User-agent: *
 Allow: /
 
+# Allow AI search assistants (GEO — Generative Engine Optimization)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
 Sitemap: ${baseUrl}/sitemap.xml
 `.trim();
 

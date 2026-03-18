@@ -4,27 +4,31 @@ import OurCaseStudies from "~/components/projects/ourCaseStudies";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Our Projects & Case Studies - Weblaud Portfolio" },
+    { title: "Portfolio – Weblaud LLC Software Development Company" },
     {
       name: "description",
       content:
-        "Explore Weblaud's portfolio of successful projects and case studies. See how we've transformed businesses through innovative digital solutions.",
+        "Explore Weblaud LLC's portfolio of successful software projects. See how our agency transforms businesses through innovative digital engineering.",
     },
     {
       name: "keywords",
       content:
-        "portfolio, case studies, projects, web development portfolio, digital projects, client success stories",
+        "portfolio, Weblaud LLC, case studies, software projects, engineering portfolio, digital solutions",
     },
+    { tagName: "link", rel: "canonical", href: "https://weblaud.com/projects" },
     {
-      name: "og:title",
+      property: "og:title",
       content: "Our Projects & Case Studies - Weblaud Portfolio",
     },
     {
-      name: "og:description",
+      property: "og:description",
       content:
         "Discover our successful projects and case studies showcasing our expertise in digital transformation.",
     },
-    { name: "og:type", content: "website" },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: "https://weblaud.com/projects" },
+    { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
+    { property: "og:image:alt", content: "Weblaud Portfolio - Our Best Work" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: "Weblaud Portfolio - Our Best Work" },
     {
@@ -32,6 +36,7 @@ export function meta({}: Route.MetaArgs) {
       content:
         "Check out our portfolio and see how we've helped businesses succeed with digital solutions.",
     },
+    { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
   ];
 }
 

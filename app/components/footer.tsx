@@ -1,4 +1,4 @@
-import { useLocation } from "react-router";
+import { useLocation, Link } from "react-router";
 import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp, IoLocationSharp } from "react-icons/io5";
@@ -41,12 +41,12 @@ const Footer: React.FC = () => {
     location.pathname
   );
 
-  const menuItems: string[] = [
-    "Home",
-    "Services",
-    "Portfolio",
-    "About Us",
-    "Careers",
+  const menuItems: { label: string; href: string }[] = [
+    { label: "Home", href: "/" },
+    { label: "Services", href: "/services" },
+    { label: "Portfolio", href: "/projects" },
+    { label: "About Us", href: "/aboutus" },
+    { label: "Contact", href: "/contact" },
   ];
 
   const socialLinks: { icon: React.ReactNode; url: string }[] = [
@@ -110,10 +110,15 @@ const Footer: React.FC = () => {
             <ul className="flex flex-wrap justify-center lg:flex-row font-barlow gap-4 md:gap-6 font-medium">
               {menuItems.map((item) => (
                 <li
-                  key={item}
-                  className="hover:text-blue-500 text-gray font-barlow cursor-pointer transition duration-200"
+                  key={item.label}
+                  className="hover:text-blue-500 text-gray font-barlow transition duration-200"
                 >
-                  {item}
+                  <Link
+                    to={item.href}
+                    className="hover:text-blue-500 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -27,7 +27,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
         }
         return prev + 1;
       });
-    }, 40);
+    }, 15);
 
     const stageInterval = setInterval(() => {
       setProgress((prev) => {
@@ -38,11 +38,11 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
         else setLoadingStage(4);
         return prev;
       });
-    }, 40);
+    }, 15);
 
     const completeTimer = setTimeout(() => {
       if (onComplete) onComplete();
-    }, 5000);
+    }, 2000);
 
     return () => {
       clearInterval(interval);
@@ -263,7 +263,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                   animate={{ opacity: 1, y: 0, rotateX: 0 }}
                   transition={{
                     duration: 0.5,
-                    delay: 1 + index * 0.08,
+                    delay: 0.2 + index * 0.04,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   whileHover={{
@@ -285,7 +285,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                   animate={{ opacity: 1, y: 0, rotateX: 0 }}
                   transition={{
                     duration: 0.5,
-                    delay: 1 + (7 + index) * 0.08,
+                    delay: 0.2 + (7 + index) * 0.04,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   whileHover={{
@@ -318,7 +318,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                 ease: [0.22, 1, 0.36, 1],
               },
             }}
-            style={{ transitionDelay: "1.6s" }}
+            style={{ transitionDelay: "0.8s" }}
           />
         </motion.div>
 
@@ -333,7 +333,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                   animate={{ opacity: 1, scaleY: 1, y: 0 }}
                   transition={{
                     duration: 0.3,
-                    delay: 1.6 + index * 0.05,
+                    delay: 0.6 + index * 0.03,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   style={{ transformOrigin: "center" }}
@@ -344,7 +344,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                     animate={{ opacity: [0.3, 0.8, 0.3] }}
                     transition={{
                       duration: 1.5,
-                      delay: 1.6 + index * 0.05,
+                      delay: 0.6 + index * 0.03,
                       repeat: Infinity,
                       ease: "easeInOut",
                     }}
@@ -365,7 +365,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                   animate={{ opacity: 1, scaleY: 1, y: 0 }}
                   transition={{
                     duration: 0.3,
-                    delay: 1.6 + (8 + index) * 0.05,
+                    delay: 0.6 + (8 + index) * 0.03,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   style={{ transformOrigin: "center" }}
@@ -376,7 +376,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                     animate={{ opacity: [0.3, 0.8, 0.3] }}
                     transition={{
                       duration: 1.5,
-                      delay: 1.6 + (8 + index) * 0.05,
+                      delay: 0.6 + (8 + index) * 0.03,
                       repeat: Infinity,
                       ease: "easeInOut",
                     }}
@@ -398,7 +398,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                     animate={{ opacity: 1, scaleY: 1, y: 0 }}
                     transition={{
                       duration: 0.3,
-                      delay: 1.6 + (15 + index) * 0.05,
+                      delay: 0.6 + (15 + index) * 0.03,
                       ease: [0.22, 1, 0.36, 1],
                     }}
                     style={{ transformOrigin: "center" }}
@@ -409,7 +409,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                       animate={{ opacity: [0.3, 0.8, 0.3] }}
                       transition={{
                         duration: 1.5,
-                        delay: 1.6 + (15 + index) * 0.05,
+                        delay: 0.6 + (15 + index) * 0.03,
                         repeat: Infinity,
                         ease: "easeInOut",
                       }}
@@ -428,7 +428,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
           className="w-72 md:w-96"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.4 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
         >
           <div className="relative w-full h-3 bg-white/5 rounded-full overflow-hidden shadow-lg border border-white/10">
             <motion.div

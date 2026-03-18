@@ -65,7 +65,7 @@ const ContactInfo = () => {
               Phone
             </h3>
             <p className="text-white/70 font-barlow text-xs sm:text-sm group-hover/item:text-white transition-colors duration-300">
-              ++1 (307) 220 9766
+              +1 (307) 220 9766
             </p>
           </div>
         </div>
