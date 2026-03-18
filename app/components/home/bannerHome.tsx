@@ -24,7 +24,7 @@ const BannerHome = () => {
               <img
                 src={dashedArrow}
                 alt="Dashed Arrow"
-                className="md:h-90 sm:h-65 h-50 relative bottom-11"
+                className="md:h-90 sm:h-65 h-50 relative bottom-11 opacity-30 md:opacity-100"
               />
               <span className="text-sm sm:text-base font-barlow relative left-2 bottom-12">
                 Hello,
@@ -60,7 +60,7 @@ const BannerHome = () => {
 
           <div
             ref={imageRef}
-            className={`relative mt-10 lg:mt-0 ${getBlurAnimationClasses(isImageVisible, { variant: "scale" })}`}
+            className={`hidden md:block relative mt-10 lg:mt-0 ${getBlurAnimationClasses(isImageVisible, { variant: "scale" })}`}
             style={{ transitionDelay: "200ms" }}
           >
             <div className="relative z-10 animate-float">

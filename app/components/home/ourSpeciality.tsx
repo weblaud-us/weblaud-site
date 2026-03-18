@@ -180,6 +180,23 @@ const OurSpeciality = () => {
                   className={`relative border border-light-black rounded-3xl overflow-hidden bg-linear-to-b from-primary/10 to-primary/5 w-full ${getBlurAnimationClasses(isCardVisible)}`}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.15}
+                  onDragEnd={(e, info) => {
+                    const swipeThreshold = 50;
+                    if (
+                      info.offset.x < -swipeThreshold &&
+                      activeTab < tabsData.length
+                    ) {
+                      setActiveTab(activeTab + 1);
+                    } else if (
+                      info.offset.x > swipeThreshold &&
+                      activeTab > 1
+                    ) {
+                      setActiveTab(activeTab - 1);
+                    }
+                  }}
                 >
                   <AnimatedGridBg ref={gridBgRef} />
 
@@ -300,7 +317,7 @@ const OurSpeciality = () => {
                           duration: 0.5,
                           ease: "easeIn",
                         }}
-                        className={`flex items-center justify-center ${getBlurAnimationClasses(isImageVisible)}`}
+                        className={`hidden md:flex items-center justify-center ${getBlurAnimationClasses(isImageVisible)}`}
                       >
                         <motion.div
                           className="relative w-full max-w-sm"

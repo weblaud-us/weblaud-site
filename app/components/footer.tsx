@@ -107,7 +107,7 @@ const Footer: React.FC = () => {
             ref={menuRef}
             className={`text-center lg:text-left ${getBlurAnimationClasses(isMenuVisible)}`}
           >
-            <ul className="flex flex-wrap justify-center lg:flex-row font-barlow gap-4 md:gap-6 font-medium">
+            <ul className="flex flex-col sm:flex-row flex-wrap justify-center font-barlow gap-4 md:gap-6 font-medium items-center">
               {menuItems.map((item) => (
                 <li
                   key={item.label}
@@ -139,12 +139,12 @@ const Footer: React.FC = () => {
         <div className="flex flex-col lg:flex-row items-center justify-between mt-10 gap-6">
           <div
             ref={contactRef}
-            className={`flex flex-col sm:flex-row gap-4 sm:gap-6 items-center text-sm ${getBlurAnimationClasses(isContactVisible)}`}
+            className={`flex flex-col lg:flex-row gap-4 sm:gap-6 items-center lg:items-start text-sm ${getBlurAnimationClasses(isContactVisible)}`}
           >
             {contactItems.map(({ icon, text, href }) => (
               <div
                 key={text}
-                className="flex justify-center items-center text-gray font-barlow gap-2"
+                className="flex flex-col sm:flex-row justify-center items-center lg:items-start text-gray font-barlow gap-2 max-w-[280px] sm:max-w-none text-center sm:text-left"
               >
                 <span className="text-blue-500 text-lg">{icon}</span>
                 {href ? (

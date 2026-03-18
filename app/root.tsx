@@ -97,7 +97,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>
+      <body className="overflow-x-hidden antialiased">
         {children}
         <Toaster />
         <ScrollRestoration />
