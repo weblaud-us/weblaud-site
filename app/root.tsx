@@ -16,7 +16,7 @@ import NavBar from "./components/ui/navBar";
 import { Toaster } from "./components/ui/sonner";
 import IntroLoader from "./components/ui/introLoader";
 
-const GOOGLE_FONTS_URL =
+const FONTS_URL =
   "https://fonts.googleapis.com/css2?" +
   [
     "family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900",
@@ -34,14 +34,9 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
   },
-  // Preload fonts to eliminate render-blocking
-  { rel: "preload", href: GOOGLE_FONTS_URL, as: "style" },
-  {
-    rel: "stylesheet",
-    href: GOOGLE_FONTS_URL,
-  },
-  // Preload hero image to fix LCP
-  { rel: "preload", href: "/hero-icon.png", as: "image" },
+  // Preload the font CSS to eliminate render-blocking
+  { rel: "preload", href: FONTS_URL, as: "style" },
+  { rel: "stylesheet", href: FONTS_URL },
 ];
 
 export const meta: Route.MetaFunction = () => {
@@ -153,7 +148,7 @@ export default function App() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <NavBar />
-            <main id="main-content">
+            <main>
               <Outlet />
             </main>
             <Footer />

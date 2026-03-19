@@ -8,6 +8,7 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
     "User-agent: *",
     "Allow: /",
     "",
+    "# Allow AI search assistants (GEO — Generative Engine Optimization)",
     "User-agent: GPTBot",
     "Allow: /",
     "",
@@ -48,4 +49,3 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
     },
   });
 };
-

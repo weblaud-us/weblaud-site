@@ -25,6 +25,9 @@ const BannerHome = () => {
                 src={dashedArrow}
                 alt="Dashed Arrow"
                 className="md:h-90 sm:h-65 h-50 relative bottom-11"
+                width="40"
+                height="360"
+                loading="eager"
               />
               <span className="text-sm sm:text-base font-barlow relative left-2 bottom-12">
                 Hello,
@@ -66,12 +69,12 @@ const BannerHome = () => {
             <div className="relative z-10 animate-float">
               <img
                 src={heroBanner}
-                alt="3D hero illustration of a software development concept"
-                width={576}
-                height={576}
+                alt="Weblaud hero illustration"
+                className="w-full h-auto max-w-[280px] sm:max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto drop-shadow-2xl"
+                width="576"
+                height="576"
                 fetchPriority="high"
                 loading="eager"
-                className="w-full h-auto max-w-[280px] sm:max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto drop-shadow-2xl"
               />
             </div>
             <div className="absolute inset-0 bg-linear-to-r from-blue-500/20 to-purple-500/20 blur-3xl -z-10"></div>

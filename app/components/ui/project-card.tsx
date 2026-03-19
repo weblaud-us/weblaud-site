@@ -52,7 +52,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           <img
             src={image}
             alt={imageAlt}
-            loading="lazy"
             className="w-full h-48 object-cover group-hover:scale-115 group-hover:rotate-2 group-hover:brightness-110 transition-all duration-700"
           />
           <div className="absolute inset-0 bg-linear-to-t from-card-bg/60 to-transparent group-hover:from-card-bg/20 transition-colors duration-500"></div>
