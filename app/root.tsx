@@ -140,7 +140,7 @@ export default function App() {
         {showLoader && <IntroLoader onComplete={handleLoaderComplete} />}
       </AnimatePresence>
 
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {isLoaderComplete && (
           <motion.div
             initial={{ opacity: 0 }}
