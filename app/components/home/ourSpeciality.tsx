@@ -211,19 +211,12 @@ const OurSpeciality = () => {
                     className="relative z-10 p-8 md:p-12 lg:p-16"
                     style={{ pointerEvents: "auto" }}
                   >
-                    <motion.p
+                    <p
                       ref={descriptionRef}
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.4,
-                        delay: 0.08,
-                        ease: "easeOut",
-                      }}
                       className={`text-gray-300 text-sm md:text-base leading-relaxed mb-8`}
                     >
                       {activeContent.description}
-                    </motion.p>
+                    </p>
 
                     <div className="grid md:grid-cols-2 gap-8 md:gap-12">
                       <motion.div
