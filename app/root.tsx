@@ -16,6 +16,16 @@ import NavBar from "./components/ui/navBar";
 import { Toaster } from "./components/ui/sonner";
 import IntroLoader from "./components/ui/introLoader";
 
+const GOOGLE_FONTS_URL =
+  "https://fonts.googleapis.com/css2?" +
+  [
+    "family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900",
+    "family=Barlow:wght@400;500;600;700",
+    "family=Poppins:wght@400;500;600;700",
+    "family=Lexend:wght@400;500;600;700",
+    "display=swap",
+  ].join("&");
+
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.png", type: "image/png" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -24,18 +34,14 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
   },
+  // Preload fonts to eliminate render-blocking
+  { rel: "preload", href: GOOGLE_FONTS_URL, as: "style" },
   {
     rel: "stylesheet",
-    href:
-      "https://fonts.googleapis.com/css2?" +
-      [
-        "family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900",
-        "family=Barlow:wght@400;500;600;700",
-        "family=Poppins:wght@400;500;600;700",
-        "family=Lexend:wght@400;500;600;700",
-        "display=swap",
-      ].join("&"),
+    href: GOOGLE_FONTS_URL,
   },
+  // Preload hero image to fix LCP
+  { rel: "preload", href: "/hero-icon.png", as: "image" },
 ];
 
 export const meta: Route.MetaFunction = () => {
@@ -147,7 +153,9 @@ export default function App() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <NavBar />
-            <Outlet />
+            <main id="main-content">
+              <Outlet />
+            </main>
             <Footer />
           </motion.div>
         )}

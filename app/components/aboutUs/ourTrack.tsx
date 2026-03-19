@@ -14,7 +14,7 @@ interface TrackRecord {
 const trackRecords: TrackRecord[] = [
   {
     id: 1,
-    number: "3",
+    number: "1",
     suffix: "+",
     title: "Years AI & ML Development",
     description:
@@ -22,21 +22,21 @@ const trackRecords: TrackRecord[] = [
   },
   {
     id: 2,
-    number: "$2",
-    suffix: "M+",
+    number: "$80",
+    suffix: "K+",
     title: "Website Development",
     description: "Through our battle tested algorithmic trading systems",
   },
   {
     id: 3,
-    number: "170",
+    number: "70",
     suffix: "+",
     title: "Custom Mobile App dev",
     description: "Including DeFi protocols and smart contracts",
   },
   {
     id: 4,
-    number: "25",
+    number: "10",
     suffix: "+",
     title: "Ai Website development",
     description: "With data driven performance optimization",

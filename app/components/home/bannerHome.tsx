@@ -66,7 +66,11 @@ const BannerHome = () => {
             <div className="relative z-10 animate-float">
               <img
                 src={heroBanner}
-                alt="3D Illustration"
+                alt="3D hero illustration of a software development concept"
+                width={576}
+                height={576}
+                fetchPriority="high"
+                loading="eager"
                 className="w-full h-auto max-w-[280px] sm:max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto drop-shadow-2xl"
               />
             </div>
