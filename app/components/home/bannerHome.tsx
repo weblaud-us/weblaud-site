@@ -31,9 +31,7 @@ const BannerHome = () => {
               </span>
             </div>
 
-            <div
-              className={`space-y-4 sm:space-y-6 md:space-y-8 animate-[blurOut_0.8s_ease-out_forwards]`}
-            >
+            <div className={`space-y-4 sm:space-y-6 md:space-y-8`}>
               <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold font-barlow leading-tight text-nowrap">
                 We Help People To
                 <span className="block">Bring Their Ideas</span>
@@ -57,9 +55,7 @@ const BannerHome = () => {
             </div>
           </div>
 
-          <div
-            className={`hidden md:block relative mt-10 lg:mt-0 animate-[scale-in_0.8s_ease-out_forwards]`}
-          >
+          <div className={`hidden md:block relative mt-10 lg:mt-0`}>
             <div className="relative z-10 animate-float">
               <img
                 src={heroBanner}
