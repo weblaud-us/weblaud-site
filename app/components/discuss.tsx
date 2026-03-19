@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
-import { BookingModal } from "~/components/ui/booking-modal";
+import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 
 const Discuss = () => {
   const [containerRef, isVisible] = useBlurAnimation<HTMLDivElement>();

@@ -11,7 +11,7 @@ import {
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
 import { ServiceCard } from "../ui/service-card";
 import { BOOKING_URL } from "~/lib/constants";
-import { BookingModal } from "~/components/ui/booking-modal";
+import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import { useState } from "react";
 
 interface Service {

@@ -40,6 +40,9 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
     "Allow: /",
     "",
     `Sitemap: ${baseUrl}/sitemap.xml`,
+    "",
+    "# AI training preference (informational comment only)",
+    "# Content-Signal is not a standard robots.txt directive",
   ];
 
   return new Response(lines.join("\n"), {

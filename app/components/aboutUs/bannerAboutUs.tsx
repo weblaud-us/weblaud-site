@@ -1,6 +1,6 @@
 import HeroBanner from "../ui/hero-banner";
 import techCube from "~/assets/about-us.png";
-import { BookingModal } from "~/components/ui/booking-modal";
+import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import { useState } from "react";
 
 const BannerAboutUs = () => {

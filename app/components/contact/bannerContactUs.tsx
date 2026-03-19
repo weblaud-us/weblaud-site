@@ -1,6 +1,6 @@
 import contactImage from "~/assets/contact-us.png";
 import HeroBanner from "../ui/hero-banner";
-import { BookingModal } from "~/components/ui/booking-modal";
+import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import { useState } from "react";
 
 const BannerContactUs = () => {

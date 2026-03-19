@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router";
 import { Button } from "./button";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import weblaudLogo from "~/assets/weblaud-logo.svg";
-import { BookingModal } from "~/components/ui/booking-modal";
+import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import logo from "~/assets/weblaud.com.svg";
 
 const NavBar = () => {
@@ -87,7 +87,6 @@ const NavBar = () => {
                   style={{ transitionDelay: "100ms" }}
                 />
               </Link>
-
             </div>
 
             <div className="hidden lg:flex items-center space-x-1">

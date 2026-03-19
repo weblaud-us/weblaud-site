@@ -9,7 +9,7 @@ import {
 } from "~/lib/animations";
 import { Link, useLocation } from "react-router";
 import { useState } from "react";
-import { BookingModal } from "~/components/ui/booking-modal";
+import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 
 const LetsDiscuss = () => {
   const location = useLocation();
