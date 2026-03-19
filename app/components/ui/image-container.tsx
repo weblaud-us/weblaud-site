@@ -87,6 +87,7 @@ export const ImageContainer = ({
           <img
             src={image}
             alt={alt}
+            loading="lazy"
             className={`w-48 h-48 sm:w-56 sm:h-56 md:w-96 md:h-96 object-contain drop-shadow-2xl ${color.imageShadow} transition-all duration-500`}
           />
         </div>
