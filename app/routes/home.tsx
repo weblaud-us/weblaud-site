@@ -5,6 +5,24 @@ import WhyChooseUs from "~/components/home/whyChooseUs";
 import OurSay from "~/components/home/ourSay";
 import FAQ from "~/components/home/faq";
 import LetsDiscuss from "~/components/home/letsDiscuss";
+import heroBanner from "~/assets/hero-icon.png";
+
+export const links: Route.LinksFunction = () => {
+  return [
+    {
+      rel: "preload",
+      as: "image",
+      href: heroBanner,
+      fetchPriority: "high",
+    },
+  ];
+};
+
+export function headers() {
+  return {
+    "Cache-Control": "public, max-age=300, s-maxage=3600", // Cache in browser for 5 mins, CDN for 1 hour
+  };
+}
 
 export function meta({}: Route.MetaArgs) {
   return [
