@@ -186,7 +186,7 @@ const OurSpeciality = () => {
           </div>
 
           <div className="w-full lg:flex-1">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               {activeContent && (
                 <motion.div
                   ref={cardRef}
@@ -201,7 +201,7 @@ const OurSpeciality = () => {
                     duration: 0.1,
                     ease: [0.22, 1, 0.36, 1],
                   }}
-                  className={`relative border border-light-black rounded-3xl overflow-hidden bg-linear-to-b from-primary/10 to-primary/5 w-full ${getBlurAnimationClasses(isCardVisible)}`}
+                  className={`relative border border-light-black rounded-3xl overflow-hidden bg-linear-to-b from-primary/10 to-primary/5 w-full`}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
                 >
@@ -213,14 +213,14 @@ const OurSpeciality = () => {
                   >
                     <motion.p
                       ref={descriptionRef}
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 1, y: 0 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{
                         duration: 0.4,
                         delay: 0.08,
                         ease: "easeOut",
                       }}
-                      className={`text-gray-300 text-sm md:text-base leading-relaxed mb-8 ${getBlurAnimationClasses(isDescriptionVisible)}`}
+                      className={`text-gray-300 text-sm md:text-base leading-relaxed mb-8`}
                     >
                       {activeContent.description}
                     </motion.p>

@@ -7,9 +7,6 @@ import { Button } from "../ui/button";
 import GlassButton from "../ui/glass-button";
 
 const BannerHome = () => {
-  const [contentRef, isContentVisible] = useBlurAnimation();
-  const [imageRef, isImageVisible] = useBlurAnimation();
-
   return (
     <section className="relative bg-black text-white overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -35,8 +32,7 @@ const BannerHome = () => {
             </div>
 
             <div
-              ref={contentRef}
-              className={`space-y-4 sm:space-y-6 md:space-y-8 ${getBlurAnimationClasses(isContentVisible, { variant: "default" })}`}
+              className={`space-y-4 sm:space-y-6 md:space-y-8 animate-[blurOut_0.8s_ease-out_forwards]`}
             >
               <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold font-barlow leading-tight text-nowrap">
                 We Help People To
@@ -62,9 +58,7 @@ const BannerHome = () => {
           </div>
 
           <div
-            ref={imageRef}
-            className={`hidden md:block relative mt-10 lg:mt-0 ${getBlurAnimationClasses(isImageVisible, { variant: "scale" })}`}
-            style={{ transitionDelay: "200ms" }}
+            className={`hidden md:block relative mt-10 lg:mt-0 animate-[scale-in_0.8s_ease-out_forwards]`}
           >
             <div className="relative z-10 animate-float">
               <img
