@@ -20,9 +20,11 @@ export function meta({}: Route.MetaArgs) {
         "Weblaud LLC, software company, product development, digital product studio, software engineering, SaaS development, UI/UX design, custom software, innovation lab",
     },
     {
+      property: "og:title",
       content: "Weblaud LLC - Software Agency & Digital Solutions",
     },
     {
+      property: "og:description",
       content:
         "Transform your ideas into reality with Weblaud LLC. A premium software agency providing expert digital solutions and custom software.",
     },
@@ -41,6 +43,7 @@ export function meta({}: Route.MetaArgs) {
       content: "Weblaud LLC - Software Agency & Digital Solutions",
     },
     {
+      name: "twitter:description",
       content:
         "Transform your ideas into reality with Weblaud LLC. A premium software agency providing expert digital solutions and custom software.",
     },

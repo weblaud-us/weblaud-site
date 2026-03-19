@@ -1,5 +1,22 @@
 import NavBar from "~/components/ui/navBar";
 import { motion } from "framer-motion";
+import type { Route } from "./+types/terms-of-service";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Terms of Service – Weblaud LLC Software Development Company" },
+    {
+      name: "description",
+      content:
+        "Read the Terms of Service of Weblaud LLC. These terms govern your use of our website and services.",
+    },
+    {
+      tagName: "link",
+      rel: "canonical",
+      href: "https://weblaud.com/terms-of-service",
+    },
+  ];
+}
 
 export default function TermsOfService() {
   return (

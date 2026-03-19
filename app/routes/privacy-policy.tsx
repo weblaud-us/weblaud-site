@@ -1,5 +1,22 @@
 import NavBar from "~/components/ui/navBar";
 import { motion } from "framer-motion";
+import type { Route } from "./+types/privacy-policy";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Privacy Policy – Weblaud LLC Software Development Company" },
+    {
+      name: "description",
+      content:
+        "Read the Privacy Policy of Weblaud LLC to understand how we collect, use, and protect your personal data.",
+    },
+    {
+      tagName: "link",
+      rel: "canonical",
+      href: "https://weblaud.com/privacy-policy",
+    },
+  ];
+}
 
 export default function PrivacyPolicy() {
   return (

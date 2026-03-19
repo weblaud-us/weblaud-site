@@ -50,6 +50,10 @@ export const meta: Route.MetaFunction = () => {
     { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    { name: "geo.region", content: "US-WY" },
+    { name: "geo.placename", content: "Cheyenne" },
+    { name: "geo.position", content: "41.1400;-104.8202" },
+    { name: "ICBM", content: "41.1400, -104.8202" },
   ];
 };
 
