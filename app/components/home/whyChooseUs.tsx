@@ -43,14 +43,14 @@ const WhyChooseUs = () => {
 
         <div
           ref={cardsRef}
-          className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-center items-center sm:items-stretch gap-0 sm:gap-0 lg:gap-0 w-full"
+          className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap justify-center items-center sm:items-stretch gap-0 w-full"
         >
           {reasons.map((reason, index) => {
             const animationDelay = index * 200;
             return (
               <div
                 key={index}
-                className={`w-[80vw] max-w-[280px] sm:max-w-full -mt-6 first:mt-0 sm:w-72 sm:mt-0 md:w-[340px] lg:w-72 xl:w-80 2xl:w-[340px] odd:self-start even:self-end sm:odd:self-auto sm:even:self-auto sm:odd:ml-0 sm:even:-ml-10 sm:nth-3:-mt-12 sm:nth-4:-mt-12 md:odd:ml-0 md:even:-ml-10 md:nth-3:-mt-16 md:nth-4:-mt-16 lg:-ml-12 lg:even:-ml-12 lg:nth-3:-ml-12 lg:nth-3:mt-0 lg:nth-4:-ml-12 lg:nth-4:mt-0 xl:-ml-14 2xl:-ml-16 first:ml-0 shrink-0 ${getBlurAnimationClasses(areCardsVisible, { variant: "scale" })}`}
+                className={`w-[70vw] max-w-72 sm:max-w-full -mt-12 first:mt-0 sm:w-72 sm:mt-0 md:w-[340px] lg:w-72 xl:w-80 2xl:w-[340px] sm:odd:ml-0 sm:even:-ml-10 sm:nth-3:-mt-12 sm:nth-4:-mt-12 md:odd:ml-0 md:even:-ml-10 md:nth-3:-mt-16 md:nth-4:-mt-16 lg:-ml-12 lg:even:-ml-12 lg:nth-3:-ml-12 lg:nth-3:mt-0 lg:nth-4:-ml-12 lg:nth-4:mt-0 xl:-ml-14 2xl:-ml-16 first:ml-0 shrink-0 ${getBlurAnimationClasses(areCardsVisible, { variant: "scale" })}`}
                 style={{
                   zIndex: reasons.length - index,
                   transitionDelay: `${animationDelay}ms`,

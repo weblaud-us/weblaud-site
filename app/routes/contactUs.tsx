@@ -15,7 +15,6 @@ export function meta({}: Route.MetaArgs) {
       content:
         "contact Weblaud LLC, software agency contact, hire software engineers, project inquiry, consultation",
     },
-    { tagName: "link", rel: "canonical", href: "https://weblaud.com/contact" },
     { property: "og:title", content: "Contact Us - Get In Touch With Weblaud" },
     {
       property: "og:description",
@@ -34,6 +33,7 @@ export function meta({}: Route.MetaArgs) {
         "Reach out to Weblaud to discuss your digital transformation needs and get expert solutions.",
     },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    { tagName: "link", rel: "canonical", href: "https://weblaud.com/contact" },
   ];
 }
 

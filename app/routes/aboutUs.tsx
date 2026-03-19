@@ -19,7 +19,6 @@ export function meta({}: Route.MetaArgs) {
       content:
         "about us, Weblaud LLC, software agency, software engineering team, innovation, company mission",
     },
-    { tagName: "link", rel: "canonical", href: "https://weblaud.com/aboutus" },
     {
       property: "og:title",
       content: "About Weblaud - Our Mission, Story & Team",
@@ -44,6 +43,7 @@ export function meta({}: Route.MetaArgs) {
         "Learn about Weblaud's mission, vision, and talented team dedicated to digital transformation.",
     },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    { tagName: "link", rel: "canonical", href: "https://weblaud.com/aboutus" },
   ];
 }
 

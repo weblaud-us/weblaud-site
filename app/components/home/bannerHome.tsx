@@ -24,7 +24,7 @@ const BannerHome = () => {
               <img
                 src={dashedArrow}
                 alt="Dashed Arrow"
-                className="md:h-90 sm:h-65 h-50 relative bottom-11 opacity-30 md:opacity-100"
+                className="md:h-90 sm:h-65 h-50 relative bottom-11"
               />
               <span className="text-sm sm:text-base font-barlow relative left-2 bottom-12">
                 Hello,
@@ -36,7 +36,7 @@ const BannerHome = () => {
               className={`space-y-4 sm:space-y-6 md:space-y-8 ${getBlurAnimationClasses(isContentVisible, { variant: "default" })}`}
             >
               <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold font-barlow leading-tight text-nowrap">
-                We Help People To{" "}
+                We Help People To
                 <span className="block">Bring Their Ideas</span>
                 <span className="block">Alive</span>
               </h1>

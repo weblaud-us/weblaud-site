@@ -15,7 +15,6 @@ export function meta({}: Route.MetaArgs) {
       content:
         "software services, software agency, Weblaud LLC, custom engineering, UI/UX design, AI solutions, web development",
     },
-    { tagName: "link", rel: "canonical", href: "https://weblaud.com/services" },
     {
       property: "og:title",
       content: "Our Services - Strategy, Design, Development & More | Weblaud",
@@ -40,6 +39,7 @@ export function meta({}: Route.MetaArgs) {
         "From strategy to scaling, we provide end-to-end digital solutions for your business needs.",
     },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    { tagName: "link", rel: "canonical", href: "https://weblaud.com/services" },
   ];
 }
 

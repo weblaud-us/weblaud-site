@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedGridBg, { type AnimatedGridBgRef } from "../ui/animated-grid-bg";
 import VerticalTabs from "../ui/vertical-tabs";
@@ -142,6 +142,27 @@ const OurSpeciality = () => {
     }
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const handleDragEnd = (_: any, info: { offset: { x: number } }) => {
+    if (!isMobile) return;
+    const threshold = 100;
+    if (info.offset.x > threshold && activeTab > 1) {
+      setActiveTab(activeTab - 1);
+    } else if (info.offset.x < -threshold && activeTab < tabsData.length) {
+      setActiveTab(activeTab + 1);
+    }
+  };
+
   return (
     <section
       ref={containerRef}
@@ -170,6 +191,9 @@ const OurSpeciality = () => {
                 <motion.div
                   ref={cardRef}
                   key={activeContent.id}
+                  drag={isMobile ? "x" : false}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={handleDragEnd}
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
@@ -180,23 +204,6 @@ const OurSpeciality = () => {
                   className={`relative border border-light-black rounded-3xl overflow-hidden bg-linear-to-b from-primary/10 to-primary/5 w-full ${getBlurAnimationClasses(isCardVisible)}`}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.15}
-                  onDragEnd={(e, info) => {
-                    const swipeThreshold = 50;
-                    if (
-                      info.offset.x < -swipeThreshold &&
-                      activeTab < tabsData.length
-                    ) {
-                      setActiveTab(activeTab + 1);
-                    } else if (
-                      info.offset.x > swipeThreshold &&
-                      activeTab > 1
-                    ) {
-                      setActiveTab(activeTab - 1);
-                    }
-                  }}
                 >
                   <AnimatedGridBg ref={gridBgRef} />
 

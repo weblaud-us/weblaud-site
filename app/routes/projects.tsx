@@ -15,7 +15,6 @@ export function meta({}: Route.MetaArgs) {
       content:
         "portfolio, Weblaud LLC, case studies, software projects, engineering portfolio, digital solutions",
     },
-    { tagName: "link", rel: "canonical", href: "https://weblaud.com/projects" },
     {
       property: "og:title",
       content: "Our Projects & Case Studies - Weblaud Portfolio",
@@ -37,6 +36,7 @@ export function meta({}: Route.MetaArgs) {
         "Check out our portfolio and see how we've helped businesses succeed with digital solutions.",
     },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    { tagName: "link", rel: "canonical", href: "https://weblaud.com/projects" },
   ];
 }
 

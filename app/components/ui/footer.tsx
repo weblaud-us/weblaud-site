@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
 
   const menuItems: { label: string; href: string }[] = [
     { label: "Home", href: "/" },
-    { label: "About Us", href: "/aboutUs" },
+    { label: "About Us", href: "/aboutus" },
     { label: "Our Services", href: "/services" },
     { label: "Our Projects", href: "/projects" },
     { label: "Contact Us", href: "/contact" },
@@ -56,13 +56,13 @@ const Footer: React.FC = () => {
       icon: <FaFacebook className="text-blue-500 text-2xl" />,
       url: "https://facebook.com/weblaud",
     },
-    // {
-    //   icon: <FaXTwitter className="text-blue-500 text-2xl" />,
-    //   url: "https://x.com/weblaud",
-    // },
+    {
+      icon: <FaXTwitter className="text-blue-500 text-2xl" />,
+      url: "https://x.com/weblaud",
+    },
     {
       icon: <FaLinkedin className="text-blue-500 text-2xl" />,
-      url: "https://linkedin.com/company/weblaud",
+      url: "https://www.linkedin.com/company/weblaud",
     },
     {
       icon: <FaInstagram className="text-blue-500 text-2xl" />,

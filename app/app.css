@@ -10,6 +10,12 @@
   --font-barlow: Barlow, sans-serif;
   --font-poppins: Poppins, sans-serif;
   --font-lexend: Lexend, sans-serif;
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
 }
 
 html,
@@ -249,4 +255,105 @@ body {
 
 .animate-ping-slow {
   animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* "Why Choose Us" Mobile Responsive Styles - Design 4 */
+@media (max-width: 768px) {
+  /* Section Background */
+  section:has(
+    .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full
+  ) {
+    background: linear-gradient(160deg, #0d1b3e 0%, #0a0a0a 60%) !important;
+  }
+
+  /* Grid container (2x2) */
+  .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 0 10px !important;
+    align-items: start !important;
+  }
+
+  /* Reset margin on the direct card wrappers */
+  .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full
+    > div {
+    margin: 0 !important;
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: none !important;
+  }
+
+  /* Staggered offset for 2nd and 4th cards */
+  .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full
+    > div:nth-child(even) {
+    margin-top: 20px !important;
+  }
+
+  /* The card itself (replacing circle shape) */
+  .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full
+    > div
+    .group
+    .aspect-square {
+    border-radius: 18px !important;
+    aspect-ratio: auto !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 20px 12px !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-shadow: none !important;
+  }
+
+  /* Hide the decorative background blur blobs and rings on mobile for clean UI */
+  .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full
+    > div
+    .group
+    > div:not(.relative) {
+    display: none !important;
+  }
+
+  /* Hide inner decorative rings */
+  .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full
+    > div
+    .group
+    .aspect-square
+    > div.absolute {
+    display: none !important;
+  }
+
+  /* Icon container styling */
+  .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full
+    > div
+    .group
+    .z-10
+    > .relative.mb-1
+    > .relative.rounded-full {
+    background: linear-gradient(135deg, #1a6fff44, #0033ff22) !important;
+    border-radius: 12px !important;
+    border: 1px solid #1a6fff44 !important;
+  }
+
+  /* Title color */
+  .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full
+    > div
+    .group
+    .z-10
+    h3 {
+    color: #c8d8ff !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+  }
+
+  /* Body Text color */
+  .flex-col.sm\:flex-row.flex-wrap.lg\:flex-nowrap.justify-center.items-center.sm\:items-stretch.gap-0.w-full
+    > div
+    .group
+    .z-10
+    p {
+    color: #4a5a7a !important;
+  }
 }

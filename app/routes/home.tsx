@@ -19,7 +19,6 @@ export function meta({}: Route.MetaArgs) {
       content:
         "Weblaud LLC, software company, product development, digital product studio, software engineering, SaaS development, UI/UX design, custom software, innovation lab",
     },
-    { tagName: "link", rel: "canonical", href: "https://weblaud.com/" },
     {
       content: "Weblaud LLC - Software Agency & Digital Solutions",
     },
@@ -94,6 +93,7 @@ export function meta({}: Route.MetaArgs) {
         ],
       },
     },
+    { tagName: "link", rel: "canonical", href: "https://weblaud.com/" },
   ];
 }
 
