@@ -1,10 +1,16 @@
-import type { Route } from "./+types/aboutUs";
+import type { Route } from "./+types/aboutus";
 import BannerAboutUs from "~/components/aboutUs/bannerAboutUs";
 import Discuss from "~/components/aboutUs/discuss";
 import OurAchievement from "~/components/aboutUs/ourAchievement";
 import OurMissionAndStory from "~/components/aboutUs/ourMissionAndStory";
 import OurTrack from "~/components/aboutUs/ourTrack";
 import TheTeam from "~/components/aboutUs/theTeam";
+
+export function headers() {
+  return {
+    "Cache-Control": "public, max-age=300, s-maxage=3600",
+  };
+}
 
 export function meta({}: Route.MetaArgs) {
   return [

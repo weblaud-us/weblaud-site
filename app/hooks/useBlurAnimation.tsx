@@ -12,7 +12,9 @@ export function useBlurAnimation<T extends HTMLElement = HTMLDivElement>(
   resetOnExit: boolean = false,
   resetKey?: string | number
 ) {
-  const [isVisible, setIsVisible] = useState(false);
+  // Start as true — content is visible by default.
+  // We only hide it temporarily on scroll-triggered re-animation (resetOnExit=true).
+  const [isVisible, setIsVisible] = useState(true);
   const ref = useRef<T>(null);
 
   // Reset animation when resetKey changes (e.g., on route change)
@@ -21,27 +23,37 @@ export function useBlurAnimation<T extends HTMLElement = HTMLDivElement>(
   }, [resetKey]);
 
   useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    // Immediately check if element is already in the viewport on mount.
+    const rect = element.getBoundingClientRect();
+    const alreadyInView =
+      rect.top < window.innerHeight &&
+      rect.bottom > 0 &&
+      rect.left < window.innerWidth &&
+      rect.right > 0;
+
+    if (alreadyInView) {
+      setIsVisible(true);
+      if (!resetOnExit) return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
         } else if (resetOnExit) {
-          // Reset animation when element leaves viewport
           setIsVisible(false);
         }
       },
-      { threshold }
+      { threshold, rootMargin: "0px 0px -50px 0px" }
     );
 
-    const element = ref.current;
-    if (element) {
-      observer.observe(element);
-    }
+    observer.observe(element);
 
     return () => {
-      if (element) {
-        observer.unobserve(element);
-      }
+      observer.unobserve(element);
     };
   }, [threshold, resetOnExit]);
 
@@ -63,7 +75,8 @@ export function useBlurAnimationList<TId extends string | number>(
   resetOnExit: boolean = false,
   resetKey?: string | number
 ) {
-  const [visibleItems, setVisibleItems] = useState<Set<TId>>(new Set());
+  // Start with all items visible — content renders immediately by default.
+  const [visibleItems, setVisibleItems] = useState<Set<TId>>(() => new Set(itemIds));
   const itemRefs = useRef<Map<TId, HTMLElement>>(new Map());
 
   // Reset animation when resetKey changes (e.g., on route change)
@@ -75,6 +88,22 @@ export function useBlurAnimationList<TId extends string | number>(
     const observers = new Map<TId, IntersectionObserver>();
 
     itemIds.forEach((itemId) => {
+      const element = itemRefs.current.get(itemId);
+      if (!element) return;
+
+      // Immediately check if element is already in the viewport on mount.
+      const rect = element.getBoundingClientRect();
+      const alreadyInView =
+        rect.top < window.innerHeight &&
+        rect.bottom > 0 &&
+        rect.left < window.innerWidth &&
+        rect.right > 0;
+
+      if (alreadyInView) {
+        setVisibleItems((prev) => new Set([...prev, itemId]));
+        if (!resetOnExit) return; // No need to observe if we won't reset
+      }
+
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
@@ -88,14 +117,11 @@ export function useBlurAnimationList<TId extends string | number>(
             });
           }
         },
-        { threshold }
+        { threshold, rootMargin: "0px 0px -50px 0px" }
       );
 
-      const element = itemRefs.current.get(itemId);
-      if (element) {
-        observer.observe(element);
-        observers.set(itemId, observer);
-      }
+      observer.observe(element);
+      observers.set(itemId, observer);
     });
 
     return () => {

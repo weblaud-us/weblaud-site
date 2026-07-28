@@ -1,4 +1,3 @@
-import NavBar from "~/components/ui/navBar";
 import { motion } from "framer-motion";
 import type { Route } from "./+types/terms-of-service";
 
@@ -11,6 +10,29 @@ export function meta({}: Route.MetaArgs) {
         "Read the Terms of Service of Weblaud LLC. These terms govern your use of our website and services.",
     },
     {
+      property: "og:title",
+      content: "Terms of Service – Weblaud LLC",
+    },
+    {
+      property: "og:description",
+      content:
+        "Read the Terms of Service of Weblaud LLC. These terms govern your use of our website and services.",
+    },
+    { property: "og:type", content: "website" },
+    {
+      property: "og:url",
+      content: "https://weblaud.com/terms-of-service",
+    },
+    { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "Terms of Service – Weblaud LLC" },
+    {
+      name: "twitter:description",
+      content:
+        "Read the Terms of Service of Weblaud LLC. These terms govern your use of our website and services.",
+    },
+    { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    {
       tagName: "link",
       rel: "canonical",
       href: "https://weblaud.com/terms-of-service",
@@ -21,8 +43,7 @@ export function meta({}: Route.MetaArgs) {
 export default function TermsOfService() {
   return (
     <div className="bg-black min-h-screen flex flex-col">
-      <NavBar />
-      <main className="flex-grow pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <main className="flex-grow pt-28 md:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -48,9 +49,12 @@ export const meta: Route.MetaFunction = () => {
         "Weblaud LLC — a software company and innovation lab building the future of digital products and providing premium engineering services for global businesses.",
     },
     { property: "og:site_name", content: "Weblaud LLC" },
+    { property: "og:locale", content: "en_US" },
     { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:site", content: "@weblaud" },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    { name: "theme-color", content: "#000000" },
     { name: "geo.region", content: "US-WY" },
     { name: "geo.placename", content: "Cheyenne" },
     { name: "geo.position", content: "41.1400;-104.8202" },
@@ -101,6 +105,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Google Analytics Placeholder */}
+        {/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-XXXXXXXXXX');
+            `,
+          }}
+        /> */}
       </head>
       <body className="overflow-x-hidden antialiased">
         {children}
@@ -116,6 +132,7 @@ export default function App() {
   // TEMPORARILY DISABLED (Change back to 'true', 'false' to re-enable loader in 5 months)
   const [showLoader, setShowLoader] = useState(false);
   const [isLoaderComplete, setIsLoaderComplete] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -148,9 +165,17 @@ export default function App() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <NavBar />
-            <main>
-              <Outlet />
-            </main>
+            <AnimatePresence mode="sync">
+              <motion.main
+                key={location.pathname}
+                initial={{ opacity: 0, y: 8, filter: "blur(3px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -4, filter: "blur(2px)" }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Outlet />
+              </motion.main>
+            </AnimatePresence>
             <Footer />
           </motion.div>
         )}

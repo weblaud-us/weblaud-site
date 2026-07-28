@@ -49,6 +49,7 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
     status: 200,
     headers: {
       "Content-Type": "text/plain",
+      "Cache-Control": "public, max-age=3600, s-maxage=86400",
     },
   });
 };

@@ -2,6 +2,12 @@ import type { Route } from "./+types/contactUs";
 import BannerContactUs from "~/components/contact/bannerContactUs";
 import ContactFormAndInfo from "~/components/contact/contactFormAndInfo";
 
+export function headers() {
+  return {
+    "Cache-Control": "public, max-age=300, s-maxage=3600",
+  };
+}
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Contact Us – Weblaud LLC Software Development Company" },

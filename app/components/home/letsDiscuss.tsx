@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import GlassButton from "../ui/glass-button";
-import { HiMail, HiPhone } from "react-icons/hi";
+import { HiMail } from "react-icons/hi";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import {
   getBlurAnimationClasses,
@@ -113,8 +113,9 @@ const LetsDiscuss = () => {
               )}`}
               style={getBlurAnimationDelay(400)}
             >
-              Ready to transform your vision into reality? Let's connect and
-              create something extraordinary together.
+              Book a free 30-minute strategy call. We'll review your
+              requirements, scope your project, and send a detailed proposal
+              within 48 hours.
             </p>
 
             <div
@@ -129,7 +130,7 @@ const LetsDiscuss = () => {
                 onClick={() => setIsModalOpen(true)}
                 className="text-xs font-bold px-9 py-4.5"
               >
-                Contact Us
+                Book a Call
               </Button>
 
               <GlassButton
@@ -137,7 +138,7 @@ const LetsDiscuss = () => {
                 to="/contact"
                 className="cursor-pointer"
               >
-                Send Mail
+                Send a Message
               </GlassButton>
             </div>
           </div>

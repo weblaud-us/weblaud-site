@@ -52,7 +52,7 @@ const tabsData: TabContent[] = [
       "We help you transform ideas into actionable roadmaps. Our strategic approach focuses on understanding your business goals, identifying opportunities, and creating comprehensive plans that align technology with your vision. From product planning to value engineering, we ensure every decision drives meaningful results.",
     features: [
       { name: "Product planning", icon: productPlanningIcon },
-      { name: "Clean development", icon: leanDevelopmentIcon },
+      { name: "Lean development", icon: leanDevelopmentIcon },
       { name: "Value-engineering", icon: valueEngineeringIcon },
       { name: "Accessibility compliance", icon: accessibilityIcon },
     ],
@@ -68,7 +68,7 @@ const tabsData: TabContent[] = [
       { name: "UI/UX design", icon: uiUxIcon },
       { name: "Prototyping", icon: prototypingIcon },
       { name: "3D designs", icon: threeDDesignsIcon },
-      { name: "Animation", icon: prototypingIcon },
+      { name: "Motion Design", icon: valueEngineeringIcon },
     ],
     image: designImg,
     color: "#0a84ff",
@@ -94,7 +94,7 @@ const tabsData: TabContent[] = [
       "We ensure your systems run smoothly and efficiently. Our maintenance services provide continuous support, monitoring, and optimization to keep your applications performing at their best. From cloud infrastructure to dedicated support teams, we're here to keep your technology reliable and secure.",
     features: [
       { name: "Software maintenance", icon: customSoftwareIcon },
-      { name: "Software support", icon: customSoftwareIcon },
+      { name: "Software support", icon: webApplicationIcon },
       { name: "Cloud infrastructure management", icon: cloudManagementIcon },
       { name: "Dedicated teams", icon: dedicatedTeamsIcon },
     ],
@@ -108,7 +108,7 @@ const tabsData: TabContent[] = [
       "We help your business grow without limits. Our scaling solutions focus on modernizing legacy systems, implementing CI/CD pipelines, and optimizing DevOps practices. With robust software architecture and automated workflows, we enable your infrastructure to scale seamlessly as your business expands.",
     features: [
       { name: "CI/CD", icon: ciCdIcon },
-      { name: "Legacy software modernization", icon: customSoftwareIcon },
+      { name: "Legacy software modernization", icon: productPlanningIcon },
       { name: "DevOps", icon: devopsIcon },
       { name: "Software architecture", icon: softwareArchitectureIcon },
     ],
@@ -166,13 +166,13 @@ const OurSpeciality = () => {
   return (
     <section
       ref={containerRef}
-      className="bg-black text-white overflow-x-hidden py-16 md:py-24 px-4"
+      className="bg-black text-white overflow-x-hidden py-14 md:py-20 px-4"
     >
       <h2
         ref={titleRef}
         className={`text-center font-barlow text-2xl md:text-3xl font-semibold mb-8 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
       >
-        Our Speciality
+        Our Specialty
       </h2>
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-12 items-start">
@@ -255,7 +255,7 @@ const OurSpeciality = () => {
                               scale: 1.05,
                               transition: { duration: 0.15, ease: "easeOut" },
                             }}
-                            className="flex items-center gap-3 group cursor-pointer"
+                            className="flex items-center gap-3 group"
                           >
                             <motion.div
                               className="relative w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 overflow-hidden p-2"

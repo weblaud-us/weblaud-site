@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -22,10 +23,16 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
     };
   }, [isOpen]);
 
-  return (
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 md:p-6">
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center sm:p-4 md:p-6" style={{ pointerEvents: 'auto' }}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -34,9 +41,9 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           />
           <motion.div
-            initial={{ opacity: 0, y: "100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "100%" }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="relative w-full max-w-5xl bg-card-bg rounded-t-2xl sm:rounded-2xl overflow-hidden border-t sm:border border-white/10 shadow-2xl h-[90vh] sm:h-auto"
           >
@@ -71,4 +78,11 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
       )}
     </AnimatePresence>
   );
+
+  if (!mounted) return null;
+  
+  // Use createPortal to ensure the modal breaks out of all parent CSS contexts
+  return typeof document !== "undefined"
+    ? createPortal(modalContent, document.body)
+    : modalContent;
 };

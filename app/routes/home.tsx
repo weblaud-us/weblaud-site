@@ -2,6 +2,7 @@ import type { Route } from "./+types/home";
 import BannerHome from "~/components/home/bannerHome";
 import OurSpeciality from "~/components/home/ourSpeciality";
 import WhyChooseUs from "~/components/home/whyChooseUs";
+import TrustedPartnerships from "~/components/home/trustedPartnerships";
 import OurSay from "~/components/home/ourSay";
 import FAQ from "~/components/home/faq";
 import LetsDiscuss from "~/components/home/letsDiscuss";
@@ -122,6 +123,7 @@ export default function Home() {
   return (
     <>
       <BannerHome />
+      <TrustedPartnerships />
       <OurSpeciality />
       <WhyChooseUs />
       <OurSay />

@@ -14,32 +14,35 @@ interface TrackRecord {
 const trackRecords: TrackRecord[] = [
   {
     id: 1,
-    number: "1",
+    number: "20",
     suffix: "+",
-    title: "Years AI & ML Development",
+    title: "AI & ML Projects Delivered",
     description:
-      "Building and deploying production grade ML systems and AI solutions",
+      "Production-grade ML systems, LLM integrations, and AI-powered applications shipped",
   },
   {
     id: 2,
-    number: "$80",
-    suffix: "K+",
-    title: "Website Development",
-    description: "Through our battle tested algorithmic trading systems",
+    number: "95",
+    suffix: "%",
+    title: "On-Time Project Delivery",
+    description:
+      "Milestone-driven sprints and transparent communication that keep projects on schedule",
   },
   {
     id: 3,
-    number: "70",
+    number: "30",
     suffix: "+",
-    title: "Custom Mobile App dev",
-    description: "Including DeFi protocols and smart contracts",
+    title: "Mobile Apps Shipped",
+    description:
+      "Cross-platform and native applications, from MVP to enterprise scale",
   },
   {
     id: 4,
-    number: "10",
+    number: "8",
     suffix: "+",
-    title: "Ai Website development",
-    description: "With data driven performance optimization",
+    title: "Countries Served",
+    description:
+      "Clients across North America, Europe, Asia, and the Middle East",
   },
 ];
 
@@ -107,35 +110,17 @@ const OurTrack = () => {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="border border-light-black rounded-3xl p-6 md:p-8 bg-card-bg"
             >
-              <div className="mb-4 md:mb-6 relative">
+              <div className="mb-4 md:mb-6">
                 <h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-bold font-barlow tracking-tight relative"
+                  className="text-5xl md:text-6xl lg:text-7xl font-bold font-barlow tracking-tight"
                   style={{
                     background:
-                      "linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%)",
+                      "linear-gradient(180deg, #ffffff 0%, #8a8a9a 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
-                    filter:
-                      "drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3))",
                   }}
                 >
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      background:
-                        "linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 40%,  white)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                      zIndex: 1,
-                    }}
-                  >
-                    <Counter value={record.number} suffix={record.suffix} />
-                  </span>
                   <Counter value={record.number} suffix={record.suffix} />
                 </h3>
               </div>

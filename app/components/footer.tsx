@@ -56,11 +56,11 @@ const Footer: React.FC = () => {
     },
     {
       icon: <FaTwitter className="text-blue-500 text-2xl" />,
-      url: "https://twitter.com",
+      url: "https://twitter.com/weblaud",
     },
     {
       icon: <FaLinkedin className="text-blue-500 text-2xl" />,
-      url: "https://linkedin.com",
+      url: "https://linkedin.com/company/weblaud",
     },
     {
       icon: <FaInstagram className="text-blue-500 text-2xl" />,
@@ -126,10 +126,10 @@ const Footer: React.FC = () => {
 
           <div
             ref={socialRef}
-            className={`flex justify-center lg:justify-end gap-3 border border-light-black p-4 rounded-xl ${getBlurAnimationClasses(isSocialVisible)}`}
+            className={`flex justify-center lg:justify-end gap-3 border border-light-black p-4 rounded-xl hover:border-primary/30 transition-colors duration-300 ${getBlurAnimationClasses(isSocialVisible)}`}
           >
             {socialLinks.map(({ icon, url }, index) => (
-              <IconTile key={index} href={url} ariaLabel={`Visit ${url}`}>
+              <IconTile key={index} href={url} ariaLabel={`Visit ${url}`} className="hover:scale-110 transition-transform duration-200">
                 {icon}
               </IconTile>
             ))}

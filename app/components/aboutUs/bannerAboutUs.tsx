@@ -13,10 +13,10 @@ const BannerAboutUs = () => {
           text: "Innovation & Excellence",
           showPulse: true,
         }}
-        title="We're Engineers of Intelligent Change"
-        description="Pioneering the intersection of AI, blockchain, and quantitative finance to deliver innovative solutions that drive business transformation"
+        title="We're Engineers Who Build With Purpose"
+        description="Combining deep engineering expertise with a human-centered approach to deliver AI-powered, blockchain, and custom software solutions that drive real business transformation"
         button={{
-          text: "Get In Touch",
+          text: "Book a Call",
           onClick: () => {
             setIsModalOpen(true);
           },

@@ -84,7 +84,7 @@ const HeroBanner = ({
             {badge && (
               <div
                 className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 mb-4 bg-white/7 border border-white/20 rounded-full ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
-                style={{ transitionDelay: "200ms" }}
+              style={{ transitionDelay: "80ms" }}
               >
                 {badge.showPulse !== false && (
                   <span className="relative flex h-1.5 w-1.5">
@@ -100,7 +100,7 @@ const HeroBanner = ({
 
             <h1
               className={`text-2xl text-white sm:text-3xl md:text-4xl lg:text-[2.8rem] font-barlow font-bold leading-tight mb-4 sm:mb-6 ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
-              style={{ transitionDelay: "400ms" }}
+              style={{ transitionDelay: "160ms" }}
             >
               {typeof title === "string" ? (
                 <span className="text-white">{title}</span>
@@ -111,7 +111,7 @@ const HeroBanner = ({
 
             <div
               className={`mt-6 sm:mt-7 max-w-2xl mx-auto lg:mx-0 text-sm sm:text-base text-white font-barlow ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
-              style={{ transitionDelay: "600ms" }}
+              style={{ transitionDelay: "240ms" }}
             >
               {typeof description === "string" ? (
                 <p className="leading-relaxed md:leading-normal">
@@ -125,7 +125,7 @@ const HeroBanner = ({
             {button && (
               <div
                 className={`flex mt-6 sm:mt-7 flex-col sm:flex-row gap-3 sm:gap-4 items-center lg:items-start ${justifyContent} ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
-                style={{ transitionDelay: "800ms" }}
+                style={{ transitionDelay: "320ms" }}
               >
                 {button.href ? (
                   <a href={button.href}>
@@ -148,12 +148,15 @@ const HeroBanner = ({
           {image && (
             <div
               className={`${image.showOnMobile ? "flex" : "hidden lg:flex"} shrink-0 w-auto justify-end relative ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
-              style={{ transitionDelay: "1000ms" }}
+              style={{ transitionDelay: "400ms" }}
             >
               <img
                 className="w-64 max-w-full h-auto hover:scale-105 transition-transform duration-500"
                 src={image.src}
                 alt={image.alt}
+                width={256}
+                height={256}
+                loading="lazy"
               />
             </div>
           )}

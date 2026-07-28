@@ -1,6 +1,13 @@
 import type { Route } from "./+types/services";
 import BannerOurServices from "~/components/services/bannerOurServices";
 import OurServices from "~/components/services/ourServices";
+import Discuss from "~/components/aboutUs/discuss";
+
+export function headers() {
+  return {
+    "Cache-Control": "public, max-age=300, s-maxage=3600",
+  };
+}
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -48,6 +55,7 @@ const Services = () => {
     <>
       <BannerOurServices />
       <OurServices />
+      <Discuss />
     </>
   );
 };

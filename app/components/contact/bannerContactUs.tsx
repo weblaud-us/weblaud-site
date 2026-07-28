@@ -18,9 +18,9 @@ const BannerContactUs = () => {
           showPulse: true,
         }}
         title="Contact Us"
-        description="Get in touch with our team to discuss how we can help transform your business. We're here to help. Whether you have questions about our AI solutions, blockchain integrations, data analytics platforms, or need consultation on your next project, our expert team is ready to provide tailored solutions that drive innovation and growth. Let's collaborate to turn your vision into reality and unlock new possibilities for your business success."
+        description="Have a project in mind? Our team is ready to help — from initial consultation to full-scale development. Let's build something great together."
         button={{
-          text: "Get In Touch Now",
+          text: "Book a Call",
           onClick: handleGetInTouch,
         }}
         image={{

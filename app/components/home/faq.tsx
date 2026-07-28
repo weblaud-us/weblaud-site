@@ -62,7 +62,7 @@ export default function FAQ() {
   };
 
   return (
-    <section className="relative py-16 pb-32 bg-black text-white overflow-hidden">
+    <section className="relative py-14 pb-24 bg-black text-white overflow-hidden">
 
       <motion.div className="absolute top-20 left-30 w-40 h-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
       <motion.div className="absolute md:block hidden bottom-20 right-30 w-40 h-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
@@ -88,8 +88,10 @@ export default function FAQ() {
                 ref={(el) => {
                   if (el) itemRefs.current.set(item.id, el);
                 }}
-                className={`rounded-2xl border border-light-black ${
-                  isOpen ? "bg-card-bg" : "bg-card-bg"
+                className={`rounded-2xl border bg-card-bg transition-all duration-300 ${
+                  isOpen
+                    ? "border-primary/40 border-l-2 border-l-primary shadow-sm shadow-primary/10"
+                    : "border-light-black"
                 } ${getBlurAnimationClasses(itemVisible)}`}
               >
                 <div className="flex items-start gap-4 p-4 md:p-6">

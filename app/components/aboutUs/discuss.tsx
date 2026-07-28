@@ -50,22 +50,22 @@ const Discuss = () => {
               >
                 Your Product Needs With{" "}
                 <span className="text-blue-500 font-semibold">
-                  Catalyst Analytic
+                  Weblaud
                 </span>{" "}
                 Experts?
               </p>
 
               <div
-                className={getBlurAnimationClasses(isVisible, {
+                className={`relative z-50 cursor-pointer ${getBlurAnimationClasses(isVisible, {
                   variant: "light",
-                })}
-                style={{ transitionDelay: "600ms" }}
+                })}`}
+                style={{ transitionDelay: "600ms", pointerEvents: "auto" }}
               >
                 <Button
                   onClick={() => setIsModalOpen(true)}
                   className="text-xs font-bold px-9 py-4.5 mt-4"
                 >
-                  Get In Touch
+                  Book a Call
                 </Button>
               </div>
             </div>

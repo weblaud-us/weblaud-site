@@ -2,8 +2,8 @@ import aiAppImg from "~/assets/ai-app.png";
 import mobileAppImg from "~/assets/mobile-app.png";
 import algorithmTradingImg from "~/assets/algorithm-trading.png";
 import retailEcommerceImg from "~/assets/retail-ecommerce.png";
-import customDesignImg from "~/assets/custom-design.png";
 import webAppImg from "~/assets/web-app.png";
+import customDesignImg from "~/assets/custom-design.png";
 import {
   useBlurAnimation,
   useBlurAnimationList,
@@ -88,31 +88,31 @@ const services: Service[] = [
     id: 5,
     title: "Custom Website Design & Development",
     description:
-      "We design and build stunning, high-performance websites that reflect your brand and convert visitors into customers. Every site we create is custom-built, mobile-responsive, SEO-optimized, and crafted for measurable results.",
+      "We design and build stunning, high-performance websites that reflect your brand and convert visitors into customers. Every site is custom-built, mobile-responsive, SEO-optimized, and crafted for measurable results.",
     features: [
-      "Custom UI/UX design",
+      "Custom UI/UX design & interactive prototyping",
       "Responsive & mobile-first development",
-      "SEO-optimized architecture",
+      "SEO-optimized architecture & Core Web Vitals",
       "CMS integration (Sanity, Contentful, WordPress)",
-      "Performance & Core Web Vitals optimization",
+      "Performance audits & ongoing optimization",
     ],
     image: customDesignImg,
     imageAlt: "Custom Website Design & Development",
   },
   {
     id: 6,
-    title: "Custom Mobile App & Website Development",
+    title: "DevOps, Cloud & Infrastructure",
     description:
-      "We deliver end-to-end digital product development — from custom websites to fully-featured mobile apps. Our team handles everything from architecture and design to development, testing, and post-launch support.",
+      "We modernize your engineering infrastructure with cloud-native architecture, automated CI/CD pipelines, and DevOps best practices — so your team ships faster with confidence and zero-downtime deployments.",
     features: [
-      "Full-stack web & mobile development",
-      "API design & third-party integrations",
-      "CI/CD pipeline setup",
-      "DevOps & cloud infrastructure",
-      "Ongoing maintenance & scaling",
+      "Cloud-native architecture (AWS, GCP, Azure)",
+      "CI/CD pipeline setup & automation",
+      "Docker & Kubernetes orchestration",
+      "Infrastructure as Code (Terraform)",
+      "Monitoring, alerting & disaster recovery",
     ],
     image: webAppImg,
-    imageAlt: "Custom Mobile App & Website Development",
+    imageAlt: "DevOps, Cloud & Infrastructure",
   },
 ];
 
@@ -146,8 +146,9 @@ const OurServices = () => {
             className={`text-white/70 md:w-3/4 lg:w-1/2 font-barlow text-base md:text-lg max-w-4xl mx-auto ${getBlurAnimationClasses(isDescVisible)}`}
             style={{ transitionDelay: "200ms" }}
           >
-            Comprehensive AI, blockchain, and analytics solutions powered by
-            deep expertise in machine learning and data engineering
+            Tailored digital solutions — from custom web and mobile development
+            to AI integrations and e-commerce — built by engineers who care
+            about performance, scalability, and your success
           </p>
         </div>
 

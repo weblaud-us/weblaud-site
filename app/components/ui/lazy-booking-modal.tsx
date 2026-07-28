@@ -1,4 +1,5 @@
 import { lazy, Suspense, useState, useEffect } from "react";
+import { Loader2 } from "lucide-react";
 
 // Lazy-load the BookingModal to avoid including it in the initial JS bundle.
 // This defers ~36 KiB of JS until the user actually opens the modal.
@@ -29,7 +30,15 @@ export const LazyBookingModal = ({
   if (!hasBeenOpened) return null;
 
   return (
-    <Suspense fallback={null}>
+    <Suspense
+      fallback={
+        isOpen ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+          </div>
+        ) : null
+      }
+    >
       <BookingModal isOpen={isOpen} onClose={onClose} />
     </Suspense>
   );

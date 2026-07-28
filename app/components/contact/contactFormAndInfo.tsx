@@ -32,7 +32,7 @@ const ContactFormAndInfo = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
   } = useForm<FormData>({
     defaultValues: {
@@ -40,10 +40,48 @@ const ContactFormAndInfo = () => {
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
-    toast.success("Message sent successfully!");
-    reset();
+  const onSubmit = async (data: FormData) => {
+    try {
+      // Weblaud uses Web3Forms for free, smooth email delivery.
+      // Get your free key at https://web3forms.com/ and put it in your .env file
+      const accessKey = import.meta.env.VITE_CONTACT_FORM_ACCESS_KEY;
+      
+      if (!accessKey) {
+        console.warn("No VITE_CONTACT_FORM_ACCESS_KEY found. Simulating submission.");
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        toast.success("Message sent successfully! (Simulated)");
+        reset();
+        return;
+      }
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: "New Project Inquiry - Weblaud Website",
+          from_name: `${data.firstName} ${data.lastName}`,
+          email: data.email,
+          phone: `${data.countryCode} ${data.phoneNumber}`,
+          message: data.message,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success("Message sent successfully!");
+        reset();
+      } else {
+        throw new Error(result.message || "Failed to send");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast.error("Failed to send message. Please try again.");
+    }
   };
 
   return (
@@ -205,7 +243,6 @@ const ContactFormAndInfo = () => {
                       type="tel"
                       placeholder="Phone Number"
                       {...register("phoneNumber", {
-                        required: "Phone number is required",
                         pattern: {
                           value: /^[0-9]{10,15}$/,
                           message: "Phone number must be 10-15 digits",
@@ -263,10 +300,13 @@ const ContactFormAndInfo = () => {
 
               <Button
                 type="submit"
-                className="w-full font-barlow font-semibold text-xs sm:text-sm py-3 sm:py-3.5 flex items-center justify-center gap-2 "
+                disabled={isSubmitting}
+                className="w-full font-barlow font-semibold text-xs sm:text-sm py-3 sm:py-3.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
               >
-                Send
-                <FiSend className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-2 group-hover/btn:rotate-12 transition-all duration-300" />
+                {isSubmitting ? "Sending..." : "Send"}
+                {!isSubmitting && (
+                  <FiSend className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-2 group-hover/btn:rotate-12 transition-all duration-300" />
+                )}
               </Button>
             </form>
           </div>

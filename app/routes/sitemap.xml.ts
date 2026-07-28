@@ -4,6 +4,9 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
 
+  // Update this date when site content changes significantly
+  const lastmod = "2026-07-27";
+
   const pages = [
     { path: "", priority: "1.0", changefreq: "weekly" },
     { path: "/aboutus", priority: "0.8", changefreq: "monthly" },
@@ -21,7 +24,7 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
       return `
   <url>
     <loc>${baseUrl}${path}</loc>
-    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;
@@ -34,8 +37,8 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
     status: 200,
     headers: {
       "Content-Type": "application/xml",
-      "xml-version": "1.0",
-      encoding: "UTF-8",
+      "Cache-Control": "public, max-age=3600, s-maxage=86400",
     },
   });
 };
+

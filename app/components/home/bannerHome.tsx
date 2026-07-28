@@ -1,6 +1,4 @@
 import { Link } from "react-router";
-import { useBlurAnimation } from "~/hooks/useBlurAnimation";
-import { getBlurAnimationClasses } from "~/lib/animations";
 import heroBanner from "~/assets/hero-icon.png";
 import dashedArrow from "~/assets/dashed-arrow.svg";
 import { Button } from "../ui/button";
@@ -14,7 +12,7 @@ const BannerHome = () => {
         <div className="absolute bottom-20 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 lg:pb-24 xl:pb-28 pt-44  md:pt-50">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 lg:pb-20 xl:pb-24 pt-44 md:pt-50">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-0 items-center">
           <div className="flex  ">
             <div className="flex items-start relative top-5 sm:top-0">
@@ -32,22 +30,22 @@ const BannerHome = () => {
             </div>
 
             <div className={`space-y-4 sm:space-y-6 md:space-y-8`}>
-              <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold font-barlow leading-tight text-nowrap">
-                We Help People To
-                <span className="block">Bring Their Ideas</span>
-                <span className="block">Alive</span>
+              <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold font-barlow leading-tight">
+                We Engineer Software
+                <span className="block">Companies Actually</span>
+                <span className="block">Scale With</span>
               </h1>
 
-              <p className="text-sm sm:text-base md:text-lg text-gray-300 font-barlow  sm:max-w-md max-w-sm lg:max-w-xl leading-relaxed">
-                A talented team to help you in your journey of creating useful
-                and easy to use product
+              <p className="text-sm sm:text-base md:text-lg text-gray-300 font-barlow sm:max-w-md max-w-sm lg:max-w-xl leading-relaxed">
+                From AI-powered platforms to algorithmic trading systems — we
+                build production-grade software for businesses that demand
+                performance, precision, and real results.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 pt-2">
                 <Link to="/contact">
                   <Button className="text-xs font-bold px-9 py-4.5">
-                    {" "}
-                    Let's Talk
+                    Book a Call
                   </Button>
                 </Link>
                 <GlassButton to="/services">Check our Services</GlassButton>
@@ -71,20 +69,6 @@ const BannerHome = () => {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-      `}</style>
     </section>
   );
 };

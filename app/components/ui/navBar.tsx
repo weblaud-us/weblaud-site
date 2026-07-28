@@ -122,7 +122,7 @@ const NavBar = () => {
                   isScrolled ? "px-6 py-2.5 text-xs" : "px-8 py-3 text-sm"
                 }`}
               >
-                Contact Us
+                Book a Call
               </Button>
             </div>
 
@@ -207,7 +207,7 @@ const NavBar = () => {
                   }}
                   className="w-full text-sm font-bold px-8 py-4 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-shadow duration-300"
                 >
-                  Contact Us
+                  Book a Call
                 </Button>
               </div>
             </div>

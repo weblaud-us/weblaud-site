@@ -9,11 +9,10 @@ interface Achievement {
 }
 
 const achievements: Achievement[] = [
-  { label: "CLIENTS", value: 30, suffix: "+", duration: 2.5 },
-  { label: "PROJECTS", value: 50, suffix: "+", duration: 2.5 },
-  { label: "HAPPY CLIENTS", value: 98, suffix: "%", duration: 2.2 },
+  { label: "CLIENTS", value: 50, suffix: "+", duration: 2.5 },
+  { label: "PROJECTS", value: 75, suffix: "+", duration: 2.5 },
+  { label: "CLIENT SATISFACTION", value: 99, suffix: "%", duration: 2.2 },
   { label: "COUNTRIES SERVED", value: 8, suffix: "+", duration: 2.5 },
-  { label: "YEARS OF EXPERIENCE", value: 1, suffix: "+", duration: 1.2 },
 ];
 
 function AnimatedCounter({
@@ -64,7 +63,7 @@ const OurAchievement = () => {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {achievements.map((achievement, index) => (
             <motion.div
               key={achievement.label}

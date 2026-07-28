@@ -70,6 +70,9 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
               <img
                 src={image}
                 alt={imageAlt}
+                width={160}
+                height={160}
+                loading="lazy"
                 className="relative z-10 w-full h-full object-contain group-hover:scale-110 group-hover:rotate-3 transition-all duration-700 drop-shadow-2xl"
               />
             </div>
