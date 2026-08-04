@@ -265,24 +265,25 @@ const TrustedPartnerships = () => {
         </div>
       </div>
 
-      {/* Stats row */}
-      <div className="max-w-7xl mx-auto px-4 mt-14 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          {[
-            { value: "50+", label: "Happy Clients" },
-            { value: "75+", label: "Projects Delivered" },
-            { value: "20+", label: "Tech Partners" },
-            { value: "99%", label: "Client Satisfaction" },
-          ].map((stat, i) => (
-            <div key={i} className="text-center group">
-              <p className="text-primary font-barlow text-3xl md:text-4xl font-bold mb-1 group-hover:scale-110 transition-transform duration-300 inline-block">
-                {stat.value}
-              </p>
-              <p className="text-dark-gray text-xs md:text-sm font-barlow tracking-wide">
-                {stat.label}
-              </p>
-            </div>
-          ))}
+      <div className="max-w-7xl mx-auto px-4 mt-12 relative z-10">
+        <div className="border-t border-white/8 pt-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            {[
+              { value: "50+", label: "Happy Clients" },
+              { value: "75+", label: "Projects Delivered" },
+              { value: "20+", label: "Tech Partners" },
+              { value: "99%", label: "Client Satisfaction" },
+            ].map((stat, i) => (
+              <div key={i} className="text-center group py-4 px-2 rounded-2xl hover:bg-white/[0.03] transition-colors duration-300">
+                <p className="text-primary font-barlow text-3xl md:text-4xl font-bold mb-1 group-hover:scale-110 transition-transform duration-300 inline-block">
+                  {stat.value}
+                </p>
+                <p className="text-dark-gray text-xs md:text-sm font-barlow tracking-wide">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

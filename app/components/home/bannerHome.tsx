@@ -1,8 +1,6 @@
 import { Link } from "react-router";
 import heroBanner from "~/assets/hero-icon.png";
 import dashedArrow from "~/assets/dashed-arrow.svg";
-import { Button } from "../ui/button";
-import GlassButton from "../ui/glass-button";
 
 const BannerHome = () => {
   return (
@@ -12,26 +10,26 @@ const BannerHome = () => {
         <div className="absolute bottom-20 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 lg:pb-20 xl:pb-24 pt-44 md:pt-50">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 lg:pb-14 pt-20 md:pt-24 lg:pt-28">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-0 items-center">
           <div className="flex  ">
             <div className="flex items-start relative top-5 sm:top-0">
               <img
                 src={dashedArrow}
                 alt="Dashed Arrow"
-                className="md:h-90 sm:h-65 h-50 relative bottom-11"
+                className="md:h-64 lg:h-72 sm:h-52 h-44 relative bottom-11"
                 width="40"
-                height="360"
+                height="288"
                 loading="eager"
               />
-              <span className="text-xs uppercase tracking-wider font-barlow relative left-2 bottom-12">
+              <span className="text-xs uppercase tracking-wider font-barlow relative left-2 bottom-12 whitespace-nowrap">
                 OPERATIONS SOFTWARE
               </span>
             </div>
 
-            <div className={`space-y-4 sm:space-y-6 md:space-y-8`}>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-barlow leading-tight">
-                Your Business <span className="block">Outgrew Its Spreadsheets</span>
+            <div className={`space-y-3 sm:space-y-4 md:space-y-6`}>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-barlow leading-tight text-balance">
+                Your Business <span>Outgrew Its Spreadsheets</span>
               </h1>
 
               <p className="text-sm sm:text-base md:text-lg text-gray-300 font-barlow sm:max-w-md max-w-sm lg:max-w-xl leading-relaxed text-balance">
@@ -39,16 +37,30 @@ const BannerHome = () => {
               </p>
 
               <div className="flex flex-col pt-2">
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5">
-                  <Link to="/contact">
-                    <Button className="text-xs font-bold px-9 py-4.5">
-                      Book a Call
-                    </Button>
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center w-full sm:w-auto">
+                  <Link 
+                    to="/contact"
+                    className="relative group h-[44px] w-full sm:w-auto inline-flex items-center justify-center px-7 rounded-[12px] text-[14px] font-semibold text-white bg-[#0A84FF] overflow-hidden shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:shadow-[0_8px_24px_rgba(10,132,255,0.3)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    <span className="absolute inset-0 bg-gradient-to-b from-white/15 to-transparent opacity-100 mix-blend-overlay"></span>
+                    <span className="relative z-10 flex items-center">Book a Call</span>
                   </Link>
-                  <GlassButton to="/services">Check our Services</GlassButton>
+
+                  <Link 
+                    to="/services"
+                    className="group relative h-[44px] w-full sm:w-auto inline-flex items-center justify-center px-7 rounded-[12px] text-[14px] font-semibold text-white bg-white/[0.04] backdrop-blur-xl border border-white/10 hover:border-white/30 hover:bg-white/[0.08] hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  >
+                    <span className="relative z-10 flex items-center">
+                      Check our Services
+                      <svg className="w-4 h-4 ml-2 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </span>
+                  </Link>
                 </div>
                 <div className="pt-6">
-                  <p className="text-xs text-gray-400 font-barlow tracking-wider uppercase">
+                  <p className="text-xs text-gray-400 font-barlow tracking-wider uppercase whitespace-nowrap overflow-hidden text-ellipsis">
                     React · Next.js · Flutter · FastAPI · NestJS · PostgreSQL · LLM integration
                   </p>
                 </div>
@@ -56,7 +68,7 @@ const BannerHome = () => {
             </div>
           </div>
 
-          <div className={`hidden md:block relative mt-10 lg:mt-0`}>
+          <div className={`md:block relative mt-10 lg:mt-0`}>
             <div className="relative z-10 animate-float">
               <img
                 src={heroBanner}

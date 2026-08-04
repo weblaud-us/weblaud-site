@@ -215,6 +215,9 @@ const OurSpeciality = () => {
                       ref={descriptionRef}
                       className={`text-gray-300 text-sm md:text-base leading-relaxed mb-8`}
                     >
+                      <span className="block font-barlow font-bold text-white text-lg md:text-xl mb-3">
+                        {activeContent.title}
+                      </span>
                       {activeContent.description}
                     </p>
 
@@ -375,6 +378,24 @@ const OurSpeciality = () => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Mobile Pagination Dots */}
+            {isMobile && (
+              <div className="flex justify-center gap-2 mt-6 lg:hidden">
+                {tabsData.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as number)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      activeTab === tab.id
+                        ? "bg-primary w-6"
+                        : "bg-white/20 hover:bg-white/40"
+                    }`}
+                    aria-label={`Go to ${tab.title}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

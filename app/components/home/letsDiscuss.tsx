@@ -67,14 +67,14 @@ const LetsDiscuss = () => {
           <div className="relative z-10 text-center">
             <h2
               ref={titleRef}
-              className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-lexend mb-6 md:mb-8 ${getBlurAnimationClasses(
+              className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-barlow mb-6 md:mb-8 ${getBlurAnimationClasses(
                 isTitleVisible,
                 { variant: "default" }
               )}`}
               style={getBlurAnimationDelay(200)}
             >
               <motion.span
-                className="inline-block bg-linear-to-b from-black via-gray to-white bg-clip-text text-transparent"
+                className="inline-block bg-linear-to-b from-white via-white/90 to-white/70 bg-clip-text text-transparent"
                 animate={{
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 }}
@@ -107,7 +107,7 @@ const LetsDiscuss = () => {
 
             <p
               ref={subtitleRef}
-              className={`text-gray text-sm sm:text-md md:text-lg max-w-2xl mx-auto mb-10 md:mb-12 font-poppins leading-relaxed ${getBlurAnimationClasses(
+              className={`text-gray text-sm sm:text-md md:text-lg max-w-2xl mx-auto mb-10 md:mb-12 font-sans leading-relaxed ${getBlurAnimationClasses(
                 isSubtitleVisible,
                 { variant: "default" }
               )}`}

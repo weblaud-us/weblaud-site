@@ -17,7 +17,7 @@ const OurServices = () => {
 
   const { itemRefs, isItemVisible } = useBlurAnimationList(
     services.map((s) => s.id),
-    0.1
+    0.05
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,7 +50,8 @@ const OurServices = () => {
           {services.map((service, index) => {
             const isVisible = isItemVisible(service.id);
             const animation = blurAnimation(isVisible, index, {
-              variant: "heavy",
+              variant: "default",
+              staggerDelay: 80,
             });
 
             return (

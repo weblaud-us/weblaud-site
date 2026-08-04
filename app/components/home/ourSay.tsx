@@ -62,10 +62,10 @@ export default function OurSay() {
   };
 
   return (
-    <section ref={containerRef} className="bg-black text-white py-16 md:py-24">
+    <section ref={containerRef} className="bg-black text-white py-12 md:py-16">
       <div className="max-w-5xl mx-auto px-4 md:px-6">
         <h2
-          className={`text-center text-2xl md:text-3xl font-semibold ${getBlurAnimationClasses(isVisible)}`}
+          className={`text-center text-2xl md:text-3xl font-semibold mb-8 ${getBlurAnimationClasses(isVisible)}`}
         >
           What Our Clients Say
         </h2>
@@ -180,7 +180,7 @@ export default function OurSay() {
                           ease: [0.22, 1, 0.36, 1],
                         }}
                       >
-                        <h4 className="text-primary font-medium font-lexend text-base m-0">
+                        <h4 className="text-primary font-medium font-barlow text-base m-0">
                           {item.name}
                         </h4>
                         {item.context && (

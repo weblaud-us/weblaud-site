@@ -68,7 +68,7 @@ const WhyChooseUs = () => {
           className={`text-center mb-12 md:mb-16 ${getBlurAnimationClasses(isTitleVisible)}`}
         >
           <p className="text-primary text-xs font-semibold tracking-[0.2em] uppercase font-barlow mb-3">
-            Why Work With Us
+            THE WEBLAUD ADVANTAGE
           </p>
           <h2 className="text-white font-barlow text-2xl md:text-3xl font-semibold">
             Why Choose Us
@@ -95,6 +95,8 @@ const WhyChooseUs = () => {
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 className={`group relative bg-card-bg border border-light-black rounded-2xl p-6 md:p-8 ${reason.borderHover} transition-all duration-300 hover:shadow-lg overflow-hidden cursor-pointer`}
               >
+                {/* Default subtle background layer to prevent cards from looking flat on mobile */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent rounded-2xl pointer-events-none md:hidden" />
                 {/* Card gradient bg on hover */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${reason.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`}
@@ -124,7 +126,7 @@ const WhyChooseUs = () => {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-white font-barlow font-bold text-lg mb-2 group-hover:text-white transition-colors duration-300">
+                  <h3 className="text-white font-barlow font-bold text-lg mb-2 min-h-[3.5rem] flex items-start group-hover:text-white transition-colors duration-300">
                     {reason.title}
                   </h3>
 

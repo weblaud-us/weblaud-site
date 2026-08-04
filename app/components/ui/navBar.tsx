@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
-import { Button } from "./button";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import weblaudLogo from "~/assets/weblaud-logo.svg";
-import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import logo from "~/assets/weblaud.com.svg";
+// import { Button } from "./button";
+// import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 
 const NavBar = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
@@ -65,8 +65,8 @@ const NavBar = () => {
           <div
             className={`flex items-center justify-between transition-all duration-1000 ease-out ${
               isScrolled
-                ? "bg-card-bg backdrop-blur-lg border border-light-black rounded-2xl px-4 md:px-6 py-2 md:py-3 shadow-lg shadow-black/50"
-                : "bg-card-bg backdrop-blur-md border border-light-black   rounded-3xl px-6 md:px-8 py-3 md:py-4"
+                ? "bg-card-bg/80 backdrop-blur-xl border border-light-black/50 rounded-2xl px-4 md:px-6 py-2 md:py-3 shadow-lg shadow-black/50"
+                : "bg-card-bg/50 backdrop-blur-md border border-light-black   rounded-3xl px-6 md:px-8 py-3 md:py-4"
             } ${
               isVisible
                 ? "opacity-100 blur-0 translate-y-0"
@@ -115,17 +115,16 @@ const NavBar = () => {
               })}
             </div>
 
-            <div className="hidden lg:flex items-center">
-              <Button
-                onClick={() => setIsModalOpen(true)}
+            {/* Book a Call — desktop nav button (hidden; keeping for layout balance) */}
+            <div className="hidden lg:flex items-center invisible pointer-events-none" aria-hidden="true">
+              <div
                 className={`text-xs font-bold transition-all duration-300 ${
                   isScrolled ? "px-6 py-2.5 text-xs" : "px-8 py-3 text-sm"
-                }`}
+                } bg-primary rounded-xl text-white`}
               >
                 Book a Call
-              </Button>
+              </div>
             </div>
-
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="lg:hidden text-white cursor-pointer p-2 hover:bg-blue-500/20 rounded-lg transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden group"
@@ -192,6 +191,7 @@ const NavBar = () => {
                 ))}
               </nav>
 
+              {/* Book a Call — mobile drawer button (commented out; re-enable when needed)
               <div
                 className={`transition-all duration-500 ${
                   isMobileMenuOpen
@@ -210,14 +210,13 @@ const NavBar = () => {
                   Book a Call
                 </Button>
               </div>
+              */}
+
             </div>
           </div>
         </div>
       </nav>
-      <BookingModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      {/* <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} /> */}
     </>
   );
 };

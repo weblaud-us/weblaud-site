@@ -258,7 +258,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
               {["W", "e", "l", "c", "o", "m", "e"].map((letter, index) => (
                 <motion.span
                   key={index}
-                  className="text-4xl md:text-5xl font-bold font-lexend text-white inline-block"
+                  className="text-4xl md:text-5xl font-bold font-barlow text-white inline-block"
                   initial={{ opacity: 0, y: 20, rotateX: -90 }}
                   animate={{ opacity: 1, y: 0, rotateX: 0 }}
                   transition={{
@@ -280,7 +280,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
               {["T", "o"].map((letter, index) => (
                 <motion.span
                   key={index}
-                  className="text-4xl md:text-5xl font-bold font-lexend text-white inline-block"
+                  className="text-4xl md:text-5xl font-bold font-barlow text-white inline-block"
                   initial={{ opacity: 0, y: 20, rotateX: -90 }}
                   animate={{ opacity: 1, y: 0, rotateX: 0 }}
                   transition={{
@@ -328,7 +328,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
               {["C", "r", "a", "f", "t", "i", "n", "g"].map((char, index) => (
                 <motion.span
                   key={`crafting-${index}`}
-                  className="text-lg md:text-xl text-white font-poppins font-semibold relative"
+                  className="text-lg md:text-xl text-white font-sans font-semibold relative"
                   initial={{ opacity: 0, scaleY: 0, y: 10 }}
                   animate={{ opacity: 1, scaleY: 1, y: 0 }}
                   transition={{
@@ -360,7 +360,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
               {["D", "i", "g", "i", "t", "a", "l"].map((char, index) => (
                 <motion.span
                   key={`digital-${index}`}
-                  className="text-lg md:text-xl text-white font-poppins font-semibold relative"
+                  className="text-lg md:text-xl text-white font-sans font-semibold relative"
                   initial={{ opacity: 0, scaleY: 0, y: 10 }}
                   animate={{ opacity: 1, scaleY: 1, y: 0 }}
                   transition={{
@@ -393,7 +393,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
                 (char, index) => (
                   <motion.span
                     key={`excellence-${index}`}
-                    className="text-lg md:text-xl text-white font-poppins font-semibold relative"
+                    className="text-lg md:text-xl text-white font-sans font-semibold relative"
                     initial={{ opacity: 0, scaleY: 0, y: 10 }}
                     animate={{ opacity: 1, scaleY: 1, y: 0 }}
                     transition={{
@@ -489,7 +489,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center gap-2">
               <motion.span
-                className="text-xs text-gray-500 font-poppins"
+                className="text-xs text-gray-500 font-sans"
                 key={loadingStage}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}

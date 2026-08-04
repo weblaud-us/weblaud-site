@@ -62,7 +62,7 @@ export default function FAQ() {
   };
 
   return (
-    <section className="relative py-14 pb-24 bg-black text-white overflow-hidden">
+    <section className="relative py-14 pb-16 bg-black text-white overflow-hidden scroll-mt-24">
 
       <motion.div className="absolute top-20 left-30 w-40 h-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
       <motion.div className="absolute md:block hidden bottom-20 right-30 w-40 h-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
