@@ -13,7 +13,9 @@ const BannerAboutUs = () => {
           text: "Innovation & Excellence",
           showPulse: true,
         }}
+        title="We're Engineers Who Build With Purpose"
         description="Combining deep engineering expertise with a human-centered approach to deliver AI-powered, cloud, and custom software solutions that drive real business transformation"
+        button={{
           text: "Book a Call",
           onClick: () => {
             setIsModalOpen(true);
