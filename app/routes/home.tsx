@@ -31,12 +31,12 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "description",
       content:
-        "Weblaud LLC is a software development company and innovation studio. We build high-performance digital products and provide expert software engineering for businesses worldwide.",
+        "We build the operational software that service businesses run on — admin platforms, mobile apps, and AI that removes the manual work. Production-grade, delivered in weeks.",
     },
     {
       name: "keywords",
       content:
-        "Weblaud LLC, software company, product development, digital product studio, software engineering, operations platforms, AI integration, mobile development, custom software, innovation lab",
+        "Weblaud LLC, software company, product development, digital product studio, software engineering, operations platforms, web applications, AI integration, mobile development, custom software, innovation lab",
     },
     {
       property: "og:title",
@@ -45,7 +45,7 @@ export function meta({}: Route.MetaArgs) {
     {
       property: "og:description",
       content:
-        "Transform your ideas into reality with Weblaud LLC. A premium software agency providing expert digital solutions and custom software.",
+        "We build the operational software that service businesses run on — admin platforms, mobile apps, and AI that removes the manual work.",
     },
     { property: "og:type", content: "website" },
     { property: "og:url", content: "https://weblaud.com/" },
@@ -64,7 +64,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "twitter:description",
       content:
-        "Transform your ideas into reality with Weblaud LLC. A premium software agency providing expert digital solutions and custom software.",
+        "We build the operational software that service businesses run on — admin platforms, mobile apps, and AI that removes the manual work.",
     },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
     {
@@ -77,7 +77,7 @@ export function meta({}: Route.MetaArgs) {
             name: "What services does your company offer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "We provide comprehensive digital solutions including operations platform development, mobile app and backend engineering, AI integration, dedicated engineering teams, real-time communication infrastructure, and cloud DevOps. Our team specializes in modern technologies to deliver scalable, high-performance applications tailored to your business needs.",
+              text: "We provide comprehensive digital solutions including operations platform development, web application development, mobile app and backend engineering, AI integration, cloud and real-time infrastructure, and dedicated engineering teams. Our team specializes in modern technologies to deliver scalable, high-performance applications tailored to your business needs.",
             },
           },
           {

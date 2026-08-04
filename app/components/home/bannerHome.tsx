@@ -30,16 +30,14 @@ const BannerHome = () => {
             </div>
 
             <div className={`space-y-4 sm:space-y-6 md:space-y-8`}>
-              <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold font-barlow leading-tight">
-                We Engineer Software
-                <span className="block">Companies Actually</span>
-                <span className="block">Scale With</span>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-barlow leading-tight">
+                Your Business <span className="block">Outgrew Its Spreadsheets</span>
               </h1>
 
-              <p className="text-sm sm:text-base md:text-lg text-gray-300 font-barlow sm:max-w-md max-w-sm lg:max-w-xl leading-relaxed">
-                From AI-powered platforms to real-time infrastructure — we
-                build production-grade software for businesses that demand
-                performance, precision, and real results.
+              <p className="text-sm sm:text-base md:text-lg text-gray-300 font-barlow sm:max-w-md max-w-sm lg:max-w-xl leading-relaxed text-balance">
+                We build the operational software that service businesses run on —
+                admin platforms, mobile apps, and AI that removes the manual work.
+                Production-grade, delivered in weeks.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 pt-2">
@@ -49,6 +47,12 @@ const BannerHome = () => {
                   </Button>
                 </Link>
                 <GlassButton to="/services">Check our Services</GlassButton>
+              </div>
+
+              <div className="pt-4 md:pt-6">
+                <p className="text-xs text-gray-500/80 font-barlow tracking-wider uppercase">
+                  React · Next.js · Flutter · FastAPI · NestJS · PostgreSQL · LLM integration
+                </p>
               </div>
             </div>
           </div>
