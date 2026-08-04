@@ -36,7 +36,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "keywords",
       content:
-        "Weblaud LLC, software company, product development, digital product studio, software engineering, SaaS development, UI/UX design, custom software, innovation lab",
+        "Weblaud LLC, software company, product development, digital product studio, software engineering, operations platforms, AI integration, mobile development, custom software, innovation lab",
     },
     {
       property: "og:title",
@@ -77,7 +77,7 @@ export function meta({}: Route.MetaArgs) {
             name: "What services does your company offer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "We provide comprehensive digital solutions including custom web development, mobile app development, UI/UX design, cloud infrastructure setup, API development, and ongoing maintenance and support. Our team specializes in modern technologies like React, Next.js, Node.js, and cloud platforms to deliver scalable, high-performance applications tailored to your business needs.",
+              text: "We provide comprehensive digital solutions including operations platform development, mobile app and backend engineering, AI integration, dedicated engineering teams, real-time communication infrastructure, and cloud DevOps. Our team specializes in modern technologies to deliver scalable, high-performance applications tailored to your business needs.",
             },
           },
           {

@@ -82,7 +82,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
             {title}
           </h3>
 
-          <p className="text-white/70 group-hover:text-white/90 font-barlow text-sm sm:text-base mb-6 text-center leading-relaxed transition-colors duration-500">
+          <p className="line-clamp-2 text-white/70 group-hover:text-white/90 font-barlow text-sm sm:text-base mb-6 text-center leading-relaxed transition-colors duration-500">
             {description}
           </p>
 

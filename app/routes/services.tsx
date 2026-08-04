@@ -15,12 +15,12 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "description",
       content:
-        "Explore Weblaud LLC's comprehensive software services: custom engineering, mobile app development, UI/UX design, and AI solutions for digital transformation.",
+        "Explore Weblaud LLC's comprehensive software services: operations platforms, mobile & backend development, AI integrations, dedicated engineering teams, real-time infrastructure, and cloud DevOps.",
     },
     {
       name: "keywords",
       content:
-        "software services, software agency, Weblaud LLC, custom engineering, UI/UX design, AI solutions, web development",
+        "software services, software agency, Weblaud LLC, operations platforms, mobile development, AI integration, dedicated engineering, real-time infrastructure, DevOps",
     },
     {
       property: "og:title",

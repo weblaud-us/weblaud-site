@@ -19,7 +19,7 @@ const items: FAQItem[] = [
     id: 1,
     question: "What services does your company offer?",
     answer:
-      "We provide comprehensive digital solutions including custom web development, mobile app development, UI/UX design, cloud infrastructure setup, API development, and ongoing maintenance and support. Our team specializes in modern technologies like React, Next.js, Node.js, and cloud platforms to deliver scalable, high-performance applications tailored to your business needs.",
+      "We provide comprehensive digital solutions including operations platform development, mobile app and backend engineering, AI integration, dedicated engineering teams, real-time communication infrastructure, and cloud DevOps. Our team specializes in modern technologies to deliver scalable, high-performance applications tailored to your business needs.",
   },
   {
     id: 2,
