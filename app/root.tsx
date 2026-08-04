@@ -144,6 +144,12 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [location.pathname]);
+
   const handleLoaderComplete = () => {
     setShowLoader(false);
     setIsLoaderComplete(true);
@@ -163,7 +169,7 @@ export default function App() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <NavBar />
-            <AnimatePresence mode="sync">
+            <AnimatePresence mode="wait">
               <motion.main
                 key={location.pathname}
                 initial={{ opacity: 0, y: 8, filter: "blur(3px)" }}

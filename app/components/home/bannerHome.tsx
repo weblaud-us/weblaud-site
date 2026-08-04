@@ -10,24 +10,33 @@ const BannerHome = () => {
         <div className="absolute bottom-20 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 lg:pb-14 pt-20 md:pt-24 lg:pt-28">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 lg:pb-14 pt-30 md:pt-40 lg:pt-48">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-0 items-center">
-          <div className="flex  ">
-            <div className="flex items-start relative top-5 sm:top-0">
+          <div className="relative flex">
+            {/* Absolute positioned arrow for sm and up */}
+            <div className="absolute hidden sm:block -left-10 md:-left-12 lg:-left-16 top-6 h-[85%] max-h-[380px] w-[80px] lg:w-[100px] pointer-events-none">
               <img
                 src={dashedArrow}
                 alt="Dashed Arrow"
-                className="md:h-64 lg:h-72 sm:h-52 h-44 relative bottom-11"
-                width="40"
-                height="288"
+                className="w-full h-full object-contain object-right-top"
                 loading="eager"
               />
-              <span className="text-xs uppercase tracking-wider font-barlow relative left-2 bottom-12 whitespace-nowrap">
+              <span className="text-xs uppercase tracking-wider font-barlow absolute -top-8 left-2 whitespace-nowrap text-gray-500">
                 OPERATIONS SOFTWARE
               </span>
             </div>
 
-            <div className={`space-y-3 sm:space-y-4 md:space-y-6`}>
+            {/* Mobile inline arrow */}
+            <div className="flex sm:hidden items-start relative top-2 pr-3">
+              <img
+                src={dashedArrow}
+                alt="Dashed Arrow"
+                className="w-8 h-[220px]"
+                loading="eager"
+              />
+            </div>
+
+            <div className={`space-y-3 sm:space-y-4 md:space-y-6 sm:ml-12 md:ml-16 lg:ml-20 w-full`}>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-barlow leading-tight text-balance">
                 Your Business <span>Outgrew Its Spreadsheets</span>
               </h1>

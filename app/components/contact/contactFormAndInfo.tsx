@@ -16,6 +16,7 @@ import { ContactInfo } from "../ui/contact-info";
 import { BookMeeting } from "../ui/book-meeting";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
+import { countryCodes } from "~/data/country-codes";
 
 type FormData = {
   firstName: string;
@@ -213,10 +214,11 @@ const ContactFormAndInfo = () => {
                     {...register("countryCode")}
                     className="w-full pl-10 pr-8 appearance-none text-white/40 hover:border-primary/40 hover:shadow-sm hover:shadow-primary/20 group-hover/select:border-primary/50 transition-all duration-300 cursor-pointer"
                   >
-                    <option value="+1">🇺🇸 +1</option>
-                    <option value="+880">🇧🇩 +880</option>
-                    <option value="+44">🇬🇧 +44</option>
-                    <option value="+91">🇮🇳 +91</option>
+                    {countryCodes.map((country, index) => (
+                      <option key={`${country.code}-${index}`} value={country.code}>
+                        {country.flag} {country.code}
+                      </option>
+                    ))}
                   </Select>
                   <div className="absolute top-4 right-3 flex items-center pointer-events-none z-10">
                     <svg

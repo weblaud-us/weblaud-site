@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 
 /**
  * Custom hook for blur-in animation on scroll using Intersection Observer
@@ -75,8 +75,11 @@ export function useBlurAnimationList<TId extends string | number>(
   resetOnExit: boolean = false,
   resetKey?: string | number
 ) {
+  // Stabilize itemIds to prevent infinite loops when called with inline map/filter
+  const stableItemIds = useMemo(() => itemIds, [JSON.stringify(itemIds)]);
+
   // Start with all items visible — content renders immediately by default.
-  const [visibleItems, setVisibleItems] = useState<Set<TId>>(() => new Set(itemIds));
+  const [visibleItems, setVisibleItems] = useState<Set<TId>>(() => new Set(stableItemIds));
   const itemRefs = useRef<Map<TId, HTMLElement>>(new Map());
 
   // Reset animation when resetKey changes (e.g., on route change)
@@ -87,7 +90,7 @@ export function useBlurAnimationList<TId extends string | number>(
   useEffect(() => {
     const observers = new Map<TId, IntersectionObserver>();
 
-    itemIds.forEach((itemId) => {
+    stableItemIds.forEach((itemId) => {
       const element = itemRefs.current.get(itemId);
       if (!element) return;
 
@@ -127,7 +130,7 @@ export function useBlurAnimationList<TId extends string | number>(
     return () => {
       observers.forEach((observer) => observer.disconnect());
     };
-  }, [itemIds, threshold, resetOnExit]);
+  }, [stableItemIds, threshold, resetOnExit]);
 
   const isItemVisible = (itemId: TId) => visibleItems.has(itemId);
 
