@@ -22,7 +22,7 @@ const sectionsData = {
     badge: "What We Do",
     number: "02",
     paragraphs: [
-      "Our mission is to build technology that’s practical, human, and built to last. We aim to simplify complex challenges through honest communication, clean development, and solutions that support real business growth. Whether it’s AI, mobile apps, blockchain, or cloud systems, we focus on making the process feel smooth and supportive at every step. We’re here to help you move forward with clarity and confidence.",
+      "Our mission is to build technology that’s practical, human, and built to last. We aim to simplify complex challenges through honest communication, clean development, and solutions that support real business growth. Whether it’s AI, mobile apps, or cloud systems, we focus on making the process feel smooth and supportive at every step. We’re here to help you move forward with clarity and confidence.",
     ],
   },
 };

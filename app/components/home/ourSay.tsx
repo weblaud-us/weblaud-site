@@ -47,7 +47,7 @@ const items: WhyItem[] = [
   {
     id: 5,
     quote:
-      "They delivered our algorithmic trading dashboard with real-time WebSocket feeds and full risk visualization. Complex scope, executed cleanly and shipped on schedule.",
+      "They delivered our high-performance dashboard with real-time WebSocket feeds and full risk visualization. Complex scope, executed cleanly and shipped on schedule.",
     author: "Priya Sharma",
     role: "Quantitative Analyst, QuantEdge Capital · FinTech",
   },

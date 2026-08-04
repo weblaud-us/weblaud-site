@@ -37,7 +37,7 @@ const BannerHome = () => {
               </h1>
 
               <p className="text-sm sm:text-base md:text-lg text-gray-300 font-barlow sm:max-w-md max-w-sm lg:max-w-xl leading-relaxed">
-                From AI-powered platforms to algorithmic trading systems — we
+                From AI-powered platforms to real-time infrastructure — we
                 build production-grade software for businesses that demand
                 performance, precision, and real results.
               </p>

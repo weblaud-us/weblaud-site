@@ -40,7 +40,7 @@ const OurCaseStudies = () => {
             style={{ transitionDelay: "200ms" }}
           >
             Explore our portfolio of innovative technology solutions spanning
-            blockchain, machine learning, and enterprise platforms. Each project
+            cloud infrastructure, machine learning, and enterprise platforms. Each project
             demonstrates our commitment to excellence and cutting-edge
             innovation.
           </p>

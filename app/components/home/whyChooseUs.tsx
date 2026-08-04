@@ -7,7 +7,7 @@ const reasons = [
   {
     title: "Innovation",
     description:
-      "Pushing boundaries with AI, blockchain, and next-gen application solutions.",
+      "Pushing boundaries with AI, cloud infrastructure, and next-gen application solutions.",
     icon: BsLightningChargeFill,
     gradient: "from-blue-500/20 to-cyan-500/10",
     iconColor: "text-blue-400",

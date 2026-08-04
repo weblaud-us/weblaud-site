@@ -38,42 +38,7 @@ export const projects: Project[] = [
     techStack: ["Python", "TensorFlow", "AWS SageMaker", "React", "Node.js", "PostgreSQL"],
     businessImpact: "Reduced average delivery time by 18%, slashed fuel consumption by 12%, and improved customer satisfaction scores by 35% within the first quarter of deployment."
   },
-  {
-    id: 2,
-    slug: "blockchain-integration",
-    title: "Blockchain Integration",
-    description:
-      "Secure and scalable blockchain solutions featuring smart contract development, decentralized applications, and distributed ledger technology for transparent and immutable transaction processing.",
-    features: [
-      "Smart contract development & audit",
-      "Decentralized app (DApp) architecture",
-      "Multi-chain integration support",
-    ],
-    image: pimg02,
-    imageAlt: "Blockchain Technology Project",
-    problem: "A global supply chain company faced challenges with transparency, counterfeit goods, and disputes over shipment verifications across multiple international parties.",
-    solution: "We designed and implemented a private blockchain network utilizing smart contracts to track goods from manufacturing to delivery. The immutable ledger provided real-time visibility and automated settlement upon delivery confirmation.",
-    techStack: ["Solidity", "Ethereum", "Hyperledger Fabric", "Web3.js", "Next.js", "Go"],
-    businessImpact: "Eliminated 99% of contract disputes, reduced supply chain administrative costs by $2.4M annually, and achieved end-to-end product traceability."
-  },
-  {
-    id: 3,
-    slug: "algorithmic-trading",
-    title: "Algorithmic Trading",
-    description:
-      "High-frequency trading platform utilizing sophisticated algorithms and real-time market data analysis to execute automated trading strategies with precision and minimal latency.",
-    features: [
-      "Real-time market data processing",
-      "Automated strategy execution",
-      "Risk management & backtesting",
-    ],
-    image: pimg03,
-    imageAlt: "Trading Algorithm Project",
-    problem: "A boutique hedge fund needed to execute complex trading strategies across multiple exchanges simultaneously, but their existing infrastructure suffered from high latency and manual execution errors.",
-    solution: "We developed a low-latency, high-frequency algorithmic trading system written in C++ and Go. The platform integrates directly with exchange APIs via WebSocket, executing predefined quantitative strategies in microseconds.",
-    techStack: ["C++", "Go", "Redis", "Kafka", "Docker", "Kubernetes"],
-    businessImpact: "Reduced trade execution latency from 45ms to under 2ms, increased daily trading volume capacity by 400%, and significantly boosted the fund's overall alpha."
-  },
+
   {
     id: 4,
     slug: "data-analytics-platform",
