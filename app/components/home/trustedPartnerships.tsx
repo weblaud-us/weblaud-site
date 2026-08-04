@@ -243,9 +243,8 @@ const TrustedPartnerships = () => {
             Our Trusted Partnerships
           </h2>
           <p className="text-dark-gray text-sm md:text-base font-barlow mt-3 max-w-xl mx-auto leading-relaxed">
-            We collaborate with world-class platforms and technology providers
-            — from cloud infrastructure to cutting-edge AI — to deliver
-            exceptional results.
+            We collaborate with world-class platforms and technology providers.
+            We use modern engineering practices to deliver exceptional results.
           </p>
         </div>
       </div>

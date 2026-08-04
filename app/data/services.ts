@@ -19,7 +19,7 @@ export const services: Service[] = [
     id: 1,
     title: "Operations Platform Development",
     description:
-      "End-to-end operational systems — role-based admin panels, billing and invoicing, full accounting ledgers, automated reporting, and print-ready document generation. Built for clinics, logistics firms, distributors, and multi-branch service operations.",
+      "We build role-based admin panels, billing pipelines, full accounting ledgers, and automated reporting systems. Built for clinics, logistics firms, distributors, and multi-branch service operations.",
     features: [
       "Role-based admin panel with granular permissions",
       "Billing, invoicing, and print-ready document generation",
@@ -33,9 +33,24 @@ export const services: Service[] = [
   },
   {
     id: 2,
+    title: "Web Application Development",
+    description:
+      "Custom web applications and SaaS platforms. We use React and Next.js on the front end, backed by FastAPI or Node.js and PostgreSQL. Server-side rendering, real auth, and a data layer that holds up past the first thousand users.",
+    features: [
+      "React / Next.js application with SSR and SEO-ready routing",
+      "FastAPI or Node.js/NestJS backend with documented APIs",
+      "PostgreSQL schema design, indexing, and migrations",
+      "Authentication, role-based access, and subscription billing",
+      "Staging and production deployment pipeline",
+    ],
+    image: webAppImg,
+    imageAlt: "Web Application Development",
+  },
+  {
+    id: 3,
     title: "Mobile App & Backend Development",
     description:
-      "Flutter applications for iOS and Android backed by production-grade Node.js/NestJS APIs, plus the admin dashboard to run them. Auth, payments, push notifications, and store deployment included.",
+      "Flutter applications for iOS and Android backed by secure Node.js or NestJS APIs, plus the admin dashboard to run them. Auth, payments, push notifications, and store deployment included.",
     features: [
       "Flutter app for iOS and Android from a single codebase",
       "Node.js / NestJS backend with documented REST APIs",
@@ -47,7 +62,7 @@ export const services: Service[] = [
     imageAlt: "Mobile App & Backend Development",
   },
   {
-    id: 3,
+    id: 4,
     title: "AI Integration Sprint",
     description:
       "A fixed-scope engagement that layers AI onto your existing product. Document and report generation, support assistants trained on your own data, invoice and form extraction, and semantic internal search.",
@@ -62,10 +77,26 @@ export const services: Service[] = [
     imageAlt: "AI Integration Sprint",
   },
   {
-    id: 4,
+    id: 5,
+    title: "Cloud & Real-Time Infrastructure",
+    description:
+      "WebRTC systems deployed on your own infrastructure. You get video, voice, and chat capabilities without per-minute vendor pricing, plus the deployment, backup, and monitoring layer underneath. For teams without a dedicated DevOps engineer.",
+    features: [
+      "LiveKit / WebRTC deployment, TURN/STUN (coturn) setup and hardening",
+      "Real-time chat with presence, delivery states, and push",
+      "Server provisioning, security hardening, and CI/CD pipelines",
+      "Automated backups with restores actually tested",
+      "Uptime, error, and performance monitoring with alerts",
+      "Load testing, scaling runbook, and infrastructure handover",
+    ],
+    image: algorithmTradingImg,
+    imageAlt: "Cloud & Real-Time Infrastructure",
+  },
+  {
+    id: 6,
     title: "Dedicated Engineering Team",
     description:
-      "A dedicated engineer or small pod working as an extension of your in-house team. Your tools, your standups, your roadmap — with the timezone overlap and cost structure of an offshore partner.",
+      "A dedicated engineer or small pod working as an extension of your in-house team. We adopt your tools, standups, and roadmap while providing the cost structure of an offshore partner.",
     features: [
       "Senior full-stack engineers (Flutter, Node.js, NestJS, cloud)",
       "Dedicated Slack channel and your sprint cadence",
@@ -74,35 +105,5 @@ export const services: Service[] = [
     ],
     image: customDesignImg,
     imageAlt: "Dedicated Engineering Team",
-  },
-  {
-    id: 5,
-    title: "Real-Time & Communication Infrastructure",
-    description:
-      "Production WebRTC systems built and tuned on your own infrastructure — video calls, voice, live chat, and presence — without per-minute vendor pricing. We deploy, harden, and optimize the media servers behind them.",
-    features: [
-      "LiveKit / WebRTC deployment on your own infrastructure",
-      "TURN/STUN (coturn) setup, hardening, and NAT traversal tuning",
-      "Real-time chat with presence, delivery states, and push",
-      "Load testing and connection-quality optimization",
-      "Monitoring and scaling runbook",
-    ],
-    image: algorithmTradingImg,
-    imageAlt: "Real-Time & Communication Infrastructure",
-  },
-  {
-    id: 6,
-    title: "Cloud Infrastructure & DevOps",
-    description:
-      "Production infrastructure for teams without a dedicated DevOps engineer. Server provisioning and hardening, automated CI/CD, scheduled backups, and monitoring — on AWS, GCP, Azure, or cost-optimized VPS.",
-    features: [
-      "Server provisioning and security hardening",
-      "CI/CD pipelines with automated deploys and rollback",
-      "Automated backup and restore, with restores actually tested",
-      "Uptime, error, and performance monitoring with alerts",
-      "Infrastructure documentation and handover",
-    ],
-    image: webAppImg,
-    imageAlt: "Cloud Infrastructure & DevOps",
   },
 ];

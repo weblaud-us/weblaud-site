@@ -19,7 +19,7 @@ const items: FAQItem[] = [
     id: 1,
     question: "What services does your company offer?",
     answer:
-      "We provide comprehensive digital solutions including operations platform development, mobile app and backend engineering, AI integration, dedicated engineering teams, real-time communication infrastructure, and cloud DevOps. Our team specializes in modern technologies to deliver scalable, high-performance applications tailored to your business needs.",
+      "We provide comprehensive digital solutions including operations platform development, web application development, mobile app and backend engineering, AI integration, cloud and real-time infrastructure, and dedicated engineering teams. Our team specializes in modern technologies to deliver scalable, high-performance applications tailored to your business needs.",
   },
   {
     id: 2,
@@ -31,7 +31,7 @@ const items: FAQItem[] = [
     id: 3,
     question: "Do you offer post-launch support and maintenance?",
     answer:
-      "Yes, we provide comprehensive post-launch support including bug fixes, security updates, performance monitoring, and feature enhancements. We offer flexible maintenance packages tailored to your needs, from basic monitoring to full ongoing development partnerships with dedicated support teams.",
+      "Yes, we provide continuous post-launch support including bug fixes, security updates, and feature enhancements. We offer flexible maintenance packages tailored to your needs.",
   },
   {
     id: 4,
@@ -44,7 +44,7 @@ const items: FAQItem[] = [
     question:
       "Can you work with our existing tech stack or integrate with our systems?",
     answer:
-      "Absolutely! We're experienced in working with diverse tech stacks and can seamlessly integrate with your existing systems, APIs, databases, and third-party services. Whether you need to modernize legacy systems, add new features, or build complementary tools, we'll work within your technical ecosystem while recommending best practices for optimal results.",
+      "Yes. We work with diverse tech stacks and can integrate with your existing APIs, databases, and third-party services. We modernize legacy codebases and build new features directly within your current technical ecosystem.",
   },
 ];
 

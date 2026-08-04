@@ -25,7 +25,7 @@ export const projects: Project[] = [
     slug: "machine-learning-platform",
     title: "Machine Learning Platform",
     description:
-      "Advanced AI-powered platform leveraging cutting-edge machine learning algorithms to deliver predictive analytics, automated decision-making, and intelligent data processing for enterprise solutions.",
+      "Machine learning platform that processes enterprise data to deliver predictive analytics and automated decision-making pipelines.",
     features: [
       "Neural network training & optimization",
       "Real-time predictive analytics",
@@ -80,7 +80,7 @@ export const projects: Project[] = [
     slug: "enterprise-infrastructure",
     title: "Enterprise Infrastructure",
     description:
-      "Robust and scalable enterprise infrastructure solutions featuring cloud-native architecture, microservices, and DevOps automation for high-performance and reliable business operations.",
+      "Enterprise infrastructure solutions featuring cloud-native architecture, microservices, and automated DevOps pipelines.",
     features: [
       "Cloud-native architecture design",
       "Automated CI/CD pipelines",

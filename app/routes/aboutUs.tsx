@@ -18,7 +18,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "description",
       content:
-        "Weblaud LLC is an innovation-driven software company. From building proprietary products to delivering expert engineering services, our mission is to solve complex problems through code.",
+        "Weblaud LLC is a software engineering company. We build internal products and deliver core software systems to solve complex problems through code.",
     },
     {
       name: "keywords",

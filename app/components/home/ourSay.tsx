@@ -11,45 +11,45 @@ import type { Swiper as SwiperType } from "swiper";
 type WhyItem = {
   id: number;
   quote: string;
-  author: string;
-  role: string;
+  name: string;
+  context: string;
 };
 
 const items: WhyItem[] = [
   {
     id: 1,
     quote:
-      "Weblaud rebuilt our customer portal from a tangled legacy stack into a clean, scalable architecture in 8 weeks — on time, under budget, zero surprises.",
-    author: "Sarah Mitchell",
-    role: "CTO, Apex Dynamics · FinTech",
+      "Weblaud rebuilt our customer portal into a clean, scalable architecture in 8 weeks. They delivered the project on time and under budget with zero surprises.",
+    name: "Mohamed Sinai",
+    context: "",
   },
   {
     id: 2,
     quote:
       "Their team integrated an ML recommendation engine into our platform within two sprints. They understood our data pipeline immediately and shipped clean, well-documented code.",
-    author: "Michael Chen",
-    role: "Head of Engineering, DataBridge Solutions · E-commerce",
+    name: "Jay Smith",
+    context: "",
   },
   {
     id: 3,
     quote:
-      "What stood out was their technical honesty — they pushed back on one of our feature ideas and explained clearly why it would hurt performance. That kind of judgment is rare in agencies.",
-    author: "Elena Rodriguez",
-    role: "VP Product, Lumina Health · HealthTech",
+      "What stood out was their technical honesty. They pushed back on one of our feature ideas and explained clearly why it would hurt performance. That kind of judgment is rare in agencies.",
+    name: "Ahamed Sabri",
+    context: "",
   },
   {
     id: 4,
     quote:
       "Weblaud set up our entire CI/CD pipeline on AWS in two weeks. Deployment time dropped from hours of manual work to 12 minutes automated. That alone justified the engagement.",
-    author: "David Thompson",
-    role: "Director of Infrastructure, NovaTech · SaaS",
+    name: "Kayode Okunubi",
+    context: "",
   },
   {
     id: 5,
     quote:
       "They delivered our high-performance dashboard with real-time WebSocket feeds and full risk visualization. Complex scope, executed cleanly and shipped on schedule.",
-    author: "Priya Sharma",
-    role: "Quantitative Analyst, QuantEdge Capital · FinTech",
+    name: "Oliver Preisler",
+    context: "",
   },
 ];
 
@@ -94,8 +94,8 @@ export default function OurSay() {
             <Swiper
               modules={[Navigation]}
               navigation={{ prevEl: ".why-prev", nextEl: ".why-next" }}
-              loop={true}
-              centeredSlides={true}
+              loop={items.length >= 3}
+              centeredSlides={items.length >= 3}
               spaceBetween={16}
               slidesPerView={1.05}
               speed={600}
@@ -181,14 +181,16 @@ export default function OurSay() {
                         }}
                       >
                         <h4 className="text-primary font-medium font-lexend text-base m-0">
-                          {item.author}
+                          {item.name}
                         </h4>
-                        <motion.p
-                          className="text-xs text-[#8a8a8a]"
-                          transition={{ duration: 0.4, delay: 0.3 }}
-                        >
-                          {item.role}
-                        </motion.p>
+                        {item.context && (
+                          <motion.p
+                            className="text-xs text-[#8a8a8a] truncate block"
+                            transition={{ duration: 0.4, delay: 0.3 }}
+                          >
+                            {item.context}
+                          </motion.p>
+                        )}
                       </motion.div>
                     </article>
                   </SwiperSlide>

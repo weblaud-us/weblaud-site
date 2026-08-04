@@ -138,7 +138,7 @@ const TheTeam = () => {
               Built by Engineers. Driven by Results.
             </h2>
             <p className="text-gray-400 font-barlow max-w-sm text-lg">
-              Partner with a dedicated team of senior software engineers. We don't just write code; we build scalable, high-performance applications engineered to drive your business forward.
+              Partner with a dedicated team of senior software engineers. We build stable, high-performance applications that handle your core business logic.
             </p>
 
             {/* Desktop Navigation Controls */}

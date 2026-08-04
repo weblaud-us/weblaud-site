@@ -18,7 +18,7 @@ const trackRecords: TrackRecord[] = [
     suffix: "+",
     title: "AI & ML Projects Delivered",
     description:
-      "Production-grade ML systems, LLM integrations, and AI-powered applications shipped",
+      "Enterprise ML systems, LLM integrations, and AI applications shipped",
   },
   {
     id: 2,
@@ -34,7 +34,7 @@ const trackRecords: TrackRecord[] = [
     suffix: "+",
     title: "Mobile Apps Shipped",
     description:
-      "Cross-platform and native applications, from MVP to enterprise scale",
+      "Cross-platform and native applications built for scale",
   },
   {
     id: 4,

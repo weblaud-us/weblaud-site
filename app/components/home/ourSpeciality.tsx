@@ -49,7 +49,7 @@ const tabsData: TabContent[] = [
     id: 1,
     title: "STRATEGY",
     description:
-      "We help you transform ideas into actionable roadmaps. Our strategic approach focuses on understanding your business goals, identifying opportunities, and creating comprehensive plans that align technology with your vision. From product planning to value engineering, we ensure every decision drives meaningful results.",
+      "We convert your initial concepts into actionable technical roadmaps. We identify clear milestones and create structured plans that align software choices with your business goals.",
     features: [
       { name: "Product planning", icon: productPlanningIcon },
       { name: "Lean development", icon: leanDevelopmentIcon },
@@ -63,7 +63,7 @@ const tabsData: TabContent[] = [
     id: 2,
     title: "DESIGN",
     description:
-      "We craft exceptional digital experiences that captivate and engage. Our design philosophy combines aesthetics with functionality, creating intuitive interfaces that users love. From wireframes to high-fidelity prototypes, we bring your vision to life with stunning UI/UX design and immersive 3D elements.",
+      "We craft digital experiences that engage your audience. Our design philosophy combines aesthetics with functionality to create intuitive interfaces. We build wireframes, high-fidelity prototypes, and final UI designs.",
     features: [
       { name: "UI/UX design", icon: uiUxIcon },
       { name: "Prototyping", icon: prototypingIcon },
@@ -77,7 +77,7 @@ const tabsData: TabContent[] = [
     id: 3,
     title: "DEVELOPMENT",
     description:
-      "We build powerful, scalable solutions tailored to your needs. Our development team leverages cutting-edge technologies to create custom software, web applications, and immersive experiences. Whether it's VR, AR, or traditional platforms, we deliver robust solutions that drive innovation and growth.",
+      "We build software platforms tailored to your operations. Our team creates custom applications, web portals, and system integrations that solve concrete technical problems.",
     features: [
       { name: "Custom software", icon: customSoftwareIcon },
       { name: "Web applications", icon: webApplicationIcon },
@@ -91,7 +91,7 @@ const tabsData: TabContent[] = [
     id: 4,
     title: "MAINTAIN",
     description:
-      "We ensure your systems run smoothly and efficiently. Our maintenance services provide continuous support, monitoring, and optimization to keep your applications performing at their best. From cloud infrastructure to dedicated support teams, we're here to keep your technology reliable and secure.",
+      "We ensure your systems run smoothly and efficiently. We provide continuous support, monitoring, and infrastructure management to keep your applications performing at their best.",
     features: [
       { name: "Software maintenance", icon: customSoftwareIcon },
       { name: "Software support", icon: webApplicationIcon },
@@ -105,7 +105,7 @@ const tabsData: TabContent[] = [
     id: 5,
     title: "SCALE",
     description:
-      "We help your business grow without limits. Our scaling solutions focus on modernizing legacy systems, implementing CI/CD pipelines, and optimizing DevOps practices. With robust software architecture and automated workflows, we enable your infrastructure to scale seamlessly as your business expands.",
+      "We architect systems built for high traffic and large datasets. We modernize legacy code, implement CI/CD pipelines, and optimize your database queries.",
     features: [
       { name: "CI/CD", icon: ciCdIcon },
       { name: "Legacy software modernization", icon: productPlanningIcon },

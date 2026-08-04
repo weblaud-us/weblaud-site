@@ -13,7 +13,7 @@ const sectionsData = {
     badge: "Who We Are",
     number: "01",
     paragraphs: [
-      "Weblaud started with a simple belief: great digital products begin with understanding people. We were a small team driven by curiosity and the desire to make technology feel clear and approachable. As we grew, that mindset shaped every project—listen first, build with intention, and treat clients like partners. Today, we help businesses turn ideas into meaningful digital experiences through thoughtful design, reliable engineering, and genuine collaboration.",
+      "Weblaud started with a simple belief: great digital products begin with understanding people. We were a small team driven by curiosity and the desire to make technology feel clear and approachable. As we grew, that mindset shaped every project. We listen first, build with intention, and treat clients like partners. Today, we build reliable software and digital tools for growing businesses.",
     ],
   },
   mission: {

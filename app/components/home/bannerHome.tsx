@@ -24,8 +24,8 @@ const BannerHome = () => {
                 height="360"
                 loading="eager"
               />
-              <span className="text-sm sm:text-base font-barlow relative left-2 bottom-12">
-                Hello,
+              <span className="text-xs uppercase tracking-wider font-barlow relative left-2 bottom-12">
+                OPERATIONS SOFTWARE
               </span>
             </div>
 
@@ -35,24 +35,23 @@ const BannerHome = () => {
               </h1>
 
               <p className="text-sm sm:text-base md:text-lg text-gray-300 font-barlow sm:max-w-md max-w-sm lg:max-w-xl leading-relaxed text-balance">
-                We build the operational software that service businesses run on —
-                admin platforms, mobile apps, and AI that removes the manual work.
-                Production-grade, delivered in weeks.
+                We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in 4 to 10 weeks.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 pt-2">
-                <Link to="/contact">
-                  <Button className="text-xs font-bold px-9 py-4.5">
-                    Book a Call
-                  </Button>
-                </Link>
-                <GlassButton to="/services">Check our Services</GlassButton>
-              </div>
-
-              <div className="pt-4 md:pt-6">
-                <p className="text-xs text-gray-500/80 font-barlow tracking-wider uppercase">
-                  React · Next.js · Flutter · FastAPI · NestJS · PostgreSQL · LLM integration
-                </p>
+              <div className="flex flex-col pt-2">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5">
+                  <Link to="/contact">
+                    <Button className="text-xs font-bold px-9 py-4.5">
+                      Book a Call
+                    </Button>
+                  </Link>
+                  <GlassButton to="/services">Check our Services</GlassButton>
+                </div>
+                <div className="pt-6">
+                  <p className="text-xs text-gray-400 font-barlow tracking-wider uppercase">
+                    React · Next.js · Flutter · FastAPI · NestJS · PostgreSQL · LLM integration
+                  </p>
+                </div>
               </div>
             </div>
           </div>

@@ -39,10 +39,9 @@ const OurCaseStudies = () => {
             className={`text-white/70 font-barlow text-base md:text-lg max-w-3xl mx-auto ${getBlurAnimationClasses(isDescVisible)}`}
             style={{ transitionDelay: "200ms" }}
           >
-            Explore our portfolio of innovative technology solutions spanning
-            cloud infrastructure, machine learning, and enterprise platforms. Each project
-            demonstrates our commitment to excellence and cutting-edge
-            innovation.
+            Explore our portfolio of recent projects spanning cloud infrastructure,
+            machine learning, and enterprise platforms. Each case study demonstrates
+            our technical approach and final deliverables.
           </p>
         </div>
 

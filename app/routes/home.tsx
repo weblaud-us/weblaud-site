@@ -31,7 +31,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "description",
       content:
-        "We build the operational software that service businesses run on — admin platforms, mobile apps, and AI that removes the manual work. Production-grade, delivered in weeks.",
+        "We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in 8 to 14 weeks.",
     },
     {
       name: "keywords",
@@ -45,7 +45,7 @@ export function meta({}: Route.MetaArgs) {
     {
       property: "og:description",
       content:
-        "We build the operational software that service businesses run on — admin platforms, mobile apps, and AI that removes the manual work.",
+        "We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in 8 to 14 weeks.",
     },
     { property: "og:type", content: "website" },
     { property: "og:url", content: "https://weblaud.com/" },
@@ -64,7 +64,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "twitter:description",
       content:
-        "We build the operational software that service businesses run on — admin platforms, mobile apps, and AI that removes the manual work.",
+        "We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in 8 to 14 weeks.",
     },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
     {
@@ -93,7 +93,7 @@ export function meta({}: Route.MetaArgs) {
             name: "Do you offer post-launch support and maintenance?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes, we provide comprehensive post-launch support including bug fixes, security updates, performance monitoring, and feature enhancements. We offer flexible maintenance packages tailored to your needs, from basic monitoring to full ongoing development partnerships with dedicated support teams.",
+              text: "Yes, we provide continuous post-launch support including bug fixes, security updates, and feature enhancements. We offer flexible maintenance packages tailored to your needs.",
             },
           },
           {
@@ -109,7 +109,7 @@ export function meta({}: Route.MetaArgs) {
             name: "Can you work with our existing tech stack or integrate with our systems?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Absolutely! We're experienced in working with diverse tech stacks and can seamlessly integrate with your existing systems, APIs, databases, and third-party services. Whether you need to modernize legacy systems, add new features, or build complementary tools, we'll work within your technical ecosystem.",
+              text: "Yes. We work with diverse tech stacks and can integrate with your existing APIs, databases, and third-party services. We modernize legacy codebases and build new features directly within your current technical ecosystem.",
             },
           },
         ],

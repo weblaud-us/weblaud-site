@@ -41,8 +41,7 @@ const OurServices = () => {
             className={`text-white/70 md:w-3/4 lg:w-1/2 font-barlow text-base md:text-lg max-w-4xl mx-auto ${getBlurAnimationClasses(isDescVisible)}`}
             style={{ transitionDelay: "200ms" }}
           >
-            Tailored digital solutions — from custom web and mobile development
-            to AI integrations and e-commerce — built by engineers who care
+            Custom web applications, mobile tools, and internal platforms built by engineers who care
             about performance, scalability, and your success
           </p>
         </div>

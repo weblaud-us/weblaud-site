@@ -46,7 +46,7 @@ export const meta: Route.MetaFunction = () => {
     {
       name: "description",
       content:
-        "Weblaud LLC — a software company and innovation lab building the future of digital products and providing premium engineering services for global businesses.",
+        "Weblaud LLC is a software company and innovation lab building the future of digital products and providing premium engineering services for global businesses.",
     },
     { property: "og:site_name", content: "Weblaud LLC" },
     { property: "og:locale", content: "en_US" },

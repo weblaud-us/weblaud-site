@@ -18,7 +18,7 @@ const BannerContactUs = () => {
           showPulse: true,
         }}
         title="Contact Us"
-        description="Have a project in mind? Our team is ready to help — from initial consultation to full-scale development. Let's build something great together."
+        description="Have a project in mind? Our team handles initial planning through full-scale development."
         button={{
           text: "Book a Call",
           onClick: handleGetInTouch,

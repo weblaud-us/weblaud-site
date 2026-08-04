@@ -14,7 +14,7 @@ const BannerOurServices = () => {
           <span className="text-primary">Digital Solutions</span>
         </>
       }
-      description="At Weblaud LLC, we are a software development company dedicated to building the future of digital innovation. Our skilled team combines deep engineering expertise with a passion for excellence — delivering exceptional results in web design, mobile development, AI integrations, and custom software solutions."
+      description="We engineer core business software, custom web applications, and internal tools. Our team focuses on delivering stable platforms that handle your daily operations."
       image={{
         src: ourServicesImg,
         alt: "Our Digital Solutions",

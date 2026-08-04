@@ -15,12 +15,12 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "description",
       content:
-        "Explore Weblaud LLC's comprehensive software services: operations platforms, mobile & backend development, AI integrations, dedicated engineering teams, real-time infrastructure, and cloud DevOps.",
+        "Explore Weblaud LLC's comprehensive software services: operations platforms, web application development, mobile & backend development, AI integrations, cloud & real-time infrastructure, and dedicated engineering teams.",
     },
     {
       name: "keywords",
       content:
-        "software services, software agency, Weblaud LLC, operations platforms, mobile development, AI integration, dedicated engineering, real-time infrastructure, DevOps",
+        "software services, software agency, Weblaud LLC, operations platforms, web applications, mobile development, AI integration, real-time infrastructure, dedicated engineering",
     },
     {
       property: "og:title",
@@ -43,7 +43,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "twitter:description",
       content:
-        "From strategy to scaling, we provide end-to-end digital solutions for your business needs.",
+        "We provide system architecture, application development, and infrastructure scaling for your business.",
     },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
     { tagName: "link", rel: "canonical", href: "https://weblaud.com/services" },

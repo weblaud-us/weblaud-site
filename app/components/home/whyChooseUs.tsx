@@ -40,7 +40,7 @@ const reasons = [
   {
     title: "Reliable Delivery",
     description:
-      "Dedicated Slack channels, weekly milestone reviews, and fast turnaround — we keep your project moving and your team always in the loop.",
+      "We keep your project moving with dedicated Slack channels, weekly milestone reviews, and fast turnaround times.",
     icon: BsClockFill,
     gradient: "from-orange-500/20 to-amber-500/10",
     iconColor: "text-orange-400",

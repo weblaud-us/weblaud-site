@@ -13,7 +13,7 @@ const BannerOurProjects = () => {
           Our Work, Your <span className="text-primary">Future</span>
         </>
       }
-      description="From AI-powered platforms to custom mobile apps and e-commerce solutions, here's a selection of real-world projects we've delivered. Each one reflects our commitment to clean engineering, thoughtful design, and measurable impact for our clients."
+      description="Here is a selection of real-world platforms, mobile apps, and custom software systems we have delivered. Each one reflects our commitment to clean engineering, thoughtful design, and measurable impact for our clients."
       image={{
         src: ourProjectsImg,
         alt: "Our Projects Dashboard",
