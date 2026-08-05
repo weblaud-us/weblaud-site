@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useSpring,
+  useMotionValueEvent,
+} from "framer-motion";
 import AnimatedGridBg, { type AnimatedGridBgRef } from "../ui/animated-grid-bg";
 import VerticalTabs from "../ui/vertical-tabs";
 import {
@@ -49,12 +55,12 @@ const tabsData: TabContent[] = [
     id: 1,
     title: "STRATEGY",
     description:
-      "We convert your initial concepts into actionable technical roadmaps. We identify clear milestones and create structured plans that align software choices with your business goals.",
+      "We map your operational workflows into production-ready technical roadmaps. We identify clear milestones, scope data schemas, and design software architecture that aligns directly with your business goals.",
     features: [
-      { name: "Product planning", icon: productPlanningIcon },
-      { name: "Lean development", icon: leanDevelopmentIcon },
-      { name: "Value-engineering", icon: valueEngineeringIcon },
-      { name: "Accessibility compliance", icon: accessibilityIcon },
+      { name: "Product & system architecture", icon: productPlanningIcon },
+      { name: "Operational workflow mapping", icon: leanDevelopmentIcon },
+      { name: "Technical feasibility & ROI", icon: valueEngineeringIcon },
+      { name: "Fixed-scope milestone planning", icon: accessibilityIcon },
     ],
     image: strategyImg,
     color: "#0a84ff",
@@ -63,64 +69,67 @@ const tabsData: TabContent[] = [
     id: 2,
     title: "DESIGN",
     description:
-      "We craft digital experiences that engage your audience. Our design philosophy combines aesthetics with functionality to create intuitive interfaces. We build wireframes, high-fidelity prototypes, and final UI designs.",
+      "We design intuitive admin interfaces, user dashboards, and mobile experiences engineered for maximum operational efficiency. Every screen is prototyped for speed, clarity, and zero user friction.",
     features: [
-      { name: "UI/UX design", icon: uiUxIcon },
-      { name: "Prototyping", icon: prototypingIcon },
-      { name: "3D designs", icon: threeDDesignsIcon },
-      { name: "Motion Design", icon: valueEngineeringIcon },
+      { name: "Admin & Operations UI/UX", icon: uiUxIcon },
+      { name: "High-fidelity prototyping", icon: prototypingIcon },
+      { name: "Design systems & component libraries", icon: threeDDesignsIcon },
+      { name: "Micro-animations & motion polish", icon: valueEngineeringIcon },
     ],
     image: designImg,
-    color: "#0a84ff",
+    color: "#9d4edd",
   },
   {
     id: 3,
     title: "DEVELOPMENT",
     description:
-      "We build software platforms tailored to your operations. Our team creates custom applications, web portals, and system integrations that solve concrete technical problems.",
+      "We engineer custom operations platforms, scalable web applications, and mobile apps built on resilient cloud infrastructure. Shipped with clean code, automated tests, and zero engineering compromises.",
     features: [
-      { name: "Custom software", icon: customSoftwareIcon },
-      { name: "Web applications", icon: webApplicationIcon },
-      { name: "Virtual reality", icon: virtualRealityIcon },
-      { name: "Augmented reality", icon: augmentedRealityIcon },
+      { name: "Custom operations platforms & ERPs", icon: customSoftwareIcon },
+      { name: "Scalable web apps & SaaS engineering", icon: webApplicationIcon },
+      { name: "Cross-platform mobile apps (Flutter)", icon: customSoftwareIcon },
+      { name: "Production AI & LLM integrations", icon: productPlanningIcon },
     ],
     image: developmentImg,
-    color: "#fff",
+    color: "#00f5d4",
   },
   {
     id: 4,
     title: "MAINTAIN",
     description:
-      "We ensure your systems run smoothly and efficiently. We provide continuous support, monitoring, and infrastructure management to keep your applications performing at their best.",
+      "We ensure your production systems run with 99.9% uptime and zero friction. We provide continuous support, cloud infrastructure management, security updates, and real-time system monitoring.",
     features: [
-      { name: "Software maintenance", icon: customSoftwareIcon },
-      { name: "Software support", icon: webApplicationIcon },
-      { name: "Cloud infrastructure management", icon: cloudManagementIcon },
-      { name: "Dedicated teams", icon: dedicatedTeamsIcon },
+      { name: "Software support & SLA maintenance", icon: customSoftwareIcon },
+      { name: "Cloud infrastructure & DevOps", icon: cloudManagementIcon },
+      { name: "Real-time monitoring & security", icon: webApplicationIcon },
+      { name: "Dedicated senior engineering pods", icon: dedicatedTeamsIcon },
     ],
     image: maintainImg,
-    color: "#0a84ff",
+    color: "#3a86ff",
   },
   {
     id: 5,
     title: "SCALE",
     description:
-      "We architect systems built for high traffic and large datasets. We modernize legacy code, implement CI/CD pipelines, and optimize your database queries.",
+      "We architect systems built for high concurrency, large datasets, and enterprise scale. We refactor legacy codebases, implement automated CI/CD pipelines, and optimize database performance.",
     features: [
-      { name: "CI/CD", icon: ciCdIcon },
+      { name: "Automated CI/CD pipelines", icon: ciCdIcon },
       { name: "Legacy software modernization", icon: productPlanningIcon },
-      { name: "DevOps", icon: devopsIcon },
-      { name: "Software architecture", icon: softwareArchitectureIcon },
+      { name: "DevOps & cloud infrastructure", icon: devopsIcon },
+      { name: "Enterprise software architecture", icon: softwareArchitectureIcon },
     ],
     image: scaleImg,
-    color: "#0a84ff",
+    color: "#ff007f",
   },
 ];
 
 const OurSpeciality = () => {
   const [activeTab, setActiveTab] = useState(1);
+  const [targetTab, setTargetTab] = useState(1);
+  const lastStepTimeRef = useRef<number>(Date.now());
   const [containerRef, isVisible] = useBlurAnimation<HTMLDivElement>();
   const gridBgRef = useRef<AnimatedGridBgRef>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [titleRef, isTitleVisible] = useBlurAnimation<HTMLHeadingElement>();
   const [cardRef, isCardVisible] = useBlurAnimation<HTMLDivElement>();
   const [descriptionRef, isDescriptionVisible] =
@@ -128,7 +137,83 @@ const OurSpeciality = () => {
   const [featuresRef, isFeaturesVisible] = useBlurAnimation<HTMLDivElement>();
   const [imageRef, isImageVisible] = useBlurAnimation<HTMLDivElement>();
 
-  const activeContent = tabsData.find((tab) => tab.id === activeTab);
+  const activeContent = tabsData.find((tab) => tab.id === activeTab) || tabsData[0];
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 220,
+    damping: 30,
+    mass: 0.5,
+    restDelta: 0.001,
+  });
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (isMobile) return;
+    const numTabs = tabsData.length;
+    const clampedProgress = Math.max(0, Math.min(0.999, latest));
+    const rawTab = Math.floor(clampedProgress * numTabs) + 1;
+
+    setTargetTab(rawTab);
+  });
+
+  // Enforce 450ms velocity-adaptive dwell time per tab step (1 -> 2 -> 3 -> 4 -> 5)
+  useEffect(() => {
+    if (isMobile) {
+      setActiveTab(targetTab);
+      return;
+    }
+    if (targetTab !== activeTab) {
+      const now = Date.now();
+      const elapsed = now - lastStepTimeRef.current;
+      const STEP_DWELL_MS = 450; // 0.45s adaptive step dwell
+
+      if (elapsed >= STEP_DWELL_MS) {
+        const nextTab = targetTab > activeTab ? activeTab + 1 : activeTab - 1;
+        setActiveTab(nextTab);
+        lastStepTimeRef.current = Date.now();
+      } else {
+        const timer = setTimeout(() => {
+          const nextTab = targetTab > activeTab ? activeTab + 1 : activeTab - 1;
+          setActiveTab(nextTab);
+          lastStepTimeRef.current = Date.now();
+        }, STEP_DWELL_MS - elapsed);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [targetTab, activeTab, isMobile]);
+
+  const handleTabChange = (id: number) => {
+    setActiveTab(id);
+    setTargetTab(id);
+    lastStepTimeRef.current = Date.now();
+    if (!isMobile && sectionRef.current) {
+      const rect = sectionRef.current.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const sectionTop = rect.top + scrollTop;
+      const scrollableDistance =
+        sectionRef.current.offsetHeight - window.innerHeight;
+      if (scrollableDistance > 0) {
+        const progressFraction = (id - 0.5) / tabsData.length;
+        const targetY = sectionTop + progressFraction * scrollableDistance;
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+      }
+    }
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (gridBgRef.current) {
@@ -142,17 +227,6 @@ const OurSpeciality = () => {
     }
   };
 
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
   const handleDragEnd = (_: any, info: { offset: { x: number } }) => {
     if (!isMobile) return;
     const threshold = 100;
@@ -165,218 +239,226 @@ const OurSpeciality = () => {
 
   return (
     <section
-      ref={containerRef}
-      className="bg-black text-white overflow-x-hidden py-14 md:py-20 px-4"
+      ref={sectionRef}
+      style={{ position: "relative" }}
+      className="bg-black text-white px-4 md:px-6 md:h-[400vh] h-auto overflow-visible"
     >
-      <h2
-        ref={titleRef}
-        className={`text-center font-barlow text-2xl md:text-3xl font-semibold mb-8 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
+      {/* Ambient section-level glow that bleeds behind sticky container */}
+      <div
+        className="pointer-events-none absolute inset-0 transition-opacity duration-1000"
+        style={{
+          background: `radial-gradient(ellipse 60% 40% at 70% 50%, ${activeContent.color}15 0%, transparent 70%)`,
+        }}
+      />
+
+      <div
+        ref={containerRef}
+        className="md:sticky md:top-0 md:h-screen md:flex md:flex-col md:items-center md:justify-center py-10 md:py-0 max-w-7xl mx-auto w-full relative z-10"
       >
-        Our Specialty
-      </h2>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row gap-4 lg:gap-12 items-start">
+        {/* Section Header */}
+        <div className="text-center mb-6 md:mb-8">
+          <motion.span
+            key={activeTab}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono tracking-[0.2em] uppercase mb-4"
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full animate-pulse"
+              style={{ backgroundColor: activeContent.color }}
+            />
+            <span style={{ color: activeContent.color }}>
+              Step 0{activeTab}
+            </span>
+            <span className="text-white/30">of 0{tabsData.length}</span>
+          </motion.span>
+          <h2
+            ref={titleRef}
+            className={`font-barlow text-2xl md:text-4xl font-bold ${getBlurAnimationClasses(isTitleVisible)}`}
+          >
+            Our Specialty
+          </h2>
+        </div>
+
+        {/* Main Content Row */}
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-center w-full">
+          {/* Left: Vertical Tabs */}
           <div className="w-full lg:w-auto lg:shrink-0">
             <VerticalTabs
               tabs={tabsData}
               activeTab={activeTab}
-              onTabChange={(id) => setActiveTab(id as number)}
+              onTabChange={(id) => handleTabChange(id as number)}
               className={getBlurAnimationClasses(isVisible)}
             />
           </div>
 
-          <div className="w-full lg:flex-1">
-            <AnimatePresence mode="wait" initial={false}>
-              {activeContent && (
+          {/* Right: Content Card */}
+          <div className="w-full lg:flex-1 min-w-0">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.div
+                key={activeContent.id}
+                drag={isMobile ? "x" : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={handleDragEnd}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                initial={{ opacity: 0, y: 8, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.985 }}
+                transition={{
+                  duration: 0.25,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="relative rounded-2xl md:rounded-3xl overflow-hidden w-full"
+              >
+                {/* Card Glass Background */}
+                <div className="absolute inset-0 bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl md:rounded-3xl" />
+
+                {/* Signature Weblaud Animated Grid Background */}
+                <AnimatedGridBg ref={gridBgRef} />
+
+                {/* Dynamic Ambient Glow — Top Left */}
                 <motion.div
-                  ref={cardRef}
-                  key={activeContent.id}
-                  drag={isMobile ? "x" : false}
-                  dragConstraints={{ left: 0, right: 0 }}
-                  onDragEnd={handleDragEnd}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{
-                    duration: 0.1,
-                    ease: [0.22, 1, 0.36, 1],
+                  className="absolute -top-24 -left-24 w-72 h-72 rounded-full blur-[100px] pointer-events-none"
+                  animate={{
+                    opacity: [0.35, 0.55, 0.35],
+                    scale: [1, 1.15, 1],
                   }}
-                  className={`relative border border-light-black rounded-3xl overflow-hidden bg-linear-to-b from-primary/10 to-primary/5 w-full`}
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <AnimatedGridBg ref={gridBgRef} />
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  style={{ backgroundColor: activeContent.color }}
+                />
+                {/* Dynamic Ambient Glow — Bottom Right */}
+                <motion.div
+                  className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full blur-[80px] pointer-events-none"
+                  animate={{
+                    opacity: [0.2, 0.4, 0.2],
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1,
+                  }}
+                  style={{ backgroundColor: activeContent.color }}
+                />
 
-                  <div
-                    className="relative z-10 p-8 md:p-12 lg:p-16"
-                    style={{ pointerEvents: "auto" }}
-                  >
-                    <p
-                      ref={descriptionRef}
-                      className={`text-gray-300 text-sm md:text-base leading-relaxed mb-8`}
+                {/* Card Content */}
+                <div className="relative z-10 p-6 md:p-10 lg:p-12">
+                  {/* Title + Description */}
+                  <div className="mb-6 md:mb-8">
+                    <motion.h3
+                      key={`title-${activeContent.id}`}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.35, delay: 0.05 }}
+                      className="font-barlow font-bold text-xl md:text-2xl mb-2"
+                      style={{ color: activeContent.color }}
                     >
-                      <span className="block font-barlow font-bold text-white text-lg md:text-xl mb-3">
-                        {activeContent.title}
-                      </span>
+                      {activeContent.title}
+                    </motion.h3>
+                    <motion.p
+                      key={`desc-${activeContent.id}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.4, delay: 0.1 }}
+                      className="text-gray-400 text-sm md:text-base leading-relaxed max-w-2xl"
+                    >
                       {activeContent.description}
-                    </p>
-
-                    <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-                      <motion.div
-                        ref={featuresRef}
-                        initial={{ opacity: 0, x: -20, filter: "blur(20px)" }}
-                        animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                        transition={{
-                          duration: 0.4,
-                          delay: 0.15,
-                          ease: [0.22, 1, 0.36, 1],
-                        }}
-                        className={`space-y-4 ${getBlurAnimationClasses(isFeaturesVisible)}`}
-                      >
-                        {activeContent.features.map((feature, index) => (
-                          <motion.div
-                            key={feature.name}
-                            initial={{
-                              opacity: 0,
-                              x: -20,
-                              scale: 0.8,
-                              filter: "blur(25px)",
-                            }}
-                            animate={{
-                              opacity: 1,
-                              x: 0,
-                              scale: 1,
-                              filter: "blur(0px)",
-                            }}
-                            transition={{
-                              duration: 0.3,
-                              delay: 0.2 + index * 0.2,
-                              ease: [0.22, 1, 0.36, 1],
-                            }}
-                            whileHover={{
-                              x: 12,
-                              scale: 1.05,
-                              transition: { duration: 0.15, ease: "easeOut" },
-                            }}
-                            className="flex items-center gap-3 group"
-                          >
-                            <motion.div
-                              className="relative w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 overflow-hidden p-2"
-                              whileHover={{
-                                scale: 1.2,
-                                backgroundColor: "rgba(10, 132, 255, 0.3)",
-                                transition: { duration: 0.3, ease: "easeOut" },
-                              }}
-                            >
-                              <motion.div
-                                className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent"
-                                animate={{
-                                  x: ["-150%", "250%"],
-                                }}
-                                transition={{
-                                  duration: 2.5,
-                                  repeat: Infinity,
-                                  repeatDelay: 2,
-                                  ease: "easeInOut",
-                                }}
-                              />
-                              <motion.img
-                                src={feature.icon}
-                                alt={feature.name}
-                                className="w-full h-full object-contain relative z-10 brightness-0 invert"
-                                animate={{
-                                  scale: [1, 1.15, 1],
-                                  rotate: [0, 5, -5, 0],
-                                }}
-                                transition={{
-                                  duration: 3,
-                                  repeat: Infinity,
-                                  ease: "easeInOut",
-                                }}
-                              />
-                            </motion.div>
-                            <span className="text-gray-200 text-sm md:text-base font-medium group-hover:text-white transition-colors">
-                              {feature.name}
-                            </span>
-                          </motion.div>
-                        ))}
-                      </motion.div>
-
-                      <motion.div
-                        ref={imageRef}
-                        initial={{
-                          opacity: 0,
-                          scale: 0.7,
-                          rotate: -10,
-                          filter: "blur(20px)",
-                        }}
-                        animate={{
-                          opacity: 1,
-                          scale: 1,
-                          rotate: 0,
-                          filter: "blur(0px)",
-                        }}
-                        transition={{
-                          duration: 0.5,
-                          ease: "easeIn",
-                        }}
-                        className={`hidden md:flex items-center justify-center ${getBlurAnimationClasses(isImageVisible)}`}
-                      >
-                        <motion.div
-                          className="relative w-full max-w-sm"
-                          whileHover={{ scale: 1.05, rotate: 2 }}
-                          transition={{ duration: 0.2, ease: "easeOut" }}
-                        >
-                          <motion.img
-                            src={activeContent.image}
-                            alt={activeContent.title}
-                            className="relative z-10 w-full h-auto object-contain drop-shadow-2xl"
-                            initial={{
-                              opacity: 0,
-                              rotateX: -25,
-                              scale: 0.9,
-                            }}
-                            animate={{
-                              opacity: 1,
-                              rotateX: 0,
-                              scale: 1,
-                            }}
-                            transition={{
-                              duration: 0.1,
-                              ease: "easeInOut",
-                            }}
-                          />
-
-                          <motion.div
-                            className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-primary/40 blur-2xl"
-                            animate={{
-                              scale: [1, 1.3, 1],
-                              opacity: [0.4, 0.6, 0.4],
-                            }}
-                            transition={{
-                              duration: 4,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                            }}
-                          />
-                          <motion.div
-                            className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-purple-500/40 blur-2xl"
-                            animate={{
-                              scale: [1, 1.4, 1],
-                              opacity: [0.3, 0.5, 0.3],
-                            }}
-                            transition={{
-                              duration: 5,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                            }}
-                          />
-                        </motion.div>
-                      </motion.div>
-                    </div>
+                    </motion.p>
                   </div>
-                </motion.div>
-              )}
+
+                  {/* Features + Image Grid */}
+                  <div className="grid md:grid-cols-2 gap-6 md:gap-10 items-center">
+                    {/* Feature Chips */}
+                    <div className="flex flex-col gap-3">
+                      {activeContent.features.map((feature, index) => (
+                        <motion.div
+                          key={feature.name}
+                          initial={{
+                            opacity: 0,
+                            x: -16,
+                          }}
+                          animate={{
+                            opacity: 1,
+                            x: 0,
+                          }}
+                          transition={{
+                            duration: 0.35,
+                            delay: 0.12 + index * 0.08,
+                            ease: [0.25, 0.46, 0.45, 0.94],
+                          }}
+                          whileHover={{
+                            x: 6,
+                            transition: { duration: 0.2, ease: "easeOut" },
+                          }}
+                          className="flex items-center gap-3 group py-2.5 px-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.07] hover:border-white/[0.12] transition-all duration-300 cursor-default"
+                        >
+                          <div
+                            className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 p-1.5"
+                            style={{
+                              backgroundColor: `${activeContent.color}20`,
+                            }}
+                          >
+                            <img
+                              src={feature.icon}
+                              alt={feature.name}
+                              className="w-full h-full object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity"
+                            />
+                          </div>
+                          <span className="text-gray-300 text-sm font-medium group-hover:text-white transition-colors duration-200">
+                            {feature.name}
+                          </span>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* 3D Image */}
+                    <motion.div
+                      key={`img-${activeContent.id}`}
+                      initial={{
+                        opacity: 0,
+                        scale: 0.85,
+                        rotate: -8,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                        rotate: 0,
+                      }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 0.15,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      }}
+                      className="hidden md:flex items-center justify-center"
+                    >
+                      <div className="relative w-full max-w-[280px] mx-auto">
+                        <motion.img
+                          src={activeContent.image}
+                          alt={activeContent.title}
+                          className="relative z-10 w-full h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+                          whileHover={{ scale: 1.04, rotate: 2 }}
+                          transition={{
+                            duration: 0.3,
+                            ease: "easeOut",
+                          }}
+                        />
+                        {/* Image accent glow */}
+                        <div
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full blur-[60px] opacity-25 pointer-events-none"
+                          style={{ backgroundColor: activeContent.color }}
+                        />
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
             </AnimatePresence>
 
             {/* Mobile Pagination Dots */}
@@ -386,10 +468,10 @@ const OurSpeciality = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as number)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    className={`h-2 rounded-full transition-all duration-300 ${
                       activeTab === tab.id
                         ? "bg-primary w-6"
-                        : "bg-white/20 hover:bg-white/40"
+                        : "bg-white/20 hover:bg-white/40 w-2"
                     }`}
                     aria-label={`Go to ${tab.title}`}
                   />
@@ -404,3 +486,4 @@ const OurSpeciality = () => {
 };
 
 export default OurSpeciality;
+

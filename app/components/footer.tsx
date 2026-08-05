@@ -187,7 +187,7 @@ const Footer: React.FC = () => {
           className={`flex flex-col md:flex-row justify-center font-barlow items-center text-sm text-dark-gray mt-10 pt-4 ${getBlurAnimationClasses(isCopyrightVisible)}`}
         >
           <p className="text-center">
-            © {new Date().getFullYear()} Weblaud. All rights reserved.
+            © {new Date().getFullYear()} Weblaud LLC. All rights reserved.
           </p>
         </div>
       </div>

@@ -116,7 +116,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           }}
         /> */}
       </head>
-      <body className="overflow-x-hidden antialiased">
+      <body className="[overflow-x:clip] antialiased">
         {children}
         <Toaster />
         <ScrollRestoration />
