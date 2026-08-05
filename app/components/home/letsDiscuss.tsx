@@ -113,7 +113,7 @@ const LetsDiscuss = () => {
               )}`}
               style={getBlurAnimationDelay(400)}
             >
-              Book a free 30-minute strategy call. We'll review your
+              Book a free 15-minute strategy call. We'll review your
               requirements, scope your project, and send a detailed proposal
               within 48 hours.
             </p>

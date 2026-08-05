@@ -5,11 +5,6 @@ import {
 } from "~/hooks/useBlurAnimation";
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
 import { ServiceCard } from "../ui/service-card";
-import { BOOKING_URL } from "~/lib/constants";
-import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
-import { useState } from "react";
-
-
 
 const OurServices = () => {
   const [titleRef, isTitleVisible] = useBlurAnimation<HTMLHeadingElement>(0.1);
@@ -19,12 +14,6 @@ const OurServices = () => {
     services.map((s) => s.id),
     0.05
   );
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleBookNow = () => {
-    setIsModalOpen(true);
-  };
 
   return (
     <div className="bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-6 md:py-6 lg:py-15">
@@ -41,8 +30,7 @@ const OurServices = () => {
             className={`text-white/70 md:w-3/4 lg:w-1/2 font-barlow text-base md:text-lg max-w-4xl mx-auto ${getBlurAnimationClasses(isDescVisible)}`}
             style={{ transitionDelay: "200ms" }}
           >
-            Custom web applications, mobile tools, and internal platforms built by engineers who care
-            about performance, scalability, and your success
+            From architecture to high-load deployment — production-ready software systems built with clean code and zero engineering compromises.
           </p>
         </div>
 
@@ -70,17 +58,12 @@ const OurServices = () => {
                   imageAlt={service.imageAlt}
                   className={animation.className}
                   style={animation.style}
-                  onBookNow={handleBookNow}
                 />
               </div>
             );
           })}
         </div>
       </div>
-      <BookingModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );
 };

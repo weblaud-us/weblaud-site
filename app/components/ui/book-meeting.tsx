@@ -27,7 +27,7 @@ const BookMeeting = () => {
           </h2>
 
           <p className="text-white/70 font-barlow text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 group-hover:text-white/90 transition-colors duration-300">
-            Want to discuss your project in detail? Schedule a free 30-minute
+            Want to discuss your project in detail? Schedule a free 15-minute
             consultation with our team of experts. We'll help you understand how
             our solutions can benefit your business.
           </p>

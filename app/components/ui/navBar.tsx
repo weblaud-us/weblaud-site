@@ -96,6 +96,7 @@ const NavBar = () => {
                   <Link
                     key={link.name}
                     to={link.href}
+                    viewTransition
                     className={`relative text-white font-barlow font-medium px-4 py-2 rounded-lg hover:text-blue-500 transition-all duration-300 group ${
                       isScrolled ? "text-sm" : "text-base"
                     } ${isActive ? "text-blue-500" : ""}`}
@@ -162,6 +163,7 @@ const NavBar = () => {
                   <Link
                     key={link.name}
                     to={link.href}
+                    viewTransition
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`group relative text-white font-barlow font-semibold text-lg px-6 py-4 rounded-xl border border-white/5 hover:border-blue-500/50 hover:bg-linear-to-r hover:from-blue-500/10 hover:to-transparent transition-all duration-500 overflow-hidden ${
                       isMobileMenuOpen

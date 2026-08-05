@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiArrowRight, FiCheck } from "react-icons/fi";
+import { FiCheck } from "react-icons/fi";
 
 export interface ServiceCardProps {
   title: string;
@@ -9,6 +9,7 @@ export interface ServiceCardProps {
   imageAlt: string;
   className?: string;
   style?: React.CSSProperties;
+  /** @deprecated — booking is now handled by the section-level CTA */
   onBookNow?: () => void;
   href?: string;
 }
@@ -21,8 +22,6 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   imageAlt,
   className = "",
   style,
-  onBookNow,
-  href,
 }) => {
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(
     null
@@ -78,7 +77,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
             </div>
           </div>
 
-          <h3 className="text-white font-barlow font-bold text-xl sm:text-2xl mb-4 text-center">
+          <h3 className="text-white font-barlow font-bold text-xl sm:text-2xl mb-3 text-center">
             {title}
           </h3>
 
@@ -86,7 +85,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
             {description}
           </p>
 
-          <ul className="space-y-3 mb-8 grow">
+          <ul className="space-y-3">
             {features.map((feature, index) => (
               <li
                 key={index}
@@ -104,26 +103,6 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
               </li>
             ))}
           </ul>
-
-          <div className="flex justify-center mt-auto">
-            <button
-              onClick={onBookNow || (() => href && window.open(href, "_blank"))}
-              className="group/btn relative overflow-hidden bg-transparent hover:bg-white/5 text-white font-barlow font-semibold text-sm px-6 py-3 rounded-full flex items-center justify-between border border-white/20 hover:border-white/5 transition-all duration-500 min-w-[140px] h-11 cursor-pointer"
-            >
-              <span className="absolute transition-all duration-500 group-hover/btn:translate-x-8">
-                Book Now
-              </span>
-
-              <span
-                className="absolute flex items-center justify-center w-8 h-8 rounded-full bg-primary transition-all duration-500 
-                  -rotate-45 translate-x-19 
-                  group-hover/btn:rotate-0
-                  group-hover/btn:-translate-x-4.5"
-              >
-                <FiArrowRight className="w-4 h-4 text-white" />
-              </span>
-            </button>
-          </div>
         </div>
       </div>
     </div>

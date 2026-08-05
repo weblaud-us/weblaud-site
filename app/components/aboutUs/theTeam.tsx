@@ -5,6 +5,7 @@ import ruhul from "~/assets/team/ruhul_w.png";
 import ishtique from "~/assets/team/ishtique.png";
 import jubayed from "~/assets/team/Jubayed.png";
 import shuvo from "~/assets/team/shuvo.png";
+import manirul from "~/assets/team/manirul.png";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { blurAnimation } from "~/lib/animations";
 import {
@@ -26,6 +27,18 @@ const TheTeam = () => {
       image: sakib,
     },
     {
+      id: 7,
+      name: "Manirul Islam",
+      role: "Business Development",
+      image: manirul,
+    },
+    {
+      id: 4,
+      name: "Kazi Arif Ishtique",
+      role: "Senior Software Engineer",
+      image: ishtique,
+    },
+    {
       id: 2,
       name: "Shoaib Al Jayed",
       role: "Software Engineer",
@@ -38,12 +51,6 @@ const TheTeam = () => {
       image: ruhul,
     },
     {
-      id: 4,
-      name: "Kazi Arif Ishtique",
-      role: "Senior Software Engineer",
-      image: ishtique,
-    },
-    {
       id: 5,
       name: "Jubayed Islam",
       role: "Software Engineer",
@@ -51,7 +58,7 @@ const TheTeam = () => {
     },
     {
       id: 6,
-      name: "Shuvo Chandra Debnath",
+      name: "Shuvo Chandra",
       role: "Software Engineer",
       image: shuvo,
     },
@@ -78,7 +85,7 @@ const TheTeam = () => {
     if (isPaused) return;
     const interval = setInterval(() => {
       handleNext();
-    }, 4000);
+    }, 2500);
 
     return () => clearInterval(interval);
   }, [isPaused, handleNext]);
@@ -132,13 +139,13 @@ const TheTeam = () => {
             style={titleAnimation.style}
           >
             <h3 className="text-blue-500 md:text-2xl font-semibold font-barlow tracking-wider uppercase text-sm">
-              Engineering Excellence
+              Our Core Team
             </h3>
             <h2 className="text-3xl md:text-5xl font-bold font-barlow leading-tight">
-              Built by Engineers. Driven by Results.
+              Built by Experts. Driven by Results.
             </h2>
             <p className="text-gray-400 font-barlow max-w-sm text-lg">
-              Partner with a dedicated team of senior software engineers. We build stable, high-performance applications that handle your core business logic.
+              Partner with a dedicated, high-performance team. We build stable, scalable applications that handle your core business logic and deliver exceptional user experiences.
             </p>
 
             {/* Desktop Navigation Controls */}
@@ -211,7 +218,7 @@ const TheTeam = () => {
                         width={400}
                         height={400}
                         loading="lazy"
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                         draggable={false}
                       />
 

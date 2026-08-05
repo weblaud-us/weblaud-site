@@ -14,27 +14,27 @@ interface TrackRecord {
 const trackRecords: TrackRecord[] = [
   {
     id: 1,
-    number: "20",
+    number: "75",
     suffix: "+",
-    title: "AI & ML Projects Delivered",
+    title: "Projects Delivered",
     description:
-      "Enterprise ML systems, LLM integrations, and AI applications shipped",
+      "Enterprise systems, mobile apps, and custom software successfully shipped",
   },
   {
     id: 2,
-    number: "95",
+    number: "99",
     suffix: "%",
-    title: "On-Time Project Delivery",
+    title: "Client Satisfaction",
     description:
-      "Milestone-driven sprints and transparent communication that keep projects on schedule",
+      "Long-term partnerships built on transparency, quality, and proven results",
   },
   {
     id: 3,
-    number: "30",
-    suffix: "+",
-    title: "Mobile Apps Shipped",
+    number: "95",
+    suffix: "%",
+    title: "On-Time Delivery",
     description:
-      "Cross-platform and native applications built for scale",
+      "Milestone-driven sprints and transparent communication that keep projects on schedule",
   },
   {
     id: 4,
@@ -42,7 +42,7 @@ const trackRecords: TrackRecord[] = [
     suffix: "+",
     title: "Countries Served",
     description:
-      "Clients across North America, Europe, Asia, and the Middle East",
+      "Trusted by clients across North America, Europe, Asia, and the Middle East",
   },
 ];
 

@@ -5,16 +5,16 @@ const BannerOurServices = () => {
   return (
     <HeroBanner
       badge={{
-        text: "Our Services",
+        text: "Engineering Capabilities",
         showPulse: true,
       }}
       title={
         <>
-          Our Comprehensive{" "}
-          <span className="text-primary">Digital Solutions</span>
+          Full-Cycle Engineering &{" "}
+          <span className="text-primary">Scalable Software Systems</span>
         </>
       }
-      description="We engineer core business software, custom web applications, and internal tools. Our team focuses on delivering stable platforms that handle your daily operations."
+      description="We build enterprise back-offices, high-concurrency web applications, and production AI platforms. Engineered by senior developers for speed, security, and long-term maintainability."
       image={{
         src: ourServicesImg,
         alt: "Our Digital Solutions",
