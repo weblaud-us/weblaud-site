@@ -9,10 +9,28 @@ import type { Route } from "./+types/projects.$slug";
 export function meta({ params }: Route.MetaArgs) {
   const project = projects.find((p) => p.slug === params.slug);
   if (!project) return [{ title: "Case Study Not Found - Weblaud LLC" }];
-  
+
+  const pageUrl = `https://weblaud.com/projects/${project.slug}`;
+  const pageTitle = `${project.title} Case Study | Weblaud LLC`;
+
   return [
-    { title: `${project.title} Case Study | Weblaud LLC` },
+    { title: pageTitle },
     { name: "description", content: project.description },
+    {
+      name: "keywords",
+      content: `${project.title}, case study, software development, ${project.techStack.join(", ")}, Weblaud LLC`,
+    },
+    { property: "og:title", content: pageTitle },
+    { property: "og:description", content: project.description },
+    { property: "og:type", content: "article" },
+    { property: "og:url", content: pageUrl },
+    { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
+    { property: "og:image:alt", content: project.imageAlt },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: pageTitle },
+    { name: "twitter:description", content: project.description },
+    { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    { tagName: "link", rel: "canonical", href: pageUrl },
   ];
 }
 
