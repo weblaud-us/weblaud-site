@@ -7,6 +7,7 @@ import OurSay from "~/components/home/ourSay";
 import FAQ from "~/components/home/faq";
 import LetsDiscuss from "~/components/home/letsDiscuss";
 import heroBanner from "~/assets/hero-icon.png";
+import { TIMELINE, SAVINGS } from "~/lib/constants";
 
 export const links: Route.LinksFunction = () => {
   return [
@@ -31,21 +32,16 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "description",
       content:
-        "We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in 8 to 14 weeks.",
-    },
-    {
-      name: "keywords",
-      content:
-        "Weblaud LLC, software company, product development, digital product studio, software engineering, operations platforms, web applications, AI integration, mobile development, custom software, innovation lab",
+        `We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in ${TIMELINE.range}.`,
     },
     {
       property: "og:title",
-      content: "Weblaud LLC - Software Agency & Digital Solutions",
+      content: "Weblaud LLC – Software Development Company",
     },
     {
       property: "og:description",
       content:
-        "We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in 8 to 14 weeks.",
+        `We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in ${TIMELINE.range}.`,
     },
     { property: "og:type", content: "website" },
     { property: "og:url", content: "https://weblaud.com/" },
@@ -54,17 +50,17 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:image:height", content: "630" },
     {
       property: "og:image:alt",
-      content: "Weblaud LLC - Software Agency & Digital Solutions",
+      content: "Weblaud LLC – Software Development Company",
     },
     { name: "twitter:card", content: "summary_large_image" },
     {
       name: "twitter:title",
-      content: "Weblaud LLC - Software Agency & Digital Solutions",
+      content: "Weblaud LLC – Software Development Company",
     },
     {
       name: "twitter:description",
       content:
-        "We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in 8 to 14 weeks.",
+        `We build admin platforms, mobile apps, and AI tools for businesses that have outgrown manual processes. Most projects ship in ${TIMELINE.range}.`,
     },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
     {
@@ -74,42 +70,50 @@ export function meta({}: Route.MetaArgs) {
         mainEntity: [
           {
             "@type": "Question",
-            name: "What services does your company offer?",
+            name: "What services does Weblaud LLC offer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "We provide comprehensive digital solutions including operations platform development, web application development, mobile app and backend engineering, AI integration, cloud and real-time infrastructure, and dedicated engineering teams. Our team specializes in modern technologies to deliver scalable, high-performance applications tailored to your business needs.",
+              text: "Weblaud LLC provides end-to-end software engineering including custom operations platforms, B2B SaaS web applications, cross-platform mobile apps (React Native & Flutter), production AI/LLM integrations, real-time WebSocket infrastructure, and cloud DevOps management.",
             },
           },
           {
             "@type": "Question",
-            name: "How long does a typical project take to complete?",
+            name: "How long does a software project take to ship?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Project timelines vary based on complexity and scope. A simple website typically takes 4-6 weeks, while a full-featured web application may require 3-6 months. We provide detailed timelines during the discovery phase and keep you updated throughout development with regular milestone reviews and demos.",
+              text: `We operate on focused, fixed-scope agile sprint cycles. Simple builds typically ship in ${TIMELINE.mvp}, while full enterprise systems complete ${TIMELINE.enterprise}. We provide detailed milestone roadmaps during discovery and host bi-weekly sprint reviews.`,
             },
           },
           {
             "@type": "Question",
-            name: "Do you offer post-launch support and maintenance?",
+            name: "What is Weblaud LLC's pricing model?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes, we provide continuous post-launch support including bug fixes, security updates, and feature enhancements. We offer flexible maintenance packages tailored to your needs.",
+              text: "We operate on transparent, fixed-fee sprint pricing starting at $4,500 for MVP projects up to $18,500 for full enterprise platforms. You receive 100% IP source code ownership with zero unpredictable hourly billing or unexpected invoices.",
             },
           },
           {
             "@type": "Question",
-            name: "What is your development process like?",
+            name: "Why hire Weblaud LLC instead of in-house software engineers?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "We follow an agile development methodology with clear phases: discovery and planning, design and prototyping, development with regular sprints, quality assurance testing, and deployment. You'll have full visibility throughout with regular check-ins, demos, and the ability to provide feedback at every stage.",
+              text: `Hiring a senior developer costs over $180,000 annually per engineer once salary, health benefits, and recruiting commissions are factored in—requiring 3 to 6 months just to hire. Weblaud LLC deploys an active senior squad instantly for a fixed sprint fee at ${SAVINGS.shareOfCost}.`,
             },
           },
           {
             "@type": "Question",
-            name: "Can you work with our existing tech stack or integrate with our systems?",
+            name: "Do you provide post-launch support and cloud maintenance?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. We work with diverse tech stacks and can integrate with your existing APIs, databases, and third-party services. We modernize legacy codebases and build new features directly within your current technical ecosystem.",
+              text: "Yes, we provide continuous SLA support packages including 99.9% uptime monitoring, automated database backups, security patch updates, and feature expansion as your active user base grows.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Can you integrate with our existing APIs, databases, or legacy systems?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. We work with modern and legacy tech stacks, connecting directly to your existing PostgreSQL/MySQL databases, third-party APIs, and cloud services without disrupting active operational workflows.",
             },
           },
         ],

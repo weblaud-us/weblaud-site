@@ -18,11 +18,6 @@ export function meta({}: Route.MetaArgs) {
         "Explore Weblaud LLC's portfolio of successful software projects. See how our agency transforms businesses through innovative digital engineering.",
     },
     {
-      name: "keywords",
-      content:
-        "portfolio, Weblaud LLC, case studies, software projects, engineering portfolio, digital solutions",
-    },
-    {
       property: "og:title",
       content: "Our Projects & Case Studies - Weblaud Portfolio",
     },

@@ -20,11 +20,6 @@ export function meta({}: Route.MetaArgs) {
         "Weblaud LLC is a software engineering company. We build internal products and deliver core software systems to solve complex problems through code.",
     },
     {
-      name: "keywords",
-      content:
-        "about us, Weblaud LLC, software agency, software engineering team, innovation, company mission",
-    },
-    {
       property: "og:title",
       content: "About Weblaud - Our Mission, Story & Team",
     },
@@ -48,6 +43,87 @@ export function meta({}: Route.MetaArgs) {
         "Learn about Weblaud's mission, vision, and talented team dedicated to digital transformation.",
     },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    {
+      "script:ld+json": {
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        name: "About Weblaud LLC",
+        description:
+          "Weblaud LLC is a software engineering company building operations platforms, AI tools, and mobile apps for global businesses.",
+        url: "https://weblaud.com/aboutus",
+        mainEntity: {
+          "@type": "Organization",
+          name: "Weblaud LLC",
+          legalName: "Weblaud LLC",
+          url: "https://weblaud.com",
+          logo: "https://weblaud.com/favicon.png",
+          employee: [
+            {
+              "@type": "Person",
+              name: "Sakib Al Jaber",
+              jobTitle: "Lead Software Engineer",
+              worksFor: { "@type": "Organization", name: "Weblaud LLC" },
+            },
+            {
+              "@type": "Person",
+              name: "Manirul Islam",
+              jobTitle: "Business Development",
+              worksFor: { "@type": "Organization", name: "Weblaud LLC" },
+            },
+            {
+              "@type": "Person",
+              name: "Kazi Arif Ishtique",
+              jobTitle: "Senior Software Engineer",
+              worksFor: { "@type": "Organization", name: "Weblaud LLC" },
+            },
+            {
+              "@type": "Person",
+              name: "Shoaib Al Jayed",
+              jobTitle: "Software Engineer",
+              worksFor: { "@type": "Organization", name: "Weblaud LLC" },
+            },
+            {
+              "@type": "Person",
+              name: "Ruhul Amin",
+              jobTitle: "Full Stack Engineer",
+              worksFor: { "@type": "Organization", name: "Weblaud LLC" },
+            },
+            {
+              "@type": "Person",
+              name: "Jubayed Islam",
+              jobTitle: "Software Engineer",
+              worksFor: { "@type": "Organization", name: "Weblaud LLC" },
+            },
+            {
+              "@type": "Person",
+              name: "Shuvo Chandra",
+              jobTitle: "Software Engineer",
+              worksFor: { "@type": "Organization", name: "Weblaud LLC" },
+            },
+          ],
+        },
+      },
+    },
+    {
+      "script:ld+json": {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://weblaud.com",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "About Us",
+            item: "https://weblaud.com/aboutus",
+          },
+        ],
+      },
+    },
     { tagName: "link", rel: "canonical", href: "https://weblaud.com/aboutus" },
   ];
 }

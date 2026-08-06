@@ -185,7 +185,7 @@ const PartnerLogoCard = ({ partner }: { partner: Partner }) => (
     className="group flex items-center justify-center gap-3 mx-3 rounded-xl border border-white/8 bg-white/3 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 cursor-pointer shrink-0 min-w-[160px] h-[72px] px-5 relative overflow-hidden"
   >
     {/* Hover shimmer */}
-    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-r from-transparent via-primary/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-700 pointer-events-none bg-gradient-to-r from-transparent via-primary/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%]" />
 
     {partner.icon ? (
       <div className="text-2xl opacity-75 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 shrink-0">
@@ -237,14 +237,14 @@ const TrustedPartnerships = () => {
           className={`text-center mb-10 ${getBlurAnimationClasses(isTitleVisible)}`}
         >
           <p className="text-primary text-xs font-semibold tracking-[0.2em] uppercase font-barlow mb-3">
-            Trusted By Industry Leaders
+            Our Technology Stack
           </p>
           <h2 className="text-white font-barlow text-2xl md:text-3xl font-semibold">
-            Our Trusted Partnerships
+            Platforms & Tools We Build With
           </h2>
           <p className="text-dark-gray text-sm md:text-base font-barlow mt-3 max-w-xl mx-auto leading-relaxed">
-            We collaborate with world-class platforms and technology providers.
-            We use modern engineering practices to deliver exceptional results.
+            We engineer on modern, industry-standard cloud, AI, and payment
+            infrastructure — no legacy stacks, no vendor lock-in.
           </p>
         </div>
       </div>

@@ -92,7 +92,54 @@ export default function PrivacyPolicy() {
 
               <section>
                 <h2 className="text-xl md:text-2xl font-semibold text-white mb-4">
-                  3. How We Use Your Information
+                  3. Third-Party Service Providers
+                </h2>
+                <p className="mb-4">
+                  We share limited personal data with the following
+                  third-party processors solely to operate the features below.
+                  Each provider processes data under its own privacy policy:
+                </p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>
+                    <strong className="text-white">Web3Forms:</strong> When
+                    you submit our contact form, your name, email, phone
+                    number, and message are transmitted to Web3Forms
+                    (web3forms.com) for email delivery to our team.
+                  </li>
+                  <li>
+                    <strong className="text-white">Zcal:</strong> When you
+                    book a call through our scheduling widget, Zcal (zcal.co)
+                    processes the booking details you provide (name, email,
+                    and selected time) to schedule the meeting.
+                  </li>
+                  <li>
+                    <strong className="text-white">Google Fonts:</strong> Our
+                    website loads typefaces from Google's font servers, which
+                    may receive your IP address as part of that request.
+                  </li>
+                  <li>
+                    <strong className="text-white">Google Analytics:</strong>{" "}
+                    We use Google Analytics (GA4) to understand how visitors
+                    use our website, including pages visited, referral
+                    source, and approximate location. Google may process this
+                    data on servers outside your country. You can opt out
+                    using the{" "}
+                    <a
+                      href="https://tools.google.com/dlpage/gaoptout"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Google Analytics Opt-out Browser Add-on
+                    </a>
+                    .
+                  </li>
+                </ul>
+              </section>
+
+              <section>
+                <h2 className="text-xl md:text-2xl font-semibold text-white mb-4">
+                  4. How We Use Your Information
                 </h2>
                 <p className="mb-4">
                   We use the collected information for the following purposes:
@@ -110,7 +157,7 @@ export default function PrivacyPolicy() {
 
               <section>
                 <h2 className="text-xl md:text-2xl font-semibold text-white mb-4">
-                  4. Data Security
+                  5. Data Security
                 </h2>
                 <p>
                   We implement appropriate technical and organizational measures
@@ -123,7 +170,7 @@ export default function PrivacyPolicy() {
 
               <section>
                 <h2 className="text-xl md:text-2xl font-semibold text-white mb-4">
-                  5. Contact Us
+                  6. Contact Us
                 </h2>
                 <p>
                   If you have any questions about this Privacy Policy, please

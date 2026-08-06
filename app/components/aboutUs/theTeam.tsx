@@ -11,7 +11,6 @@ import { blurAnimation } from "~/lib/animations";
 import {
   motion,
   AnimatePresence,
-  useMotionValue,
 } from "framer-motion";
 
 const TheTeam = () => {

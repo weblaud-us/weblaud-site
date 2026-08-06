@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import type { Route } from "./+types/root";
+import { TIMELINE } from "./lib/constants";
 import Footer from "./components/ui/footer";
 import "./app.css";
 import NavBar from "./components/ui/navBar";
@@ -27,6 +28,7 @@ const FONTS_URL =
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.png", type: "image/png" },
+  { rel: "preconnect", href: "https://www.googletagmanager.com" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -63,13 +65,25 @@ export const meta: Route.MetaFunction = () => {
 export function Layout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Weblaud LLC – Software Development Company",
+    "@type": ["Organization", "ProfessionalService"],
+    name: "Weblaud LLC",
     legalName: "Weblaud LLC",
     url: "https://weblaud.com",
     logo: "https://weblaud.com/favicon.png",
     image: "https://weblaud.com/og-image.jpg",
+    description:
+      "Weblaud LLC is a software company and innovation lab building digital products, operations platforms, AI tools, and mobile apps for global businesses.",
+    priceRange: "$$",
+    knowsAbout: [
+      "Software Engineering",
+      "Web Development",
+      "Mobile Application Development",
+      "AI Integration & Machine Learning",
+      "Cloud Infrastructure & DevOps",
+      "Enterprise Operations Platforms",
+    ],
     sameAs: [
+      "https://github.com/weblaud-us",
       "https://www.facebook.com/weblaud",
       "https://www.instagram.com/weblaud",
       "https://www.linkedin.com/company/weblaud",
@@ -80,6 +94,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         telephone: "+1-307-220-9766",
         contactType: "customer service",
         email: "info@weblaud.com",
+        availableLanguage: ["English"],
       },
     ],
     address: {
@@ -89,6 +104,51 @@ export function Layout({ children }: { children: React.ReactNode }) {
       addressRegion: "WY",
       postalCode: "82001",
       addressCountry: "US",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 41.1400,
+      longitude: -104.8202,
+    },
+    areaServed: ["US", "CA", "GB", "EU", "Worldwide"],
+    employee: [
+      { "@type": "Person", name: "Sakib Al Jaber", jobTitle: "Lead Software Engineer" },
+      { "@type": "Person", name: "Manirul Islam", jobTitle: "Business Development" },
+      { "@type": "Person", name: "Kazi Arif Ishtique", jobTitle: "Senior Software Engineer" },
+      { "@type": "Person", name: "Shoaib Al Jayed", jobTitle: "Software Engineer" },
+      { "@type": "Person", name: "Ruhul Amin", jobTitle: "Full Stack Engineer" },
+      { "@type": "Person", name: "Jubayed Islam", jobTitle: "Software Engineer" },
+      { "@type": "Person", name: "Shuvo Chandra", jobTitle: "Software Engineer" },
+    ],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Software Engineering Services",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Operations Platforms Development",
+            description: `Custom admin portals, internal tools, and operational workflows built in ${TIMELINE.rangeShort}.`,
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Web & Mobile App Development",
+            description: "High-performance cross-platform mobile apps and modern web applications.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "AI & Machine Learning Integration",
+            description: "Custom AI models, RAG pipelines, predictive analytics, and automated decision engines.",
+          },
+        },
+      ],
     },
   };
 
@@ -103,18 +163,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google Analytics Placeholder */}
-        {/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+        {/* Google Analytics (GA4) */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-16QLSZ8K04"
+        ></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-XXXXXXXXXX');
+              gtag('config', 'G-16QLSZ8K04');
             `,
           }}
-        /> */}
+        />
       </head>
       <body className="[overflow-x:clip] antialiased">
         {children}

@@ -16,11 +16,6 @@ export function meta({}: Route.MetaArgs) {
       content:
         "Ready to build your next big idea? Contact Weblaud LLC today. Reach out to our software agency for consultations, inquiries, or project discussions.",
     },
-    {
-      name: "keywords",
-      content:
-        "contact Weblaud LLC, software agency contact, hire software engineers, project inquiry, consultation",
-    },
     { property: "og:title", content: "Contact Us - Get In Touch With Weblaud" },
     {
       property: "og:description",

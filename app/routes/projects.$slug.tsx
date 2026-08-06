@@ -1,9 +1,9 @@
 import { useParams, Link } from "react-router";
 import { projects } from "~/data/projects";
-import { Button } from "~/components/ui/button";
-import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
+import Discuss from "~/components/aboutUs/discuss";
 import { useState, useEffect } from "react";
 import { FiArrowLeft, FiCheckCircle } from "react-icons/fi";
+import { Button } from "~/components/ui/button";
 import type { Route } from "./+types/projects.$slug";
 
 export function meta({ params }: Route.MetaArgs) {
@@ -16,10 +16,6 @@ export function meta({ params }: Route.MetaArgs) {
   return [
     { title: pageTitle },
     { name: "description", content: project.description },
-    {
-      name: "keywords",
-      content: `${project.title}, case study, software development, ${project.techStack.join(", ")}, Weblaud LLC`,
-    },
     { property: "og:title", content: pageTitle },
     { property: "og:description", content: project.description },
     { property: "og:type", content: "article" },
@@ -30,6 +26,57 @@ export function meta({ params }: Route.MetaArgs) {
     { name: "twitter:title", content: pageTitle },
     { name: "twitter:description", content: project.description },
     { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    {
+      "script:ld+json": {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        headline: pageTitle,
+        description: project.description,
+        url: pageUrl,
+        author: {
+          "@type": "Organization",
+          name: "Weblaud LLC",
+          url: "https://weblaud.com",
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Weblaud LLC",
+          logo: {
+            "@type": "ImageObject",
+            url: "https://weblaud.com/favicon.png",
+          },
+        },
+        proficiencyLevel: "Expert",
+        dependencies: project.techStack.join(", "),
+        articleBody: `Challenge: ${project.problem} Solution: ${project.solution} Impact: ${project.businessImpact}`,
+      },
+    },
+    {
+      "script:ld+json": {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://weblaud.com",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Projects",
+            item: "https://weblaud.com/projects",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: project.title,
+            item: pageUrl,
+          },
+        ],
+      },
+    },
     { tagName: "link", rel: "canonical", href: pageUrl },
   ];
 }
@@ -159,23 +206,9 @@ export default function CaseStudy() {
              </p>
           </div>
         </div>
-
-        {/* CTA Section */}
-        <div className="mt-20 md:mt-32 text-center">
-          <h2 className="text-3xl font-bold font-barlow mb-6">Ready to build your success story?</h2>
-          <p className="text-gray-400 font-barlow mb-8 max-w-2xl mx-auto">
-            Let's discuss how our engineering team can solve your most complex technical challenges and drive real business growth.
-          </p>
-          <Button onClick={() => setIsModalOpen(true)} className="px-10 py-5 text-lg font-bold">
-            Book a Discovery Call
-          </Button>
-        </div>
       </div>
       
-      <BookingModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <Discuss />
     </div>
   );
 }

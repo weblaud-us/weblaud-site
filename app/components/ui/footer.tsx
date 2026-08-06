@@ -7,47 +7,27 @@ import { motion } from "framer-motion";
 import IconTile from "./icon-tile";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
-import weblaudLogo from "~/assets/weblaud-logo.svg";
+import weblaudFooterLogo from "~/assets/Weblaud_LLC_Footer.svg";
 
 const Footer: React.FC = () => {
   const location = useLocation();
 
-  const [logoRef, isLogoVisible] = useBlurAnimation<HTMLDivElement>(
-    0.3,
-    false,
-    location.pathname
-  );
-  const [menuRef, isMenuVisible] = useBlurAnimation<HTMLDivElement>(
-    0.3,
-    false,
-    location.pathname
-  );
-  const [socialRef, isSocialVisible] = useBlurAnimation<HTMLDivElement>(
-    0.3,
-    false,
-    location.pathname
-  );
-  const [contactRef, isContactVisible] = useBlurAnimation<HTMLDivElement>(
-    0.3,
-    false,
-    location.pathname
-  );
-  const [legalRef, isLegalVisible] = useBlurAnimation<HTMLDivElement>(
-    0.3,
-    false,
-    location.pathname
-  );
-  const [copyrightRef, isCopyrightVisible] = useBlurAnimation<HTMLDivElement>(
-    0.3,
-    false,
-    location.pathname
-  );
+  const [logoRef, isLogoVisible] = useBlurAnimation<HTMLDivElement>(0.05, false);
+  const [menuRef, isMenuVisible] = useBlurAnimation<HTMLDivElement>(0.05, false);
+  const [socialRef, isSocialVisible] = useBlurAnimation<HTMLDivElement>(0.05, false);
+  const [contactRef, isContactVisible] = useBlurAnimation<HTMLDivElement>(0.05, false);
+  const [legalRef, isLegalVisible] = useBlurAnimation<HTMLDivElement>(0.05, false);
+  const [copyrightRef, isCopyrightVisible] = useBlurAnimation<HTMLDivElement>(0.05, false);
 
   const menuItems: { label: string; href: string }[] = [
     { label: "Home", href: "/" },
     { label: "About Us", href: "/aboutus" },
     { label: "Our Services", href: "/services" },
     { label: "Our Projects", href: "/projects" },
+    { label: "Project Estimator", href: "/calculator" },
+    { label: "Engineering Insights", href: "/insights" },
+    { label: "Weblaud vs In-House", href: "/vs/in-house-engineers" },
+    { label: "Weblaud vs Agencies", href: "/vs/traditional-agencies" },
     { label: "Contact Us", href: "/contact" },
   ];
 
@@ -107,10 +87,10 @@ const Footer: React.FC = () => {
             className={`text-center lg:text-left ${getBlurAnimationClasses(isLogoVisible)}`}
           >
             <motion.img
-              src={weblaudLogo}
-              alt="Weblaud"
-              className="h-8 md:h-10"
-              whileHover={{ scale: 1.1, rotate: 5 }}
+              src={weblaudFooterLogo}
+              alt="Weblaud LLC"
+              className="h-16 md:h-18 w-auto"
+              whileHover={{ scale: 1.05 }}
             />
           </motion.div>
 

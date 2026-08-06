@@ -42,9 +42,10 @@ const NavBar = () => {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About Us", href: "/aboutus" },
-    { name: "Our Services", href: "/services" },
-    { name: "Our Projects", href: "/projects" },
-    { name: "Contact Us", href: "/contact" },
+    { name: "Services", href: "/services" },
+    { name: "Projects", href: "/projects" },
+    { name: "Insights", href: "/insights" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
@@ -116,15 +117,16 @@ const NavBar = () => {
               })}
             </div>
 
-            {/* Book a Call — desktop nav button (hidden; keeping for layout balance) */}
-            <div className="hidden lg:flex items-center invisible pointer-events-none" aria-hidden="true">
-              <div
-                className={`text-xs font-bold transition-all duration-300 ${
-                  isScrolled ? "px-6 py-2.5 text-xs" : "px-8 py-3 text-sm"
-                } bg-primary rounded-xl text-white`}
+            {/* Dedicated Cost Estimator button on the right side */}
+            <div className="hidden lg:flex items-center">
+              <Link
+                to="/calculator"
+                className={`relative group inline-flex items-center justify-center font-barlow font-semibold text-white bg-[#0A84FF] hover:bg-blue-600 transition-all duration-300 rounded-xl shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[1px] active:translate-y-0 ${
+                  isScrolled ? "px-5 py-2 text-xs" : "px-6 py-2.5 text-sm"
+                }`}
               >
-                Book a Call
-              </div>
+                <span>Cost Estimator</span>
+              </Link>
             </div>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

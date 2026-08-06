@@ -19,78 +19,117 @@ export interface Project {
   businessImpact: string;
 }
 
+/**
+ * One case study per Weblaud service (see ~/data/services.ts) so the
+ * portfolio always demonstrates something we actually sell.
+ */
 export const projects: Project[] = [
   {
     id: 1,
-    slug: "machine-learning-platform",
-    title: "Machine Learning Platform",
+    slug: "enterprise-operations-erp-platform",
+    title: "Enterprise Operations & ERP Platform",
     description:
-      "Machine learning platform that processes enterprise data to deliver predictive analytics and automated decision-making pipelines.",
+      "Custom back-office ERP unifying billing, inventory, and multi-branch reporting into a single platform with granular role-based access control.",
     features: [
-      "Neural network training & optimization",
-      "Real-time predictive analytics",
-      "Automated model deployment pipeline",
+      "Automated invoicing, payment workflows & PDF generation",
+      "Role-based access control (RBAC) & full audit logging",
+      "Real-time executive reporting & financial dashboards",
     ],
-    image: pimg01,
-    imageAlt: "AI Machine Learning Project",
-    problem: "The client, a leading logistics enterprise, struggled with inefficient route planning and unpredictable delivery times due to a lack of dynamic forecasting capabilities.",
-    solution: "We engineered an end-to-end Machine Learning Platform that ingests live traffic, weather, and fleet data. By utilizing deep learning models, the system dynamically reroutes drivers and predicts delivery ETAs with high precision.",
-    techStack: ["Python", "TensorFlow", "AWS SageMaker", "React", "Node.js", "PostgreSQL"],
-    businessImpact: "Reduced average delivery time by 18%, slashed fuel consumption by 12%, and improved customer satisfaction scores by 35% within the first quarter of deployment."
+    image: pimg05,
+    imageAlt: "Enterprise Operations & ERP Dashboard",
+    problem: "A multi-branch retail operator ran finance, inventory, and staff permissions across six disconnected spreadsheets and a legacy desktop accounting tool, forcing manual reconciliation every month and giving branch managers no real-time visibility into cash position or stock levels.",
+    solution: "We built a unified operations platform with automated invoicing and payment workflows, granular role-based access control down to the branch level, and live executive dashboards pulling directly from the transaction database — replacing the manual reconciliation process entirely.",
+    techStack: ["React", "Node.js", "PostgreSQL", "Redis", "AWS", "Stripe"],
+    businessImpact: "Cut month-end close from 5 days to same-day, eliminated manual reconciliation errors across all 6 branches, and gave leadership real-time cash and inventory visibility for the first time."
   },
-
   {
-    id: 4,
-    slug: "data-analytics-platform",
-    title: "Data Analytics Platform",
+    id: 2,
+    slug: "b2b-saas-subscription-platform",
+    title: "B2B SaaS Subscription Platform",
     description:
-      "Comprehensive data analytics solution providing deep insights through advanced visualization, statistical analysis, and big data processing capabilities for data-driven decision making.",
+      "Multi-tenant SaaS platform built for scale from day one — subscription billing, secure tenant isolation, and zero-downtime deploys.",
     features: [
-      "Interactive data visualization",
-      "Big data processing engine",
-      "Custom reporting & dashboards",
+      "Multi-tenant architecture with secure data isolation",
+      "Stripe-powered subscription billing & plan management",
+      "Zero-downtime CI/CD pipeline with automated testing",
     ],
     image: pimg04,
-    imageAlt: "Data Analytics Project",
-    problem: "A large retail chain had terabytes of customer data trapped in siloed legacy systems, preventing them from understanding purchasing behavior or personalizing marketing efforts.",
-    solution: "We built a centralized data lake and a custom analytics platform. Using modern data pipelines, we unified the disparate data sources into a single dashboard that provides real-time, actionable insights via interactive visual reporting.",
-    techStack: ["Snowflake", "dbt", "Apache Airflow", "React", "D3.js", "Python"],
-    businessImpact: "Increased cross-sell revenue by 22% through personalized marketing campaigns and saved the analytics team over 40 hours per week in manual report generation."
+    imageAlt: "B2B SaaS Subscription Platform",
+    problem: "An early-stage SaaS startup had validated demand with a single-tenant prototype, but the codebase couldn't support paying customers — no subscription billing, no tenant isolation, and every deploy required a maintenance window.",
+    solution: "We re-architected the application into a secure multi-tenant platform, integrated Stripe for self-serve subscription billing and plan upgrades, and built a CI/CD pipeline with automated test gates enabling zero-downtime deploys multiple times a week.",
+    techStack: ["React", "Next.js", "Node.js", "PostgreSQL", "Stripe", "Docker"],
+    businessImpact: "Went from zero to 40 paying tenants in the first quarter post-launch with zero billing incidents, and cut average deploy time from a 2-hour maintenance window to under 10 minutes with no downtime."
+  },
+  {
+    id: 3,
+    slug: "offline-first-field-service-app",
+    title: "Offline-First Field Service Mobile App",
+    description:
+      "Cross-platform Flutter app and API backend giving field technicians full functionality in zero-connectivity environments, with automatic background sync.",
+    features: [
+      "Single Flutter codebase for iOS, Android & Web",
+      "Offline-first local storage with background sync",
+      "Push notifications & in-app payment collection",
+    ],
+    image: pimg02,
+    imageAlt: "Offline-First Field Service Mobile App",
+    problem: "A field services company's technicians regularly lost work orders and photo documentation when cellular signal dropped in basements, rural sites, and metal-frame buildings, forcing them to redo paperwork back at the office.",
+    solution: "We built a single Flutter codebase for iOS and Android backed by local-first storage, so technicians can complete work orders, capture photos, and collect payment entirely offline. A background sync queue pushes everything to the cloud API the moment connectivity returns.",
+    techStack: ["Flutter", "SQLite", "Node.js", "PostgreSQL", "Firebase Cloud Messaging"],
+    businessImpact: "Eliminated redone paperwork from lost connectivity, cut average job completion time by 25%, and gave dispatch real-time visibility into technician status even in low-signal areas."
+  },
+  {
+    id: 4,
+    slug: "ai-support-assistant-rag-pipeline",
+    title: "AI Support Assistant & RAG Pipeline",
+    description:
+      "Production RAG pipeline and AI assistant trained securely on a company's private documentation, deployed as a support-deflection tool for its customer success team.",
+    features: [
+      "Custom RAG pipeline over a private knowledge base",
+      "AI assistant secured to company data, zero data leakage",
+      "Evaluation framework tracking accuracy & hallucination rate",
+    ],
+    image: pimg01,
+    imageAlt: "AI Support Assistant & RAG Pipeline",
+    problem: "A B2B software company's support team was drowning in repetitive tickets that were already answered somewhere in their 400-page internal documentation, but agents couldn't search it fast enough to keep up with ticket volume.",
+    solution: "We built a production RAG pipeline that indexes the company's private documentation into a vector database, paired with an AI assistant that answers support agents' questions with cited sources in seconds. A rigorous evaluation framework tracks accuracy and flags low-confidence answers for human review before they reach a customer.",
+    techStack: ["Python", "FastAPI", "OpenAI API", "Pinecone", "PostgreSQL"],
+    businessImpact: "Cut average ticket resolution time by 45% within the first 6 weeks and reduced escalations to senior support staff by a third, with no drop in customer satisfaction scores."
   },
   {
     id: 5,
-    slug: "business-intelligence",
-    title: "Business Intelligence",
+    slug: "self-hosted-video-voice-infrastructure",
+    title: "Self-Hosted Video & Voice Infrastructure",
     description:
-      "Enterprise-grade business intelligence platform delivering actionable insights through powerful analytics, KPI tracking, and comprehensive reporting tools for strategic business growth.",
+      "Self-hosted WebRTC video, voice, and messaging infrastructure replacing per-minute third-party vendor billing for a telehealth platform.",
     features: [
-      "Executive dashboard & KPI tracking",
-      "Predictive business analytics",
-      "Multi-source data integration",
+      "Custom WebRTC / LiveKit video & voice infrastructure",
+      "Real-time session quality & uptime monitoring",
+      "Automated DevOps, CI/CD & 99.9% uptime SLA",
     ],
-    image: pimg05,
-    imageAlt: "Business Intelligence Dashboard",
-    problem: "C-suite executives at a multinational corporation lacked real-time visibility into global operations, often relying on month-old spreadsheet data to make critical financial decisions.",
-    solution: "We developed a tailored Business Intelligence (BI) suite. The system aggregates global financial, HR, and operational data into role-based executive dashboards, featuring predictive forecasting and anomaly detection.",
-    techStack: ["PowerBI Embedded", "Node.js", "GraphQL", "PostgreSQL", "React", "Azure"],
-    businessImpact: "Accelerated executive decision-making speed by 80%, identified $4M in operational inefficiencies, and unified 15 regional departments under a single source of truth."
+    image: pimg03,
+    imageAlt: "Real-Time Video & Voice Infrastructure Monitoring",
+    problem: "A telehealth startup was paying a third-party video SaaS vendor per-minute fees that scaled directly with patient visit volume, eating an increasing share of revenue as the platform grew, with no control over call quality or uptime.",
+    solution: "We deployed self-hosted LiveKit/WebRTC infrastructure on the company's own cloud, giving them full ownership of video and voice sessions. A real-time monitoring dashboard tracks call quality and infrastructure health, backed by automated CI/CD and a 99.9% uptime SLA.",
+    techStack: ["LiveKit", "WebRTC", "Node.js", "Redis", "Docker", "AWS"],
+    businessImpact: "Eliminated per-minute vendor billing entirely, cutting video infrastructure costs by 65% at current volume, while maintaining 99.9% uptime with full control over call quality and data residency."
   },
   {
     id: 6,
-    slug: "enterprise-infrastructure",
-    title: "Enterprise Infrastructure",
+    slug: "dedicated-engineering-pod-scaling-sprint",
+    title: "Dedicated Engineering Pod for a Scaling SaaS Team",
     description:
-      "Enterprise infrastructure solutions featuring cloud-native architecture, microservices, and automated DevOps pipelines.",
+      "Embedded senior full-stack pod integrated directly into a scaling SaaS company's existing sprints to clear a critical product backlog without a 3-to-6 month hiring cycle.",
     features: [
-      "Cloud-native architecture design",
-      "Automated CI/CD pipelines",
-      "High availability & disaster recovery",
+      "Senior full-stack engineers embedded in client's toolchain",
+      "Direct Slack integration & daily standups from week one",
+      "Transparent sprint billing & weekly milestone demos",
     ],
     image: pimg06,
-    imageAlt: "Enterprise Infrastructure Project",
-    problem: "A rapidly growing SaaS startup experienced frequent downtime and slow deployment cycles due to a monolithic architecture and manual infrastructure provisioning.",
-    solution: "We orchestrated a complete migration from a legacy monolith to a microservices architecture hosted on AWS. We implemented Infrastructure as Code (IaC) and fully automated CI/CD pipelines to ensure zero-downtime deployments.",
-    techStack: ["AWS", "Terraform", "Kubernetes", "Docker", "GitHub Actions", "Datadog"],
-    businessImpact: "Achieved 99.99% uptime, reduced deployment time from 2 days to 15 minutes, and cut monthly cloud hosting costs by 30% through optimized resource allocation."
+    imageAlt: "Dedicated Engineering Pod for a Scaling SaaS Team",
+    problem: "A venture-backed SaaS company had a roadmap it couldn't ship — its 4-person engineering team was already at capacity, and a 3-to-6 month hiring cycle would have meant missing its next funding milestone.",
+    solution: "We embedded a 3-engineer senior pod directly into the client's existing sprints and toolchain within 48 hours, working from their backlog and attending their daily standups as if we were internal hires, with zero onboarding drag on their core team.",
+    techStack: ["Node.js", "React", "Python", "PostgreSQL", "AWS"],
+    businessImpact: "Shipped the delayed roadmap 10 weeks ahead of the original in-house hiring timeline, directly supporting the company's next funding round, with zero net increase to permanent headcount."
   },
 ];
