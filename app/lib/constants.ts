@@ -22,6 +22,17 @@ export const SAVINGS = {
   percent: "70%",
 } as const;
 
+/**
+ * Case-study results disclosure — SINGLE SOURCE OF TRUTH.
+ * Portfolio impact figures are illustrative of typical engagements rather than
+ * audited per-client results, so every surface that publishes them must say so
+ * in the same words. Once a case study's numbers come from a real, verifiable
+ * engagement, move that study out from under this disclosure instead of
+ * quietly leaving it covered.
+ */
+export const RESULTS_DISCLOSURE =
+  "Figures shown are representative of typical engagement outcomes. Individual results vary with scope, data quality, and existing systems.";
+
 export const TIMELINE = {
   min: 4,
   max: 14,
