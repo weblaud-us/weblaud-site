@@ -1,6 +1,68 @@
 import type { Route } from "./+types/calculator";
 import ProjectCalculator from "~/components/calculator/projectCalculator";
 import Discuss from "~/components/aboutUs/discuss";
+import { apiFetch, fetchOptional, ApiError } from "~/lib/api.server";
+import {
+  DEFAULT_CALCULATOR_CONFIG,
+  isUsableConfig,
+} from "~/lib/calculator-defaults";
+import type { CalculatorConfig } from "~/lib/types";
+
+export async function loader() {
+  const config = await fetchOptional<CalculatorConfig | null>(
+    "/calculator-config",
+    null,
+  );
+
+  // An unreachable API and a seeded-but-cleared document are equally unusable,
+  // so both fall back to the published defaults rather than an empty wizard.
+  if (!isUsableConfig(config)) {
+    return { config: DEFAULT_CALCULATOR_CONFIG, usingFallbackConfig: true };
+  }
+
+  return { config, usingFallbackConfig: false };
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+
+  // Honeypot: a bot filled a field no human can see. Report success so it has
+  // nothing to tune against, but store nothing.
+  if (String(formData.get("website") ?? "").trim()) {
+    return { ok: true };
+  }
+
+  const featureIds = String(formData.get("featureIds") ?? "")
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+  const optional = (key: string) => {
+    const value = String(formData.get(key) ?? "").trim();
+    return value || undefined;
+  };
+
+  try {
+    await apiFetch("/estimates/submit", {
+      method: "POST",
+      body: {
+        name: String(formData.get("name") ?? "").trim(),
+        email: String(formData.get("email") ?? "").trim(),
+        company: optional("company"),
+        phone: optional("phone"),
+        notes: optional("notes"),
+        projectTypeId: String(formData.get("projectTypeId") ?? ""),
+        featureIds,
+        speedId: String(formData.get("speedId") ?? ""),
+      },
+    });
+  } catch (err) {
+    if (err instanceof ApiError) return { error: err.message };
+    return { error: "We couldn't send your estimate. Please try again." };
+  }
+
+  return { ok: true };
+}
 
 export function headers() {
   return {
@@ -58,11 +120,14 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function CalculatorRoute() {
+export default function CalculatorRoute({ loaderData }: Route.ComponentProps) {
   return (
     <div className="bg-black text-white pt-24 md:pt-32 pb-16 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ProjectCalculator />
+        <ProjectCalculator
+          config={loaderData.config}
+          usingFallbackConfig={loaderData.usingFallbackConfig}
+        />
       </div>
       <Discuss />
     </div>
