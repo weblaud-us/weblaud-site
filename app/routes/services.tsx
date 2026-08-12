@@ -2,6 +2,15 @@ import type { Route } from "./+types/services";
 import BannerOurServices from "~/components/services/bannerOurServices";
 import OurServices from "~/components/services/ourServices";
 import Discuss from "~/components/aboutUs/discuss";
+import { fetchOptional, resolveMediaUrl } from "~/lib/api.server";
+import type { AdminService } from "~/lib/types";
+
+export async function loader() {
+  const services = await fetchOptional<AdminService[]>("/services", []);
+  return {
+    services: services.map((s) => ({ ...s, image: resolveMediaUrl(s.image) })),
+  };
+}
 
 export function headers() {
   return {
@@ -154,11 +163,11 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const Services = () => {
+const Services = ({ loaderData }: Route.ComponentProps) => {
   return (
     <>
       <BannerOurServices />
-      <OurServices />
+      <OurServices services={loaderData.services} />
       <Discuss />
     </>
   );

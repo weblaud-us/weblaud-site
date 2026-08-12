@@ -2,6 +2,16 @@ import type { Route } from "./+types/projects";
 import BannerOurProjects from "~/components/projects/bannerOurProjects";
 import OurCaseStudies from "~/components/projects/ourCaseStudies";
 import Discuss from "~/components/aboutUs/discuss";
+import { fetchOptional, resolveMediaUrl } from "~/lib/api.server";
+import { toProject, type BackendProject } from "~/lib/adapters/project.server";
+
+export async function loader() {
+  const backendProjects = await fetchOptional<BackendProject[]>("/projects", []);
+  const projects = backendProjects
+    .map(toProject)
+    .map((p) => ({ ...p, image: resolveMediaUrl(p.image) }));
+  return { projects };
+}
 
 export function headers() {
   return {
@@ -42,11 +52,11 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const Projects = () => {
+const Projects = ({ loaderData }: Route.ComponentProps) => {
   return (
     <div>
       <BannerOurProjects />
-      <OurCaseStudies />
+      <OurCaseStudies projects={loaderData.projects} />
       <Discuss />
     </div>
   );

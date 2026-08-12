@@ -2,49 +2,19 @@ import { motion, useInView, animate } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
+import type { TrackRecordItem } from "~/lib/types";
 
-interface TrackRecord {
-  id: number;
-  number: string;
-  suffix: string;
-  title: string;
-  description: string;
+interface OurTrackProps {
+  trackRecord: TrackRecordItem[];
 }
 
-const trackRecords: TrackRecord[] = [
-  {
-    id: 1,
-    number: "75",
-    suffix: "+",
-    title: "Projects Delivered",
-    description:
-      "Enterprise systems, mobile apps, and custom software successfully shipped",
-  },
-  {
-    id: 2,
-    number: "99",
-    suffix: "%",
-    title: "Client Satisfaction",
-    description:
-      "Long-term partnerships built on transparency, quality, and proven results",
-  },
-  {
-    id: 3,
-    number: "95",
-    suffix: "%",
-    title: "On-Time Delivery",
-    description:
-      "Milestone-driven sprints and transparent communication that keep projects on schedule",
-  },
-  {
-    id: 4,
-    number: "8",
-    suffix: "+",
-    title: "Countries Served",
-    description:
-      "Trusted by clients across North America, Europe, Asia, and the Middle East",
-  },
-];
+// Backend stores each stat as a single string (e.g. "75+", "99%") — split it
+// into the numeric part (animated by <Counter>) and the trailing suffix.
+function splitNumberAndSuffix(title: string): { number: string; suffix: string } {
+  const match = title.match(/^(\$?\d+(?:\.\d+)?)(.*)$/);
+  if (!match) return { number: title, suffix: "" };
+  return { number: match[1], suffix: match[2] };
+}
 
 function Counter({ value, suffix }: { value: string; suffix: string }) {
   const nodeRef = useRef<HTMLSpanElement>(null);
@@ -87,8 +57,10 @@ function Counter({ value, suffix }: { value: string; suffix: string }) {
   );
 }
 
-const OurTrack = () => {
+const OurTrack = ({ trackRecord }: OurTrackProps) => {
   const [titleRef, isVisible] = useBlurAnimation<HTMLHeadingElement>();
+
+  if (trackRecord.length === 0) return null;
 
   return (
     <section className="bg-black text-white py-16 md:py-20 px-4 md:px-8">
@@ -101,40 +73,45 @@ const OurTrack = () => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {trackRecords.map((record, index) => (
-            <motion.div
-              key={record.id}
-              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="border border-light-black rounded-3xl p-6 md:p-8 bg-card-bg"
-            >
-              <div className="mb-4 md:mb-6">
-                <h3
-                  className="text-5xl md:text-6xl lg:text-7xl font-bold font-barlow tracking-tight"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, #ffffff 0%, #8a8a9a 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  <Counter value={record.number} suffix={record.suffix} />
-                </h3>
-              </div>
+          {trackRecord.map((record, index) => {
+            const { number, suffix } = splitNumberAndSuffix(record.title);
+            return (
+              <motion.div
+                key={record.subtitle}
+                initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="border border-light-black rounded-3xl p-6 md:p-8 bg-card-bg"
+              >
+                <div className="mb-4 md:mb-6">
+                  <h3
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-barlow tracking-tight break-words"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, #ffffff 0%, #8a8a9a 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    <Counter value={number} suffix={suffix} />
+                  </h3>
+                </div>
 
-              <div className="space-y-2">
-                <h4 className="text-base md:text-lg font-bold font-barlow leading-tight">
-                  {record.title}
-                </h4>
-                <p className="text-sm md:text-base text-gray-400 leading-relaxed font-barlow">
-                  {record.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+                <div className="space-y-2">
+                  <h4 className="text-base md:text-lg font-bold font-barlow leading-tight">
+                    {record.subtitle}
+                  </h4>
+                  {record.description && (
+                    <p className="text-sm md:text-base text-gray-400 leading-relaxed font-barlow">
+                      {record.description}
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

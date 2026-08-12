@@ -22,18 +22,15 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   style,
   onViewDetails,
 }) => {
-  const truncateTitle = (text: string, maxLength: number = 18) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + "...";
-  };
-
-  const shouldTruncate = () => {
-    if (typeof window === "undefined") return false;
-    const width = window.innerWidth;
-    return width < 768 || (width >= 1023 && width <= 1120);
-  };
-
-  const displayTitle = shouldTruncate() ? truncateTitle(title) : title;
+  // Animate per character, but keep each word in its own inline-block so the
+  // title only ever wraps at spaces instead of splitting words apart.
+  const words = title.split(" ").filter(Boolean);
+  let charOffset = 0;
+  const wordOffsets = words.map((word) => {
+    const offset = charOffset;
+    charOffset += word.length;
+    return offset;
+  });
 
   return (
     <div
@@ -67,21 +64,30 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         </div>
 
         <div className="flex flex-col flex-1 p-6 relative">
-          <div className="flex items-start justify-between mb-4 relative">
-            <h3 className="text-white font-barlow font-bold text-xl">
-              {displayTitle.split("").map((char, index) => (
-                <span
-                  key={index}
-                  className="inline-block transition-all duration-400 ease-out group-hover:text-primary group-hover:-translate-y-1 group-hover:scale-110"
-                  style={{
-                    transitionDelay: `${index * 25}ms`,
-                  }}
-                >
-                  {char === " " ? "\u00A0" : char}
+          <div className="flex items-start justify-between gap-4 mb-4 relative">
+            <h3 className="min-w-0 flex-1 text-white font-barlow font-bold text-xl leading-snug text-balance">
+              {words.map((word, wordIndex) => (
+                <span key={wordIndex}>
+                  <span className="inline-block whitespace-nowrap">
+                    {word.split("").map((char, charIndex) => (
+                      <span
+                        key={charIndex}
+                        className="inline-block transition-all duration-400 ease-out group-hover:text-primary group-hover:-translate-y-1 group-hover:scale-110"
+                        style={{
+                          transitionDelay: `${
+                            (wordOffsets[wordIndex] + charIndex) * 25
+                          }ms`,
+                        }}
+                      >
+                        {char}
+                      </span>
+                    ))}
+                  </span>
+                  {wordIndex < words.length - 1 ? " " : null}
                 </span>
               ))}
             </h3>
-            <div className="relative shrink-0">
+            <div className="relative shrink-0 mt-0.5">
               <span className="absolute sm:block hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-primary opacity-0 group-hover:opacity-100 group-hover:scale-120 transition-all duration-600 pointer-events-none"></span>
               <span
                 className="absolute hidden sm:block top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-primary opacity-0 group-hover:opacity-70 group-hover:scale-140 transition-all duration-800 pointer-events-none"

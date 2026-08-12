@@ -1,13 +1,33 @@
-import { useParams, Link } from "react-router";
-import { projects } from "~/data/projects";
+import { Link } from "react-router";
 import Discuss from "~/components/aboutUs/discuss";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FiArrowLeft, FiCheckCircle } from "react-icons/fi";
-import { Button } from "~/components/ui/button";
+import { RouteErrorBoundary } from "~/components/ui/error-page";
 import type { Route } from "./+types/projects.$slug";
+import { apiFetch, resolveMediaUrl, ApiError } from "~/lib/api.server";
+import { toProject, type BackendProject } from "~/lib/adapters/project.server";
+import { RESULTS_DISCLOSURE } from "~/lib/constants";
 
-export function meta({ params }: Route.MetaArgs) {
-  const project = projects.find((p) => p.slug === params.slug);
+export async function loader({ params }: Route.LoaderArgs) {
+  try {
+    const backendProject = await apiFetch<BackendProject>(
+      `/projects/slug/${params.slug}`,
+    );
+    const project = {
+      ...toProject(backendProject),
+      image: resolveMediaUrl(backendProject.coverImage),
+    };
+    return { project };
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) {
+      throw new Response("Not Found", { status: 404 });
+    }
+    throw err;
+  }
+}
+
+export function meta({ data }: Route.MetaArgs) {
+  const project = data?.project;
   if (!project) return [{ title: "Case Study Not Found - Weblaud LLC" }];
 
   const pageUrl = `https://weblaud.com/projects/${project.slug}`;
@@ -81,26 +101,32 @@ export function meta({ params }: Route.MetaArgs) {
   ];
 }
 
-export default function CaseStudy() {
-  const { slug } = useParams();
-  const project = projects.find((p) => p.slug === slug);
+export function ErrorBoundary() {
+  return (
+    <RouteErrorBoundary
+      notFound={{
+        badge: "Case study not found",
+        title: "We couldn't find that case study.",
+        description:
+          "The project you're looking for doesn't exist or may have been unpublished. Browse the work we've shipped instead.",
+        primaryAction: { label: "Back to Projects", to: "/projects" },
+        suggestions: [
+          { label: "Our Services", to: "/services" },
+          { label: "Project Estimator", to: "/calculator" },
+          { label: "Contact Us", to: "/contact" },
+        ],
+      }}
+    />
+  );
+}
+
+export default function CaseStudy({ loaderData }: Route.ComponentProps) {
+  const { project } = loaderData;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [slug]);
-
-  if (!project) {
-    return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white px-4">
-        <h1 className="text-4xl font-bold font-barlow mb-4">Case Study Not Found</h1>
-        <p className="text-gray-400 mb-8">The project you are looking for does not exist.</p>
-        <Link to="/projects">
-          <Button>Back to Projects</Button>
-        </Link>
-      </div>
-    );
-  }
+  }, [project.slug]);
 
   return (
     <div className="min-h-screen bg-black text-white pt-24 md:pt-32 pb-16 md:pb-24">
@@ -111,9 +137,9 @@ export default function CaseStudy() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Back Link */}
-        <Link 
+        <Link
           to="/projects"
           className="inline-flex items-center text-primary hover:text-white transition-colors duration-300 mb-8 font-barlow font-medium group"
         >
@@ -129,12 +155,12 @@ export default function CaseStudy() {
           <p className="text-lg md:text-xl text-gray-300 font-barlow leading-relaxed mb-10">
             {project.description}
           </p>
-          
+
           <div className="rounded-3xl overflow-hidden border border-light-black shadow-2xl relative">
             <div className="absolute inset-0 bg-linear-to-tr from-blue-500/10 to-transparent pointer-events-none"></div>
-            <img 
-              src={project.image} 
-              alt={project.imageAlt} 
+            <img
+              src={project.image}
+              alt={project.imageAlt}
               className="w-full h-auto object-cover aspect-video"
             />
           </div>
@@ -142,7 +168,7 @@ export default function CaseStudy() {
 
         {/* Content Section */}
         <div className="space-y-12 md:space-y-16">
-          
+
           {/* Problem & Solution Grid */}
           <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <div className="bg-card-bg border border-light-black p-8 rounded-3xl relative overflow-hidden">
@@ -155,7 +181,7 @@ export default function CaseStudy() {
                 {project.problem}
               </p>
             </div>
-            
+
             <div className="bg-card-bg border border-light-black p-8 rounded-3xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-1/2 h-1 bg-green-500/50 blur-sm"></div>
               <h2 className="text-2xl font-bold font-barlow mb-4 flex items-center">
@@ -174,8 +200,8 @@ export default function CaseStudy() {
               <h2 className="text-2xl font-bold font-barlow mb-6">Tech Stack</h2>
               <div className="flex flex-wrap gap-3">
                 {project.techStack.map((tech, i) => (
-                  <span 
-                    key={i} 
+                  <span
+                    key={i}
                     className="px-4 py-2 bg-white/5 border border-white/10 rounded-full font-barlow text-sm text-gray-300"
                   >
                     {tech}
@@ -183,7 +209,7 @@ export default function CaseStudy() {
                 ))}
               </div>
             </div>
-            
+
             <div>
               <h2 className="text-2xl font-bold font-barlow mb-6">Key Deliverables</h2>
               <ul className="space-y-3">
@@ -204,10 +230,13 @@ export default function CaseStudy() {
              <p className="text-xl md:text-2xl text-blue-100 font-barlow leading-relaxed font-medium relative z-10">
                "{project.businessImpact}"
              </p>
+             <p className="text-xs md:text-sm text-blue-100/50 font-barlow mt-6 max-w-2xl mx-auto relative z-10">
+               {RESULTS_DISCLOSURE}
+             </p>
           </div>
         </div>
       </div>
-      
+
       <Discuss />
     </div>
   );

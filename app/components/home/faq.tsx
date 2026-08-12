@@ -7,65 +7,29 @@ import {
 } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import { motion } from "framer-motion";
-import { TIMELINE, SAVINGS } from "~/lib/constants";
+import type { Faq } from "~/lib/types";
 
-type FAQItem = {
-  id: number;
-  question: string;
-  answer: string;
-};
+interface FAQProps {
+  faqs: Faq[];
+}
 
-const items: FAQItem[] = [
-  {
-    id: 1,
-    question: "What services does Weblaud LLC offer?",
-    answer:
-      "Weblaud LLC provides end-to-end software engineering including custom operations platforms, B2B SaaS web applications, cross-platform mobile apps (React Native & Flutter), production AI/LLM integrations, real-time WebSocket infrastructure, and cloud DevOps management.",
-  },
-  {
-    id: 2,
-    question: "How long does a software project take to ship?",
-    answer:
-      `We operate on focused, fixed-scope agile sprint cycles. Simple builds typically ship in ${TIMELINE.mvp}, while full enterprise systems complete ${TIMELINE.enterprise}. We provide detailed milestone roadmaps during discovery and host bi-weekly sprint reviews.`,
-  },
-  {
-    id: 3,
-    question: "What is Weblaud LLC's pricing model?",
-    answer:
-      "We operate on transparent, fixed-fee sprint pricing starting at $4,500 for MVP projects up to $18,500 for full enterprise platforms. You receive 100% IP source code ownership with zero unpredictable hourly billing or unexpected invoices.",
-  },
-  {
-    id: 4,
-    question: "Why hire Weblaud LLC instead of in-house software engineers?",
-    answer:
-      `Hiring a senior developer costs over $180,000 annually per engineer once salary, health benefits, and recruiting commissions are factored in—requiring 3 to 6 months just to hire. Weblaud LLC deploys an active senior squad instantly for a fixed sprint fee at ${SAVINGS.shareOfCost}.`,
-  },
-  {
-    id: 5,
-    question: "Do you provide post-launch support and cloud maintenance?",
-    answer:
-      "Yes, we provide continuous SLA support packages including 99.9% uptime monitoring, automated database backups, security patch updates, and feature expansion as your active user base grows.",
-  },
-  {
-    id: 6,
-    question: "Can you integrate with our existing APIs, databases, or legacy systems?",
-    answer:
-      "Yes. We work with modern and legacy tech stacks, connecting directly to your existing PostgreSQL/MySQL databases, third-party APIs, and cloud services without disrupting active operational workflows.",
-  },
-];
-
-export default function FAQ() {
-  const [openId, setOpenId] = React.useState<number | null>(1);
+export default function FAQ({ faqs }: FAQProps) {
+  const items = faqs;
+  const [openId, setOpenId] = React.useState<string | null>(
+    items[0]?._id ?? null,
+  );
 
   const [titleRef, isTitleVisible] = useBlurAnimation<HTMLHeadingElement>();
   const { itemRefs, isItemVisible } = useBlurAnimationList(
-    items.map((item) => item.id),
+    items.map((item) => item._id),
     0.1
   );
 
-  const toggle = (id: number) => {
+  const toggle = (id: string) => {
     setOpenId((cur) => (cur === id ? null : id));
   };
+
+  if (items.length === 0) return null;
 
   return (
     <section className="relative py-14 pb-16 bg-black text-white overflow-hidden scroll-mt-24">
@@ -83,16 +47,16 @@ export default function FAQ() {
 
         <ul className="space-y-4">
           {items.map((item, idx) => {
-            const isOpen = item.id === openId;
+            const isOpen = item._id === openId;
             const number = String(idx + 1).padStart(2, "0");
-            const panelId = `faq-panel-${item.id}`;
-            const buttonId = `faq-button-${item.id}`;
-            const itemVisible = isItemVisible(item.id);
+            const panelId = `faq-panel-${item._id}`;
+            const buttonId = `faq-button-${item._id}`;
+            const itemVisible = isItemVisible(item._id);
             return (
               <li
-                key={item.id}
+                key={item._id}
                 ref={(el) => {
-                  if (el) itemRefs.current.set(item.id, el);
+                  if (el) itemRefs.current.set(item._id, el);
                 }}
                 className={`rounded-2xl border bg-card-bg transition-all duration-300 ${
                   isOpen
@@ -122,8 +86,8 @@ export default function FAQ() {
                         id={buttonId}
                         aria-controls={panelId}
                         aria-expanded={isOpen}
-                        onClick={() => toggle(item.id)}
-                        className="grid place-items-center rounded-md size-8  transition-transform"
+                        onClick={() => toggle(item._id)}
+                        className="grid place-items-center rounded-md size-10 -m-1 shrink-0 transition-transform"
                         aria-label={isOpen ? "Collapse" : "Expand"}
                       >
                         <FiPlus

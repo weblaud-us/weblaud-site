@@ -1,5 +1,6 @@
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
+import type { TrackRecordItem } from "~/lib/types";
 import {
   SiGooglecloud,
   SiReplit,
@@ -211,7 +212,14 @@ const PartnerLogoCard = ({ partner }: { partner: Partner }) => (
   </div>
 );
 
-const TrustedPartnerships = () => {
+interface TrustedPartnershipsProps {
+  /** Sourced from the same About/Track Record content editors manage in
+   * /cpadmin, so this strip and the About page can never show different
+   * numbers for the same claim. */
+  trackRecord?: TrackRecordItem[];
+}
+
+const TrustedPartnerships = ({ trackRecord = [] }: TrustedPartnershipsProps) => {
   const [titleRef, isTitleVisible] = useBlurAnimation<HTMLDivElement>();
   const [marqueeRef, isMarqueeVisible] = useBlurAnimation<HTMLDivElement>();
 
@@ -265,27 +273,24 @@ const TrustedPartnerships = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 mt-12 relative z-10">
-        <div className="border-t border-white/8 pt-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {[
-              { value: "50+", label: "Happy Clients" },
-              { value: "75+", label: "Projects Delivered" },
-              { value: "20+", label: "Tech Partners" },
-              { value: "99%", label: "Client Satisfaction" },
-            ].map((stat, i) => (
-              <div key={i} className="text-center group py-4 px-2 rounded-2xl hover:bg-white/[0.03] transition-colors duration-300">
-                <p className="text-primary font-barlow text-3xl md:text-4xl font-bold mb-1 group-hover:scale-110 transition-transform duration-300 inline-block">
-                  {stat.value}
-                </p>
-                <p className="text-dark-gray text-xs md:text-sm font-barlow tracking-wide">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
+      {trackRecord.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 mt-12 relative z-10">
+          <div className="border-t border-white/8 pt-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+              {trackRecord.map((stat, i) => (
+                <div key={i} className="text-center group py-4 px-2 rounded-2xl hover:bg-white/[0.03] transition-colors duration-300">
+                  <p className="text-primary font-barlow text-3xl md:text-4xl font-bold mb-1 group-hover:scale-110 transition-transform duration-300 inline-block">
+                    {stat.title}
+                  </p>
+                  <p className="text-dark-gray text-xs md:text-sm font-barlow tracking-wide">
+                    {stat.subtitle}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <style>{`
         @keyframes trusted-marquee {

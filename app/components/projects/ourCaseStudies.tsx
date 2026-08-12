@@ -3,17 +3,24 @@ import {
   useBlurAnimationList,
 } from "~/hooks/useBlurAnimation";
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
+import { RESULTS_DISCLOSURE } from "~/lib/constants";
 import { ProjectCard } from "../ui/project-card";
 import { useNavigate } from "react-router";
-import { projects } from "~/data/projects";
+import type { Project } from "~/lib/types";
 
-const OurCaseStudies = () => {
+interface OurCaseStudiesProps {
+  projects: Project[];
+}
+
+const OurCaseStudies = ({ projects }: OurCaseStudiesProps) => {
   const navigate = useNavigate();
 
   const { itemRefs, isItemVisible } = useBlurAnimationList(
     projects.map((p) => p.id),
     0.1
   );
+
+  if (projects.length === 0) return null;
 
   const [titleRef, isTitleVisible] = useBlurAnimation();
   const [descRef, isDescVisible] = useBlurAnimation();
@@ -42,6 +49,12 @@ const OurCaseStudies = () => {
             Explore our portfolio of recent projects spanning cloud infrastructure,
             machine learning, and enterprise platforms. Each case study demonstrates
             our technical approach and final deliverables.
+          </p>
+          <p
+            className={`text-white/45 font-barlow text-xs md:text-sm max-w-3xl mx-auto mt-4 ${getBlurAnimationClasses(isDescVisible)}`}
+            style={{ transitionDelay: "300ms" }}
+          >
+            {RESULTS_DISCLOSURE}
           </p>
         </div>
 

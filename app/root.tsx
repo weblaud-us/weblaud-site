@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useRouteLoaderData,
 } from "react-router";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -17,6 +18,14 @@ import "./app.css";
 import NavBar from "./components/ui/navBar";
 import { Toaster } from "./components/ui/sonner";
 import IntroLoader from "./components/ui/introLoader";
+import ErrorPage from "./components/ui/error-page";
+import { fetchOptional } from "./lib/api.server";
+import type { ContactInfo } from "./lib/types";
+
+export async function loader() {
+  const contactInfo = await fetchOptional<ContactInfo | null>("/contact-info", null);
+  return { contactInfo };
+}
 
 const FONTS_URL =
   "https://fonts.googleapis.com/css2?" +
@@ -189,11 +198,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
+export default function App({ loaderData }: Route.ComponentProps) {
   // TEMPORARILY DISABLED (Change back to 'true', 'false' to re-enable loader in 5 months)
   const [showLoader, setShowLoader] = useState(false);
   const [isLoaderComplete, setIsLoaderComplete] = useState(true);
   const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/cpadmin");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -217,6 +227,10 @@ export default function App() {
     setShowLoader(false);
     setIsLoaderComplete(true);
   };
+
+  if (isAdminRoute) {
+    return <Outlet />;
+  }
 
   return (
     <>
@@ -243,7 +257,7 @@ export default function App() {
                 <Outlet />
               </motion.main>
             </AnimatePresence>
-            <Footer />
+            <Footer contactInfo={loaderData.contactInfo} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -252,30 +266,72 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  // A root-level boundary replaces the whole app tree, so the chrome has to be
+  // rendered here by hand. The root loader may itself have failed, hence the
+  // optional read of its data.
+  const rootData = useRouteLoaderData<typeof loader>("root");
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/cpadmin");
+
+  let code: string | undefined;
+  let badge = "Something went wrong";
+  let title = "Something went wrong on our end.";
+  let description: string =
+    "An unexpected error occurred while loading this page. Try again in a moment — if it keeps happening, get in touch and we'll sort it out.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
+    code = String(error.status);
+
+    if (error.status === 404) {
+      badge = "Page not found";
+      title = "This page took a wrong turn.";
+      description =
+        "The page you're looking for doesn't exist, or it may have been moved or renamed. Let's get you back on track.";
+    } else if (error.status === 401 || error.status === 403) {
+      badge = "Access denied";
+      title = "You don't have access to this page.";
+      description =
+        "This area is restricted. If you believe you should have access, please sign in with an authorised account.";
+    } else if (error.status >= 500) {
+      badge = "Server error";
+      title = "Our server hit a snag.";
+      description =
+        "Something failed while we were putting this page together. Our team has been notified — please try again shortly.";
+    } else {
+      title = error.statusText || title;
+    }
+  } else if (import.meta.env.DEV && error instanceof Error) {
+    description = error.message;
     stack = error.stack;
   }
 
+  const errorPage = (
+    <ErrorPage
+      code={code}
+      badge={badge}
+      title={title}
+      description={description}
+      primaryAction={
+        isAdminRoute
+          ? { label: "Back to Dashboard", to: "/cpadmin" }
+          : { label: "Back to Home", to: "/" }
+      }
+      suggestions={isAdminRoute ? [] : undefined}
+      detail={stack}
+    />
+  );
+
+  // The admin panel has its own chrome and never renders the marketing shell.
+  if (isAdminRoute) {
+    return errorPage;
+  }
+
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <>
+      <NavBar />
+      {errorPage}
+      <Footer contactInfo={rootData?.contactInfo ?? null} />
+    </>
   );
 }

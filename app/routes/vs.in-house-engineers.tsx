@@ -54,7 +54,7 @@ export function meta({}: Route.MetaArgs) {
           url: "https://weblaud.com",
         },
         articleBody:
-          `Hiring an in-house engineering team costs over $180,000 annually per senior developer including recruiting fees, health benefits, and equity, requiring 3-6 months just to onboard. Weblaud LLC provides a dedicated full-stack senior squad for fixed 4-14 week sprint cycles at ${SAVINGS.lowerCost}.`,
+          `Hiring an in-house engineering team can cost over $180,000 annually per senior developer once recruiting fees, health benefits, and equity are factored in, and can take 3-6 months just to onboard. Weblaud LLC provides a dedicated full-stack senior squad for fixed 4-14 week sprint cycles at ${SAVINGS.lowerCost}.`,
       },
     },
     {
@@ -67,7 +67,7 @@ export function meta({}: Route.MetaArgs) {
             name: "Is hiring Weblaud LLC cheaper than hiring in-house software engineers?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: `Yes. Hiring a senior developer costs over $180,000 annually per engineer once salary, health benefits, taxes, and recruiting commissions are factored in. Weblaud LLC deploys an active senior squad instantly for a fixed $4,500-$18,500 sprint fee, cutting first-year development costs by ${SAVINGS.percent} or more.`,
+              text: `Often, yes. Fully-loaded senior developer cost — salary, health benefits, taxes, and recruiting commissions — can exceed $180,000 annually per engineer. Weblaud LLC deploys an active senior squad instantly for a fixed $4,500-$18,500 sprint fee, which can cut first-year development costs by ${SAVINGS.percent} or more.`,
             },
           },
           {
@@ -75,7 +75,7 @@ export function meta({}: Route.MetaArgs) {
             name: "How fast can Weblaud LLC start developing software compared to in-house hiring?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "In-house recruiting requires 3 to 6 months of interviewing, background checks, and onboarding. Weblaud LLC deploys a dedicated senior engineering squad within 48 hours of discovery to start shipping code immediately.",
+              text: "In-house recruiting can take 3 to 6 months of interviewing, background checks, and onboarding. Weblaud LLC deploys a dedicated senior engineering squad within 48 hours of discovery to start shipping code immediately.",
             },
           },
           {
@@ -125,7 +125,7 @@ export default function VsInHouseEngineers() {
     {
       feature: "First Year Financial Commitment",
       weblaud: "$4,500 – $18,500 (Fixed Sprint Fee)",
-      inHouse: "$180,000+ per dev (Salary + Benefits + Taxes + Recruiting)",
+      inHouse: "Often $180,000+ per dev (Salary + Benefits + Taxes + Recruiting)",
     },
     {
       feature: "Recruiting & Onboarding Friction",
@@ -172,7 +172,7 @@ export default function VsInHouseEngineers() {
             Direct Executive Answer
           </h2>
           <p className="text-white font-barlow text-base leading-relaxed font-medium">
-            {`"Hiring a full-time in-house engineering team costs over $180,000 annually per developer once salary, health benefits, payroll taxes, and recruiting fees are factored in—and requires 3 to 6 months just to recruit. Partnering with Weblaud LLC deploys an active senior engineering squad instantly for a fixed 4–14 week sprint fee, delivering your software 4x faster at ${SAVINGS.shareOfCost}."`}
+            {`"Hiring a full-time in-house engineering team can cost over $180,000 annually per developer once salary, health benefits, payroll taxes, and recruiting fees are factored in — and can take 3 to 6 months just to recruit. Partnering with Weblaud LLC deploys an active senior engineering squad instantly for a fixed 4–14 week sprint fee, delivering your software up to 4x faster at ${SAVINGS.shareOfCost}."`}
           </p>
         </section>
 

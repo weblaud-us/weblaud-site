@@ -7,7 +7,18 @@ import OurSay from "~/components/home/ourSay";
 import FAQ from "~/components/home/faq";
 import LetsDiscuss from "~/components/home/letsDiscuss";
 import heroBanner from "~/assets/hero-icon.png";
-import { TIMELINE, SAVINGS } from "~/lib/constants";
+import { TIMELINE } from "~/lib/constants";
+import { fetchOptional } from "~/lib/api.server";
+import type { Testimonial, Faq, AboutInfo } from "~/lib/types";
+
+export async function loader() {
+  const [testimonials, faqs, aboutInfo] = await Promise.all([
+    fetchOptional<Testimonial[]>("/testimonials", []),
+    fetchOptional<Faq[]>("/faqs", []),
+    fetchOptional<AboutInfo | null>("/about", null),
+  ]);
+  return { testimonials, faqs, trackRecord: aboutInfo?.trackRecord ?? [] };
+}
 
 export const links: Route.LinksFunction = () => {
   return [
@@ -26,7 +37,29 @@ export function headers() {
   };
 }
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ data }: Route.MetaArgs) {
+  const faqs = data?.faqs ?? [];
+  const faqMainEntity =
+    faqs.length > 0
+      ? faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        }))
+      : [
+          {
+            "@type": "Question",
+            name: "What services does Weblaud LLC offer?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Weblaud LLC provides end-to-end software engineering including custom operations platforms, B2B SaaS web applications, cross-platform mobile apps (React Native & Flutter), production AI/LLM integrations, real-time WebSocket infrastructure, and cloud DevOps management.",
+            },
+          },
+        ];
+
   return [
     { title: "Weblaud LLC – Software Development Company" },
     {
@@ -67,71 +100,22 @@ export function meta({}: Route.MetaArgs) {
       "script:ld+json": {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What services does Weblaud LLC offer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Weblaud LLC provides end-to-end software engineering including custom operations platforms, B2B SaaS web applications, cross-platform mobile apps (React Native & Flutter), production AI/LLM integrations, real-time WebSocket infrastructure, and cloud DevOps management.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How long does a software project take to ship?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: `We operate on focused, fixed-scope agile sprint cycles. Simple builds typically ship in ${TIMELINE.mvp}, while full enterprise systems complete ${TIMELINE.enterprise}. We provide detailed milestone roadmaps during discovery and host bi-weekly sprint reviews.`,
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What is Weblaud LLC's pricing model?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "We operate on transparent, fixed-fee sprint pricing starting at $4,500 for MVP projects up to $18,500 for full enterprise platforms. You receive 100% IP source code ownership with zero unpredictable hourly billing or unexpected invoices.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Why hire Weblaud LLC instead of in-house software engineers?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: `Hiring a senior developer costs over $180,000 annually per engineer once salary, health benefits, and recruiting commissions are factored in—requiring 3 to 6 months just to hire. Weblaud LLC deploys an active senior squad instantly for a fixed sprint fee at ${SAVINGS.shareOfCost}.`,
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Do you provide post-launch support and cloud maintenance?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes, we provide continuous SLA support packages including 99.9% uptime monitoring, automated database backups, security patch updates, and feature expansion as your active user base grows.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can you integrate with our existing APIs, databases, or legacy systems?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. We work with modern and legacy tech stacks, connecting directly to your existing PostgreSQL/MySQL databases, third-party APIs, and cloud services without disrupting active operational workflows.",
-            },
-          },
-        ],
+        mainEntity: faqMainEntity,
       },
     },
     { tagName: "link", rel: "canonical", href: "https://weblaud.com/" },
   ];
 }
 
-export default function Home() {
+export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <BannerHome />
-      <TrustedPartnerships />
+      <TrustedPartnerships trackRecord={loaderData.trackRecord} />
       <OurSpeciality />
       <WhyChooseUs />
-      <OurSay />
-      <FAQ />
+      <OurSay testimonials={loaderData.testimonials} />
+      <FAQ faqs={loaderData.faqs} />
       <LetsDiscuss />
     </>
   );

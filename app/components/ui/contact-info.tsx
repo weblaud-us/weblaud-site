@@ -2,8 +2,27 @@ import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
 import { toast } from "sonner";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
+import type { ContactInfo as ContactInfoType } from "~/lib/types";
 
-const ContactInfo = () => {
+interface ContactInfoProps {
+  contactInfo: ContactInfoType | null;
+}
+
+// Address is stored as one string in the backend but displayed as two
+// lines here — split on the last comma so "123 Main St, City, ST 00000,
+// USA" reads as "123 Main St, City" / "ST 00000, USA".
+function splitAddress(address: string): [string, string] {
+  const lastComma = address.lastIndexOf(",");
+  if (lastComma === -1) return [address, ""];
+  const secondLastComma = address.lastIndexOf(",", lastComma - 1);
+  if (secondLastComma === -1) return [address, ""];
+  return [
+    address.slice(0, secondLastComma).trim(),
+    address.slice(secondLastComma + 1).trim(),
+  ];
+}
+
+const ContactInfo = ({ contactInfo }: ContactInfoProps) => {
   const [contactInfoRef, isContactInfoVisible] = useBlurAnimation();
 
   const copyToClipboard = async (text: string, label: string) => {
@@ -17,6 +36,11 @@ const ContactInfo = () => {
     }
   };
 
+  if (!contactInfo) return null;
+
+  const [addressLine1, addressLine2] = splitAddress(contactInfo.address);
+  const telHref = `tel:${contactInfo.phone.replace(/[^+\d]/g, "")}`;
+
   return (
     <div
       ref={contactInfoRef}
@@ -29,11 +53,11 @@ const ContactInfo = () => {
 
       <div className="space-y-2 sm:space-y-3 md:space-y-4">
         <div
-          onClick={() => copyToClipboard("info@weblaud.com", "Email")}
+          onClick={() => copyToClipboard(contactInfo.email, "Email")}
           className="group/item flex items-start gap-2.5 sm:gap-3 md:gap-4 p-2 sm:p-2.5 md:p-3 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
         >
           <a
-            href="mailto:info@weblaud.com"
+            href={`mailto:${contactInfo.email}`}
             onClick={(e) => e.stopPropagation()}
             className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover/item:scale-110 group-hover/item:rotate-6 group-hover/item:bg-primary/20 transition-all duration-300 hover:bg-primary/30 cursor-pointer"
           >
@@ -44,17 +68,17 @@ const ContactInfo = () => {
               Email
             </h3>
             <p className="text-white/70 font-barlow text-xs sm:text-sm wrap-break-word group-hover/item:text-white transition-colors duration-300">
-              info@weblaud.com
+              {contactInfo.email}
             </p>
           </div>
         </div>
 
         <div
-          onClick={() => copyToClipboard("+1 (307) 220 9766", "Phone")}
+          onClick={() => copyToClipboard(contactInfo.phone, "Phone")}
           className="group/item flex items-start gap-3 sm:gap-4 p-3 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
         >
           <a
-            href="tel:+13072209766"
+            href={telHref}
             onClick={(e) => e.stopPropagation()}
             className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover/item:scale-110 group-hover/item:rotate-6 group-hover/item:bg-primary/20 transition-all duration-300 hover:bg-primary/30 cursor-pointer"
           >
@@ -65,22 +89,17 @@ const ContactInfo = () => {
               Phone
             </h3>
             <p className="text-white/70 font-barlow text-xs sm:text-sm group-hover/item:text-white transition-colors duration-300">
-              +1 (307) 220 9766
+              {contactInfo.phone}
             </p>
           </div>
         </div>
 
         <div
-          onClick={() =>
-            copyToClipboard(
-              "1621 Central Ave, Cheyenne, WY 82001, USA",
-              "Office Address"
-            )
-          }
+          onClick={() => copyToClipboard(contactInfo.address, "Office Address")}
           className="group/item flex items-start gap-3 sm:gap-4 p-3 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
         >
           <a
-            href="https://www.google.com/maps/search/1621+Central+Ave,+Cheyenne,+WY+82001,+USA"
+            href={`https://www.google.com/maps/search/${encodeURIComponent(contactInfo.address)}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
@@ -93,9 +112,13 @@ const ContactInfo = () => {
               Office
             </h3>
             <p className="text-white/70 font-barlow text-xs sm:text-sm group-hover/item:text-white transition-colors duration-300">
-              1621 Central Ave, Cheyenne
-              <br />
-              WY 82001, USA
+              {addressLine1}
+              {addressLine2 && (
+                <>
+                  <br />
+                  {addressLine2}
+                </>
+              )}
             </p>
           </div>
         </div>

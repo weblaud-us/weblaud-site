@@ -8,8 +8,13 @@ import IconTile from "./icon-tile";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import weblaudFooterLogo from "~/assets/Weblaud_LLC_Footer.svg";
+import type { ContactInfo as ContactInfoType } from "~/lib/types";
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  contactInfo: ContactInfoType | null;
+}
+
+const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
   const location = useLocation();
 
   const [logoRef, isLogoVisible] = useBlurAnimation<HTMLDivElement>(0.05, false);
@@ -28,6 +33,7 @@ const Footer: React.FC = () => {
     { label: "Engineering Insights", href: "/insights" },
     { label: "Weblaud vs In-House", href: "/vs/in-house-engineers" },
     { label: "Weblaud vs Agencies", href: "/vs/traditional-agencies" },
+    { label: "Career", href: "/career" },
     { label: "Contact Us", href: "/contact" },
   ];
 
@@ -51,23 +57,25 @@ const Footer: React.FC = () => {
   ];
 
   const contactItems: { icon: React.ReactNode; text: string; href?: string }[] =
-    [
-      {
-        icon: <IoIosMail className="text-blue-500 text-xl" />,
-        text: "info@weblaud.com",
-        href: "mailto:info@weblaud.com",
-      },
-      {
-        icon: <IoCallSharp />,
-        text: "+1 (307) 220 9766",
-        href: "tel:+13072209766",
-      },
-      {
-        icon: <IoLocationSharp />,
-        text: "1621 Central Ave, Cheyenne, WY 82001, USA",
-        href: "https://www.google.com/maps/search/1621+Central+Ave,+Cheyenne,+WY+82001,+USA",
-      },
-    ];
+    contactInfo
+      ? [
+          {
+            icon: <IoIosMail className="text-blue-500 text-xl" />,
+            text: contactInfo.email,
+            href: `mailto:${contactInfo.email}`,
+          },
+          {
+            icon: <IoCallSharp />,
+            text: contactInfo.phone,
+            href: `tel:${contactInfo.phone.replace(/[^+\d]/g, "")}`,
+          },
+          {
+            icon: <IoLocationSharp />,
+            text: contactInfo.address,
+            href: `https://www.google.com/maps/search/${encodeURIComponent(contactInfo.address)}`,
+          },
+        ]
+      : [];
 
   const legalLinks: { label: string; href: string }[] = [
     { label: "Privacy Policy", href: "/privacy-policy" },

@@ -1,6 +1,29 @@
 import type { Route } from "./+types/contactUs";
 import BannerContactUs from "~/components/contact/bannerContactUs";
 import ContactFormAndInfo from "~/components/contact/contactFormAndInfo";
+import { apiFetch, ApiError } from "~/lib/api.server";
+
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+
+  try {
+    await apiFetch("/contact/submit", {
+      method: "POST",
+      body: {
+        firstName: String(formData.get("firstName") ?? "").trim(),
+        lastName: String(formData.get("lastName") ?? "").trim(),
+        email: String(formData.get("email") ?? "").trim(),
+        phone: String(formData.get("phone") ?? "").trim() || undefined,
+        message: String(formData.get("message") ?? "").trim(),
+      },
+    });
+  } catch (err) {
+    if (err instanceof ApiError) return { error: err.message };
+    return { error: "We couldn't send your message. Please try again." };
+  }
+
+  return { ok: true };
+}
 
 export function headers() {
   return {

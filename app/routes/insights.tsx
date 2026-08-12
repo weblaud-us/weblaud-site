@@ -1,9 +1,25 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/insights";
-import { insights } from "~/data/insights";
 import Discuss from "~/components/aboutUs/discuss";
 import { FiArrowRight, FiClock, FiTag } from "react-icons/fi";
+import { fetchOptional } from "~/lib/api.server";
+import type { Insight } from "~/lib/types";
+
+export async function loader() {
+  const insights = await fetchOptional<Insight[]>("/insights", []);
+  return { insights };
+}
+
+function formatPublishedDate(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
 export function headers() {
   return {
@@ -45,7 +61,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function InsightsHub() {
+export default function InsightsHub({ loaderData }: Route.ComponentProps) {
+  const { insights } = loaderData;
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   const categories = ["All", "Operations", "AI & ML", "Architecture"];
@@ -98,7 +115,7 @@ export default function InsightsHub() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {filteredArticles.map((article) => (
             <article
-              key={article.id}
+              key={article._id}
               className="bg-card-bg/80 border border-light-black rounded-3xl p-6 sm:p-8 flex flex-col justify-between hover:border-primary/50 transition-all duration-300 group shadow-xl"
             >
               <div>
@@ -128,7 +145,9 @@ export default function InsightsHub() {
                 <div className="border-t border-white/10 pt-4 mt-2 flex items-center justify-between">
                   <div className="text-xs text-gray-400 font-barlow">
                     <p className="font-semibold text-white">{article.author.name}</p>
-                    <p className="text-[11px] text-gray-500">{article.date}</p>
+                    <p className="text-[11px] text-gray-500">
+                      {formatPublishedDate(article.publishedAt)}
+                    </p>
                   </div>
 
                   <Link

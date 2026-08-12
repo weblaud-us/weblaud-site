@@ -4,6 +4,22 @@ import Discuss from "~/components/aboutUs/discuss";
 import OurMissionAndStory from "~/components/aboutUs/ourMissionAndStory";
 import OurTrack from "~/components/aboutUs/ourTrack";
 import TheTeam from "~/components/aboutUs/theTeam";
+import { fetchOptional, resolveMediaUrl } from "~/lib/api.server";
+import type { AboutInfo, TeamMember } from "~/lib/types";
+
+export async function loader() {
+  const [aboutInfo, team] = await Promise.all([
+    fetchOptional<AboutInfo | null>("/about", null),
+    fetchOptional<TeamMember[]>("/team", []),
+  ]);
+
+  const resolvedTeam = team.map((member) => ({
+    ...member,
+    avatar: resolveMediaUrl(member.avatar),
+  }));
+
+  return { aboutInfo, team: resolvedTeam };
+}
 
 export function headers() {
   return {
@@ -128,13 +144,14 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const AboutUs = () => {
+const AboutUs = ({ loaderData }: Route.ComponentProps) => {
+  const { aboutInfo, team } = loaderData;
   return (
     <div>
       <BannerAboutUs />
-      <OurMissionAndStory />
-      <OurTrack />
-      <TheTeam />
+      <OurMissionAndStory story={aboutInfo?.story} mission={aboutInfo?.mission} />
+      <OurTrack trackRecord={aboutInfo?.trackRecord ?? []} />
+      <TheTeam teamMembers={team} />
       <Discuss />
     </div>
   );

@@ -7,55 +7,18 @@ import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import { motion } from "framer-motion";
 import type { Swiper as SwiperType } from "swiper";
+import type { Testimonial } from "~/lib/types";
 
-type WhyItem = {
-  id: number;
-  quote: string;
-  name: string;
-  context: string;
-};
+interface OurSayProps {
+  testimonials: Testimonial[];
+}
 
-const items: WhyItem[] = [
-  {
-    id: 1,
-    quote:
-      "Weblaud rebuilt our customer portal into a clean, scalable architecture in 8 weeks. They delivered the project on time and under budget with zero surprises.",
-    name: "Mohamed Sinai",
-    context: "",
-  },
-  {
-    id: 2,
-    quote:
-      "Their team integrated an ML recommendation engine into our platform within two sprints. They understood our data pipeline immediately and shipped clean, well-documented code.",
-    name: "Jay Smith",
-    context: "",
-  },
-  {
-    id: 3,
-    quote:
-      "What stood out was their technical honesty. They pushed back on one of our feature ideas and explained clearly why it would hurt performance. That kind of judgment is rare in agencies.",
-    name: "Ahamed Sabri",
-    context: "",
-  },
-  {
-    id: 4,
-    quote:
-      "Weblaud set up our entire CI/CD pipeline on AWS in two weeks. Deployment time dropped from hours of manual work to 12 minutes automated. That alone justified the engagement.",
-    name: "Kayode Okunubi",
-    context: "",
-  },
-  {
-    id: 5,
-    quote:
-      "They delivered our high-performance dashboard with real-time WebSocket feeds and full risk visualization. Complex scope, executed cleanly and shipped on schedule.",
-    name: "Oliver Preisler",
-    context: "",
-  },
-];
-
-export default function OurSay() {
+export default function OurSay({ testimonials }: OurSayProps) {
+  const items = testimonials;
   const [containerRef, isVisible] = useBlurAnimation<HTMLDivElement>();
   const [activeIndex, setActiveIndex] = useState(0);
+
+  if (items.length === 0) return null;
 
   const handleSlideChange = (swiper: SwiperType) => {
     setActiveIndex(swiper.realIndex);
@@ -109,7 +72,7 @@ export default function OurSay() {
               {items.map((item, index) => {
                 const isActive = index === activeIndex;
                 return (
-                  <SwiperSlide key={item.id}>
+                  <SwiperSlide key={item._id}>
                     <article className="relative h-full rounded-2xl mt-10 border border-light-black bg-card-bg p-6 md:p-8 transition-all duration-500 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 overflow-hidden">
                       
                       <motion.div
@@ -181,14 +144,14 @@ export default function OurSay() {
                         }}
                       >
                         <h4 className="text-primary font-medium font-barlow text-base m-0">
-                          {item.name}
+                          {item.authorName}
                         </h4>
-                        {item.context && (
+                        {item.authorTitle && (
                           <motion.p
                             className="text-xs text-[#8a8a8a] truncate block"
                             transition={{ duration: 0.4, delay: 0.3 }}
                           >
-                            {item.context}
+                            {item.authorTitle}
                           </motion.p>
                         )}
                       </motion.div>

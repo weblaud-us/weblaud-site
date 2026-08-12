@@ -1,13 +1,50 @@
-import { useParams, Link } from "react-router";
+import { Link } from "react-router";
 import type { Route } from "./+types/insights.$slug";
-import { insights, articleISODate } from "~/data/insights";
 import Discuss from "~/components/aboutUs/discuss";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { FiArrowLeft, FiCheckCircle, FiClock } from "react-icons/fi";
-import { Button } from "~/components/ui/button";
+import { RouteErrorBoundary } from "~/components/ui/error-page";
+import { apiFetch, resolveMediaUrl, ApiError } from "~/lib/api.server";
+import type { Insight } from "~/lib/types";
 
-export function meta({ params }: Route.MetaArgs) {
-  const article = insights.find((a) => a.slug === params.slug);
+export async function loader({ params }: Route.LoaderArgs) {
+  try {
+    const article = await apiFetch<Insight>(`/insights/slug/${params.slug}`);
+    return {
+      article: {
+        ...article,
+        author: {
+          ...article.author,
+          avatarUrl: resolveMediaUrl(article.author.avatarUrl),
+        },
+      },
+    };
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) {
+      throw new Response("Not Found", { status: 404 });
+    }
+    throw err;
+  }
+}
+
+function articleISODate(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 10);
+}
+
+function formatPublishedDate(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+export function meta({ data }: Route.MetaArgs) {
+  const article = data?.article;
   if (!article) return [{ title: "Article Not Found | Weblaud LLC" }];
 
   const pageUrl = `https://weblaud.com/insights/${article.slug}`;
@@ -32,8 +69,8 @@ export function meta({ params }: Route.MetaArgs) {
         headline: article.title,
         description: article.summary,
         url: pageUrl,
-        datePublished: articleISODate(article.date),
-        dateModified: articleISODate(article.date),
+        datePublished: articleISODate(article.publishedAt),
+        dateModified: articleISODate(article.publishedAt),
         articleSection: article.category,
         about: {
           "@type": "Thing",
@@ -127,26 +164,31 @@ function renderTextWithLinks(text: string) {
   });
 }
 
-export default function ArticleDetail() {
-  const { slug } = useParams();
-  const article = insights.find((a) => a.slug === slug);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export function ErrorBoundary() {
+  return (
+    <RouteErrorBoundary
+      notFound={{
+        badge: "Article not found",
+        title: "That article isn't here.",
+        description:
+          "The engineering insight you requested doesn't exist or may have been moved. Have a read through our latest writing instead.",
+        primaryAction: { label: "Back to Insights", to: "/insights" },
+        suggestions: [
+          { label: "Our Services", to: "/services" },
+          { label: "Our Projects", to: "/projects" },
+          { label: "Contact Us", to: "/contact" },
+        ],
+      }}
+    />
+  );
+}
+
+export default function ArticleDetail({ loaderData }: Route.ComponentProps) {
+  const { article } = loaderData;
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [slug]);
-
-  if (!article) {
-    return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white px-4">
-        <h1 className="text-4xl font-bold font-barlow mb-4">Article Not Found</h1>
-        <p className="text-gray-400 mb-8">The engineering insight article you requested does not exist.</p>
-        <Link to="/insights">
-          <Button>Back to Insights</Button>
-        </Link>
-      </div>
-    );
-  }
+  }, [article.slug]);
 
   return (
     <div className="min-h-screen bg-black text-white pt-24 md:pt-32 pb-16 md:pb-24">
@@ -177,7 +219,7 @@ export default function ArticleDetail() {
               {article.readTime}
             </span>
             <span>•</span>
-            <span>{article.date}</span>
+            <span>{formatPublishedDate(article.publishedAt)}</span>
           </div>
 
           <h1 className="text-3xl md:text-5xl font-bold font-barlow leading-tight mb-6">

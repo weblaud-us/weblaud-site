@@ -1,4 +1,4 @@
-import { services } from "~/data/services";
+import type { AdminService } from "~/lib/types";
 import {
   useBlurAnimation,
   useBlurAnimationList,
@@ -6,14 +6,20 @@ import {
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
 import { ServiceCard } from "../ui/service-card";
 
-const OurServices = () => {
+interface OurServicesProps {
+  services: AdminService[];
+}
+
+const OurServices = ({ services }: OurServicesProps) => {
   const [titleRef, isTitleVisible] = useBlurAnimation<HTMLHeadingElement>(0.1);
   const [descRef, isDescVisible] = useBlurAnimation<HTMLParagraphElement>(0.1);
 
   const { itemRefs, isItemVisible } = useBlurAnimationList(
-    services.map((s) => s.id),
+    services.map((s) => s._id),
     0.05
   );
+
+  if (services.length === 0) return null;
 
   return (
     <div className="bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-6 md:py-6 lg:py-15">
@@ -36,7 +42,7 @@ const OurServices = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {services.map((service, index) => {
-            const isVisible = isItemVisible(service.id);
+            const isVisible = isItemVisible(service._id);
             const animation = blurAnimation(isVisible, index, {
               variant: "default",
               staggerDelay: 80,
@@ -44,9 +50,9 @@ const OurServices = () => {
 
             return (
               <div
-                key={service.id}
+                key={service._id}
                 ref={(el) => {
-                  if (el) itemRefs.current.set(service.id, el);
+                  if (el) itemRefs.current.set(service._id, el);
                 }}
                 className="h-full"
               >
@@ -54,8 +60,8 @@ const OurServices = () => {
                   title={service.title}
                   description={service.description}
                   features={service.features}
-                  image={service.image}
-                  imageAlt={service.imageAlt}
+                  image={service.image ?? ""}
+                  imageAlt={service.title}
                   className={animation.className}
                   style={animation.style}
                 />

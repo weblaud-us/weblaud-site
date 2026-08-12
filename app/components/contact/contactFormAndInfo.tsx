@@ -6,8 +6,10 @@ import {
   FiMessageSquare,
   FiMail,
 } from "react-icons/fi";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
+import { useFetcher, useRouteLoaderData } from "react-router";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -17,6 +19,7 @@ import { BookMeeting } from "../ui/book-meeting";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import { countryCodes } from "~/data/country-codes";
+import type { loader as rootLoader } from "~/root";
 
 type FormData = {
   firstName: string;
@@ -28,12 +31,20 @@ type FormData = {
 };
 
 const ContactFormAndInfo = () => {
+  const rootData = useRouteLoaderData<typeof rootLoader>("root");
   const [formRef, isFormVisible] = useBlurAnimation();
+
+  // Posts to this route's `action`, which saves the lead via
+  // POST /contact/submit — the record admins see in
+  // /cpadmin/contact-submissions. Web3Forms below is a best-effort courtesy
+  // email only; it never decides whether the visitor sees "sent".
+  const fetcher = useFetcher<{ ok?: boolean; error?: string }>();
+  const isSending = fetcher.state !== "idle";
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     reset,
   } = useForm<FormData>({
     defaultValues: {
@@ -41,48 +52,53 @@ const ContactFormAndInfo = () => {
     },
   });
 
-  const onSubmit = async (data: FormData) => {
-    try {
-      // Weblaud uses Web3Forms for free, smooth email delivery.
-      // Get your free key at https://web3forms.com/ and put it in your .env file
-      const accessKey = import.meta.env.VITE_CONTACT_FORM_ACCESS_KEY;
-      
-      if (!accessKey) {
-        console.warn("No VITE_CONTACT_FORM_ACCESS_KEY found. Simulating submission.");
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        toast.success("Message sent successfully! (Simulated)");
-        reset();
-        return;
-      }
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data) return;
 
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          access_key: accessKey,
-          subject: "New Project Inquiry - Weblaud Website",
-          from_name: `${data.firstName} ${data.lastName}`,
-          email: data.email,
-          phone: `${data.countryCode} ${data.phoneNumber}`,
-          message: data.message,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        toast.success("Message sent successfully!");
-        reset();
-      } else {
-        throw new Error(result.message || "Failed to send");
-      }
-    } catch (error) {
-      console.error("Form submission error:", error);
-      toast.error("Failed to send message. Please try again.");
+    if (fetcher.data.ok) {
+      toast.success("Message sent successfully!");
+      reset();
+    } else if (fetcher.data.error) {
+      toast.error(fetcher.data.error);
     }
+  }, [fetcher.state, fetcher.data, reset]);
+
+  const onSubmit = (data: FormData) => {
+    fetcher.submit(
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phoneNumber ? `${data.countryCode} ${data.phoneNumber}` : "",
+        message: data.message,
+      },
+      { method: "post" },
+    );
+
+    // Weblaud uses Web3Forms for a courtesy email alongside the saved
+    // record above. Get a free key at https://web3forms.com/. Deliberately
+    // fire-and-forget: a failure here must never block or misreport the
+    // success toast, since the backend save already captured the lead.
+    const accessKey = import.meta.env.VITE_CONTACT_FORM_ACCESS_KEY;
+    if (!accessKey) return;
+
+    fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        access_key: accessKey,
+        subject: "New Project Inquiry - Weblaud Website",
+        from_name: `${data.firstName} ${data.lastName}`,
+        email: data.email,
+        phone: `${data.countryCode} ${data.phoneNumber}`,
+        message: data.message,
+      }),
+    }).catch((error) => {
+      console.error("Web3Forms notification failed:", error);
+    });
   };
 
   return (
@@ -302,11 +318,11 @@ const ContactFormAndInfo = () => {
 
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSending}
                 className="w-full font-barlow font-semibold text-xs sm:text-sm py-3 sm:py-3.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
               >
-                {isSubmitting ? "Sending..." : "Send"}
-                {!isSubmitting && (
+                {isSending ? "Sending..." : "Send"}
+                {!isSending && (
                   <FiSend className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-2 group-hover/btn:rotate-12 transition-all duration-300" />
                 )}
               </Button>
@@ -314,7 +330,7 @@ const ContactFormAndInfo = () => {
           </div>
 
           <div className="space-y-3 sm:space-y-4 md:space-y-6">
-            <ContactInfo />
+            <ContactInfo contactInfo={rootData?.contactInfo ?? null} />
             <BookMeeting />
           </div>
         </div>

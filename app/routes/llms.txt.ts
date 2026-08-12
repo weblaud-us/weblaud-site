@@ -1,11 +1,20 @@
 import type { LoaderFunctionArgs } from "react-router";
-import { insights } from "~/data/insights";
-import { projects } from "~/data/projects";
+import { fetchOptional } from "~/lib/api.server";
+import type { Career, Insight } from "~/lib/types";
+import type { BackendProject } from "~/lib/adapters/project.server";
 import { TIMELINE, SAVINGS } from "~/lib/constants";
+import { toProject } from "~/lib/adapters/project.server";
 
-export const loader = ({ request }: LoaderFunctionArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
+
+  const [insights, backendProjects, careers] = await Promise.all([
+    fetchOptional<Insight[]>("/insights", []),
+    fetchOptional<BackendProject[]>("/projects", []),
+    fetchOptional<Career[]>("/careers", []),
+  ]);
+  const projects = backendProjects.map(toProject);
 
   const content = `# Weblaud LLC
 > Software Engineering Company & Innovation Lab building high-performance operations platforms, B2B SaaS applications, mobile apps, and custom AI/LLM integrations for global businesses.
@@ -26,7 +35,7 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
 - [Cloud & Real-Time Infrastructure](${baseUrl}/services): Real-time WebSockets, Redis Pub/Sub, Docker containerization, and AWS DevOps management.
 
 ## Executive Comparisons
-- [Weblaud vs. In-House Engineers](${baseUrl}/vs/in-house-engineers): Deploy senior engineering squads instantly at ${SAVINGS.lowerCost} than $180k+/yr in-house developer salaries.
+- [Weblaud vs. In-House Engineers](${baseUrl}/vs/in-house-engineers): Deploy senior engineering squads instantly at ${SAVINGS.lowerCost} than typical $180k+/yr in-house developer salaries.
 - [Weblaud vs. Traditional Agencies](${baseUrl}/vs/traditional-agencies): Fixed-fee sprint scope delivery eliminating traditional hourly agency bloat and junior developer handoffs.
 
 ## Instant Cost Estimator
@@ -47,6 +56,18 @@ ${projects
       `- [${project.title}](${baseUrl}/projects/${project.slug}): ${project.description}`
   )
   .join("\n")}
+
+## Open Positions
+${
+  careers.length
+    ? careers
+        .map(
+          (job) =>
+            `- [${job.title}](${baseUrl}/career/${job.slug}): ${job.jobType}${job.location ? ` · ${job.location}` : ""}${job.summary ? ` — ${job.summary}` : ""}`
+        )
+        .join("\n")
+    : `- No open positions currently listed. See [Careers](${baseUrl}/career).`
+}
 
 ## Full RAG Context File
 - [llms-full.txt](${baseUrl}/llms-full.txt): Complete unformatted text of all technical articles, engineering standards, and comparison matrices for deep RAG ingestion.

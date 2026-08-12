@@ -1,10 +1,23 @@
 import type { LoaderFunctionArgs } from "react-router";
-import { projects } from "~/data/projects";
-import { insights, articleISODate } from "~/data/insights";
+import { fetchOptional } from "~/lib/api.server";
+import type { Career, Insight } from "~/lib/types";
+import type { BackendProject } from "~/lib/adapters/project.server";
 
-export const loader = ({ request }: LoaderFunctionArgs) => {
+function articleISODate(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 10);
+}
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
+
+  const [projects, insights, careers] = await Promise.all([
+    fetchOptional<BackendProject[]>("/projects", []),
+    fetchOptional<Insight[]>("/insights", []),
+    fetchOptional<Career[]>("/careers", []),
+  ]);
 
   // Fallback lastmod for pages without their own date. Update when static
   // content changes significantly.
@@ -19,6 +32,7 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
     { path: "/insights", priority: "0.9", changefreq: "weekly" },
     { path: "/vs/in-house-engineers", priority: "0.8", changefreq: "weekly" },
     { path: "/vs/traditional-agencies", priority: "0.8", changefreq: "weekly" },
+    { path: "/career", priority: "0.7", changefreq: "weekly" },
     { path: "/contact", priority: "0.7", changefreq: "yearly" },
     { path: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
     { path: "/terms-of-service", priority: "0.3", changefreq: "yearly" },
@@ -34,10 +48,21 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
     path: `/insights/${article.slug}`,
     priority: "0.8",
     changefreq: "weekly",
-    lastmod: articleISODate(article.date) || defaultLastmod,
+    lastmod: articleISODate(article.publishedAt) || defaultLastmod,
   }));
 
-  const pages = [...staticPages, ...projectPages, ...insightPages];
+  const careerPages = careers.map((job) => ({
+    path: `/career/${job.slug}`,
+    priority: "0.7",
+    changefreq: "weekly",
+  }));
+
+  const pages = [
+    ...staticPages,
+    ...projectPages,
+    ...insightPages,
+    ...careerPages,
+  ];
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

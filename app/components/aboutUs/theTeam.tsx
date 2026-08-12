@@ -1,67 +1,20 @@
 import { useState, useEffect, useCallback } from "react";
-import sakib from "~/assets/team/sakib_w.png";
-import shoaib from "~/assets/team/shoaib_weblaud.png";
-import ruhul from "~/assets/team/ruhul_w.png";
-import ishtique from "~/assets/team/ishtique.png";
-import jubayed from "~/assets/team/Jubayed.png";
-import shuvo from "~/assets/team/shuvo.png";
-import manirul from "~/assets/team/manirul.png";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { blurAnimation } from "~/lib/animations";
 import {
   motion,
   AnimatePresence,
 } from "framer-motion";
+import type { TeamMember } from "~/lib/types";
 
-const TheTeam = () => {
+interface TheTeamProps {
+  teamMembers: TeamMember[];
+}
+
+const TheTeam = ({ teamMembers }: TheTeamProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-
-  const teamMembers = [
-    {
-      id: 1,
-      name: "Sakib Al Jaber",
-      role: "Lead Software Engineer",
-      image: sakib,
-    },
-    {
-      id: 7,
-      name: "Manirul Islam",
-      role: "Business Development",
-      image: manirul,
-    },
-    {
-      id: 4,
-      name: "Kazi Arif Ishtique",
-      role: "Senior Software Engineer",
-      image: ishtique,
-    },
-    {
-      id: 2,
-      name: "Shoaib Al Jayed",
-      role: "Software Engineer",
-      image: shoaib,
-    },
-    {
-      id: 3,
-      name: "Ruhul Amin",
-      role: "Full Stack Engineer",
-      image: ruhul,
-    },
-    {
-      id: 5,
-      name: "Jubayed Islam",
-      role: "Software Engineer",
-      image: jubayed,
-    },
-    {
-      id: 6,
-      name: "Shuvo Chandra",
-      role: "Software Engineer",
-      image: shuvo,
-    },
-  ];
 
   const [titleRef, isTitleVisible] = useBlurAnimation<HTMLDivElement>();
 
@@ -125,6 +78,8 @@ const TheTeam = () => {
     return { zIndex, scale, x, opacity, filter };
   };
 
+  if (teamMembers.length === 0) return null;
+
   return (
     <section className="relative bg-black text-white py-20 px-4 overflow-hidden">
       <motion.div className="absolute top-10 left-10 w-50 h-50 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
@@ -167,18 +122,18 @@ const TheTeam = () => {
           </div>
 
           <div 
-            className="flex-1 relative w-full h-[500px] flex items-center justify-center lg:justify-start pl-0 lg:pl-24"
+            className="flex-1 relative w-full h-[380px] sm:h-[440px] lg:h-[500px] flex items-center justify-center lg:justify-start pl-0 lg:pl-24"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            <div className="relative w-full max-w-sm h-[450px]">
+            <div className="relative w-full max-w-sm h-[340px] sm:h-[400px] lg:h-[450px]">
               {teamMembers.map((member, index) => {
                 const style = getCardStyle(index);
                 const isCurrent = index === currentIndex;
 
                 return (
                   <motion.div
-                    key={member.id}
+                    key={member._id}
                     className="absolute inset-0 rounded-2xl overflow-hidden bg-gradient-to-br from-light-black to-black border border-blue-500/20 shadow-2xl group hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] transition-all duration-500"
                     initial={false}
                     animate={style}
@@ -212,7 +167,7 @@ const TheTeam = () => {
                       />
 
                       <img
-                        src={member.image}
+                        src={member.avatar}
                         alt={member.name}
                         width={400}
                         height={400}
@@ -228,7 +183,7 @@ const TheTeam = () => {
                           {member.name}
                         </h4>
                         <p className="text-cyan-400 font-mono text-sm tracking-wide">
-                          {member.role}
+                          {member.title}
                         </p>
                       </div>
                     </div>

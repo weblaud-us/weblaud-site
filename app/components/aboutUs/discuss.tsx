@@ -42,7 +42,7 @@ const Discuss = () => {
       <section ref={containerRef} className="bg-black text-white py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div
-            className={`relative border border-light-black rounded-3xl p-12 md:p-16 lg:p-[90px] overflow-hidden bg-linear-to-b from-primary/15 to-primary/3 ${getBlurAnimationClasses(isVisible)}`}
+            className={`relative border border-light-black rounded-3xl p-6 sm:p-10 md:p-16 lg:p-[90px] overflow-hidden bg-linear-to-b from-primary/15 to-primary/3 ${getBlurAnimationClasses(isVisible)}`}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
           >
