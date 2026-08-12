@@ -5,7 +5,6 @@ import {
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
 import { RESULTS_DISCLOSURE } from "~/lib/constants";
 import { ProjectCard } from "../ui/project-card";
-import { useNavigate } from "react-router";
 import type { Project } from "~/lib/types";
 
 interface OurCaseStudiesProps {
@@ -13,21 +12,15 @@ interface OurCaseStudiesProps {
 }
 
 const OurCaseStudies = ({ projects }: OurCaseStudiesProps) => {
-  const navigate = useNavigate();
-
   const { itemRefs, isItemVisible } = useBlurAnimationList(
     projects.map((p) => p.id),
     0.1
   );
 
-  if (projects.length === 0) return null;
-
   const [titleRef, isTitleVisible] = useBlurAnimation();
   const [descRef, isDescVisible] = useBlurAnimation();
 
-  const handleViewDetails = (slug: string) => {
-    navigate(`/projects/${slug}`);
-  };
+  if (projects.length === 0) return null;
 
   const animationVariants = ["heavy", "scale", "light"] as const;
 
@@ -82,7 +75,7 @@ const OurCaseStudies = ({ projects }: OurCaseStudiesProps) => {
                   features={project.features}
                   image={project.image}
                   imageAlt={project.imageAlt}
-                  onViewDetails={() => handleViewDetails(project.slug)}
+                  href={`/projects/${project.slug}`}
                 />
               </div>
             );

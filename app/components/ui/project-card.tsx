@@ -1,4 +1,4 @@
-import { FiArrowRight } from "react-icons/fi";
+import { Link } from "react-router";
 import { BsCheckCircle } from "react-icons/bs";
 
 export interface ProjectCardProps {
@@ -9,7 +9,8 @@ export interface ProjectCardProps {
   imageAlt: string;
   className?: string;
   style?: React.CSSProperties;
-  onViewDetails?: () => void;
+  /** Case study URL — the cover image and the title both link to it. */
+  href: string;
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -20,7 +21,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   imageAlt,
   className = "",
   style,
-  onViewDetails,
+  href,
 }) => {
   // Animate per character, but keep each word in its own inline-block so the
   // title only ever wraps at spaces instead of splitting words apart.
@@ -34,7 +35,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <div
-      className={`group cursor-pointer relative bg-card-bg border border-light-black rounded-3xl overflow-hidden hover:border-primary/50 hover:-transition-all duration-500 h-full ${className}`}
+      className={`group relative bg-card-bg border border-light-black rounded-3xl overflow-hidden hover:border-primary/50 hover:-transition-all duration-500 h-full ${className}`}
       style={style}
     >
       <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 group-hover:scale-150 group-hover:rotate-90 transition-all duration-1000"></div>
@@ -45,7 +46,15 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       </div>
 
       <div className="relative z-10 flex flex-col h-full">
-        <div className="relative overflow-hidden rounded-t-3xl bg-linear-to-br from-gray-800 to-gray-900">
+        {/* The cover image and the title below are separate links to the same
+            case study. The image one is hidden from assistive tech so screen
+            reader and keyboard users hit the title link only, not both. */}
+        <Link
+          to={href}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="relative block cursor-pointer overflow-hidden rounded-t-3xl bg-linear-to-br from-gray-800 to-gray-900"
+        >
           <img
             src={image}
             alt={imageAlt}
@@ -61,11 +70,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-blue-500/0 group-hover:border-blue-500/70 rounded-bl-2xl transition-all duration-500 group-hover:w-20 group-hover:h-20"
             style={{ transitionDelay: "100ms" }}
           ></div>
-        </div>
+        </Link>
 
         <div className="flex flex-col flex-1 p-6 relative">
-          <div className="flex items-start justify-between gap-4 mb-4 relative">
-            <h3 className="min-w-0 flex-1 text-white font-barlow font-bold text-xl leading-snug text-balance">
+          <h3 className="mb-4 text-white font-barlow font-bold text-xl leading-snug text-balance">
+            <Link
+              to={href}
+              className="block cursor-pointer rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card-bg"
+            >
               {words.map((word, wordIndex) => (
                 <span key={wordIndex}>
                   <span className="inline-block whitespace-nowrap">
@@ -86,25 +98,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                   {wordIndex < words.length - 1 ? " " : null}
                 </span>
               ))}
-            </h3>
-            <div className="relative shrink-0 mt-0.5">
-              <span className="absolute sm:block hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-primary opacity-0 group-hover:opacity-100 group-hover:scale-120 transition-all duration-600 pointer-events-none"></span>
-              <span
-                className="absolute hidden sm:block top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-primary opacity-0 group-hover:opacity-70 group-hover:scale-140 transition-all duration-800 pointer-events-none"
-                style={{ transitionDelay: "150ms" }}
-              ></span>
-
-              <button
-                onClick={onViewDetails}
-                className="relative flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary transition-all duration-500 overflow-hidden"
-                aria-label="View project details"
-              >
-                <FiArrowRight className="absolute w-5 h-5 text-primary group-hover:text-white transition-all duration-500 -rotate-45 ease-out group-hover:translate-x-8 group-hover:-translate-y-8 group-hover:opacity-0" />
-
-                <FiArrowRight className="absolute w-5 h-5 text-primary group-hover:text-white transition-all duration-600 ease-out -translate-x-8 translate-y-8 opacity-0 group-hover:translate-x-0 group-hover:translate-y-0 -rotate-45 group-hover:opacity-100" />
-              </button>
-            </div>
-          </div>
+            </Link>
+          </h3>
 
           <p className="text-white/70 group-hover:text-white/90 font-barlow text-sm leading-relaxed mb-4 transition-all duration-300 group-hover:tracking-wide">
             {description}
