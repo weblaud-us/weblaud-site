@@ -1,0 +1,11 @@
+# Shell scripts must keep LF endings regardless of the committer's platform.
+# This repo is developed on Windows with core.autocrlf=true; a deploy.sh that
+# reaches the Linux VPS with CRLF fails at the shebang with a confusing
+# "/usr/bin/env: 'bash\r': No such file or directory" and the deploy dies before
+# running a single step.
+*.sh text eol=lf
+
+# Same reasoning for anything else the server executes or parses literally.
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

@@ -2,3 +2,14 @@
 build
 node_modules
 README.md
+
+# Secrets — the Dockerfile does `COPY . /app`, so anything not excluded here is
+# baked into a permanent image layer and survives being deleted later.
+.env
+.env.*
+!.env.example
+
+.git
+.github
+logs
+*.log
