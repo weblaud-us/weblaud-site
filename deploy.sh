@@ -74,16 +74,21 @@ test -d "$SITE_DIR/build/client" || {
   exit 1
 }
 
-# 4. ecosystem.config.js writes to ./logs/*.log relative to cwd. PM2 creates the
-#    log files but not a missing parent directory.
+# 4. ecosystem.config.cjs writes to ./logs/*.log relative to cwd. PM2 creates
+#    the log files but not a missing parent directory.
 echo "==> [4/5] Ensuring log directory"
 mkdir -p "$SITE_DIR/logs"
 
-# 5. Restart. --update-env is required for the exported .env values above to
-#    replace the ones PM2 cached from the previous launch; without it, an edited
-#    secret is ignored until the process is fully deleted and recreated.
+# 5. Restart. The .cjs extension is required: package.json sets "type":"module",
+#    so a .js config is parsed as ESM, its `module.exports` assigns nothing, and
+#    PM2 loads a config with no `apps` at all — silently, which is how this
+#    stayed broken. Verify with:
+#      node -e "console.log(require('./ecosystem.config.cjs').apps[0].name)"
+#
+#    --update-env is belt-and-braces now that the config reads .env itself; it
+#    still matters for anything set in this shell but not in the file.
 echo "==> [5/5] Reloading PM2 process"
-pm2 startOrReload "$SITE_DIR/ecosystem.config.js" --update-env
+pm2 startOrReload "$SITE_DIR/ecosystem.config.cjs" --update-env
 pm2 save
 
 echo "==> Done. Verify: curl -fsS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3000/"

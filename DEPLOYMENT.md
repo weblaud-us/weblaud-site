@@ -55,7 +55,7 @@ Required before the first deploy:
   serves placeholder content, so the site looks live but empty. Set it
   explicitly rather than relying on the default.
 - **`NODE_ENV=production`** — gates the `Secure` flag on the admin session
-  cookie. PM2 sets it via `ecosystem.config.js`; keep it in `.env` too so a bare
+  cookie. PM2 sets it via `ecosystem.config.cjs`; keep it in `.env` too so a bare
   `npm start` or `docker run` cannot ship that cookie unprotected.
 - **`VITE_CONTACT_FORM_ACCESS_KEY`** — must be present *before* `npm run build`.
   The lead is already saved through the backend, so an empty key only drops the
