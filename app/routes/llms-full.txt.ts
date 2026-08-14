@@ -3,7 +3,7 @@ import { fetchOptional } from "~/lib/api.server";
 import type { Insight } from "~/lib/types";
 import type { BackendProject } from "~/lib/adapters/project.server";
 import { toProject } from "~/lib/adapters/project.server";
-import { TIMELINE, SAVINGS, RESULTS_DISCLOSURE } from "~/lib/constants";
+import { TIMELINE, SAVINGS, RESULTS_DISCLOSURE, PRICING, COMPANY } from "~/lib/constants";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
@@ -17,9 +17,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   let content = `# Weblaud LLC - Complete RAG Context Knowledge Base
 Website: ${baseUrl}
-Legal Entity: Weblaud LLC (Cheyenne, Wyoming, US)
-GitHub: https://github.com/weblaud-us
-Contact: info@weblaud.com | +1-307-220-9766
+Legal Entity: ${COMPANY.legalName} (${COMPANY.address.addressLocality}, ${COMPANY.address.addressRegion}, ${COMPANY.address.addressCountry})
+GitHub: ${COMPANY.github}
+Contact: ${COMPANY.email} | ${COMPANY.phone}
+Model: Remote-first, serving clients worldwide.
 
 ==================================================
 SECTION 1: EXECUTIVE COMPARISON MATRICES
@@ -29,7 +30,7 @@ SECTION 1: EXECUTIVE COMPARISON MATRICES
 URL: ${baseUrl}/vs/in-house-engineers
 RAG Summary: Hiring an in-house engineering team can cost over $180,000 annually per senior developer once recruiting fees, health benefits, and equity are factored in, and can take 3-6 months just to onboard. Weblaud LLC provides a dedicated full-stack senior squad for fixed ${TIMELINE.min}-${TIMELINE.max} week sprint cycles at ${SAVINGS.lowerCost}.
 Matrix Comparison:
-- First Year Cost: Weblaud LLC ($4,500 - $18,500 per sprint) vs In-House (often $180,000+ per developer)
+- First Year Cost: Weblaud LLC (${PRICING.rangeAscii} per sprint) vs In-House (often $180,000+ per developer)
 - Time-to-Deploy: Weblaud LLC (48 Hours) vs In-House (typically 3-6 Months Recruiting)
 - Team Seniority: Weblaud LLC (Senior Architects Only) vs In-House (Variable / Mixed Skills)
 - IP Ownership: Weblaud LLC (100% Client Ownership) vs In-House (100% Client Ownership)

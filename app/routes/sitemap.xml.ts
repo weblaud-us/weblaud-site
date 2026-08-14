@@ -2,6 +2,7 @@ import type { LoaderFunctionArgs } from "react-router";
 import { fetchOptional } from "~/lib/api.server";
 import type { Career, Insight } from "~/lib/types";
 import type { BackendProject } from "~/lib/adapters/project.server";
+import { allLandingPages } from "~/data/landing";
 
 function articleISODate(iso: string) {
   const d = new Date(iso);
@@ -30,8 +31,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     { path: "/projects", priority: "0.8", changefreq: "weekly" },
     { path: "/calculator", priority: "0.9", changefreq: "weekly" },
     { path: "/insights", priority: "0.9", changefreq: "weekly" },
-    { path: "/vs/in-house-engineers", priority: "0.8", changefreq: "weekly" },
-    { path: "/vs/traditional-agencies", priority: "0.8", changefreq: "weekly" },
     { path: "/career", priority: "0.7", changefreq: "weekly" },
     { path: "/contact", priority: "0.7", changefreq: "yearly" },
     { path: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
@@ -57,8 +56,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     changefreq: "weekly",
   }));
 
+  // Intent landing pages (/vs/*, /solutions/*, hub, cost, segment) from the
+  // catalog. The head-term hub gets top priority; the rest are high-value too.
+  const landingPages = allLandingPages.map((page) => ({
+    path: page.path,
+    priority: page.path === "/best-software-agency" ? "0.9" : "0.8",
+    changefreq: "weekly",
+  }));
+
   const pages = [
     ...staticPages,
+    ...landingPages,
     ...projectPages,
     ...insightPages,
     ...careerPages,

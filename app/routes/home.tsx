@@ -7,7 +7,7 @@ import OurSay from "~/components/home/ourSay";
 import FAQ from "~/components/home/faq";
 import LetsDiscuss from "~/components/home/letsDiscuss";
 import heroBanner from "~/assets/hero-icon.png";
-import { TIMELINE } from "~/lib/constants";
+import { TIMELINE, COMPANY } from "~/lib/constants";
 import { fetchOptional } from "~/lib/api.server";
 import type { Testimonial, Faq, AboutInfo } from "~/lib/types";
 
@@ -60,6 +60,33 @@ export function meta({ data }: Route.MetaArgs) {
           },
         ];
 
+  // Review JSON-LD from genuine, attributed client testimonials. Each maps to a
+  // real named person who gave the quote — no AggregateRating / star score is
+  // emitted, since that requires publicly verifiable ratings (see Clutch/Google),
+  // and self-serving rating markup is discounted by search engines and AI crawlers.
+  const testimonials = data?.testimonials ?? [];
+  const reviewLd = testimonials
+    .filter((t) => t.quote && t.authorName)
+    .slice(0, 10)
+    .map((t) => ({
+      "script:ld+json": {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        itemReviewed: {
+          "@type": "Organization",
+          name: COMPANY.name,
+          url: COMPANY.url,
+        },
+        author: {
+          "@type": "Person",
+          name: t.authorName,
+          ...(t.authorTitle ? { jobTitle: t.authorTitle } : {}),
+        },
+        reviewBody: t.quote,
+        ...(t.createdAt ? { datePublished: t.createdAt.slice(0, 10) } : {}),
+      },
+    }));
+
   return [
     { title: "Weblaud LLC – Software Development Company" },
     {
@@ -103,6 +130,7 @@ export function meta({ data }: Route.MetaArgs) {
         mainEntity: faqMainEntity,
       },
     },
+    ...reviewLd,
     { tagName: "link", rel: "canonical", href: "https://weblaud.com/" },
   ];
 }

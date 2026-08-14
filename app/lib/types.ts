@@ -239,6 +239,65 @@ export interface Faq {
   createdAt: string;
 }
 
+// ---------------------------------------------------------------------------
+// Intent landing pages — the data-driven GEO content system.
+// One LandingPageConfig describes a single high-intent query page (a /vs/*
+// comparison, a /solutions/* use-case page, or a standalone hub/guide). A shared
+// template (components/landing/IntentLandingPage) renders it and a shared helper
+// (lib/landing-schema) builds its meta + JSON-LD, so every page stays consistent
+// and every factual figure derives from lib/constants.
+// ---------------------------------------------------------------------------
+
+export type LandingGroup = "vs" | "solutions";
+
+export interface LandingMatrixRow {
+  feature: string;
+  /** The Weblaud column value (rendered as the winning/highlighted cell). */
+  weblaud: string;
+  /** The alternative column value (in-house, freelancer, no-code, etc.). */
+  other: string;
+}
+
+export interface LandingFaq {
+  question: string;
+  answer: string;
+}
+
+export interface LandingFeatureCard {
+  title: string;
+  body: string;
+}
+
+export interface LandingPageConfig {
+  /** URL slug, e.g. "offshore-developers" or "saas-mvp". */
+  slug: string;
+  /** Full absolute path, e.g. "/vs/offshore-developers". */
+  path: string;
+  badge: string;
+  h1: string;
+  subhead: string;
+  metaTitle: string;
+  metaDescription: string;
+  /** The quotable "direct answer" paragraph engineered for RAG citation. */
+  ragHeading: string;
+  ragAnswer: string;
+  /** Optional comparison matrix (used by /vs/* pages). */
+  matrixTitle?: string;
+  matrixColumns?: { weblaud: string; other: string };
+  matrixRows?: LandingMatrixRow[];
+  /** Optional highlight cards (used by /solutions/* and some /vs/* pages). */
+  cardsTitle?: string;
+  featureCards?: LandingFeatureCard[];
+  /** Optional inline CTA button rendered above the RAG box (e.g. cost -> calculator). */
+  ctaLink?: { label: string; to: string };
+  faqs: LandingFaq[];
+  breadcrumbName: string;
+  /** Plain-text answer embedded in the Article JSON-LD articleBody. */
+  articleBody: string;
+  /** schema.org article type; defaults to "TechArticle". */
+  articleType?: "TechArticle" | "Article";
+}
+
 export type ContactSubmissionStatus = "new" | "read";
 
 export interface ContactSubmission {

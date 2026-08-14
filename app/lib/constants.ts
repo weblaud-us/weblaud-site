@@ -45,3 +45,55 @@ export const TIMELINE = {
   /** Full enterprise builds */
   enterprise: "within 14 weeks",
 } as const;
+
+/**
+ * Fixed sprint-fee pricing — SINGLE SOURCE OF TRUTH.
+ * $4,500 (Core MVP sprint) to $18,500 (Enterprise system). Every published price
+ * (llms.txt, comparison pages, calculator copy, FAQ schema) must derive from here
+ * instead of re-typing the figures.
+ */
+export const PRICING = {
+  min: 4500,
+  max: 18500,
+  minLabel: "$4,500",
+  maxLabel: "$18,500",
+  /** En-dash range for prose, e.g. "$4,500 – $18,500" */
+  range: "$4,500 – $18,500",
+  /** Hyphen range for plain-text feeds (llms.txt), e.g. "$4,500 - $18,500" */
+  rangeAscii: "$4,500 - $18,500",
+} as const;
+
+/**
+ * Company identity, contact, and location facts — SINGLE SOURCE OF TRUTH.
+ * Previously duplicated across root.tsx (Organization JSON-LD), llms.txt, and
+ * llms-full.txt, which risked NAP drift (inconsistent name/address/phone weakens
+ * both local SEO and AI-assistant trust). All three now read from here.
+ */
+export const COMPANY = {
+  name: "Weblaud LLC",
+  legalName: "Weblaud LLC",
+  url: "https://weblaud.com",
+  email: "info@weblaud.com",
+  phone: "+1-307-220-9766",
+  github: "https://github.com/weblaud-us",
+  logo: "https://weblaud.com/favicon.png",
+  ogImage: "https://weblaud.com/og-image.jpg",
+  twitterHandle: "@weblaud",
+  /** Positioning: capability-led, serving clients worldwide. */
+  remoteFirst: true,
+  address: {
+    streetAddress: "1621 Central Ave",
+    addressLocality: "Cheyenne",
+    addressRegion: "WY",
+    postalCode: "82001",
+    addressCountry: "US",
+  },
+  geo: { latitude: 41.14, longitude: -104.8202 },
+  areaServed: ["US", "CA", "GB", "EU", "Worldwide"],
+  sameAs: [
+    "https://github.com/weblaud-us",
+    "https://www.facebook.com/weblaud",
+    "https://www.instagram.com/weblaud",
+    "https://www.linkedin.com/company/weblaud",
+  ],
+} as const;

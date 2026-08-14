@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import type { Route } from "./+types/root";
-import { TIMELINE } from "./lib/constants";
+import { TIMELINE, COMPANY } from "./lib/constants";
 import Footer from "./components/ui/footer";
 import "./app.css";
 import NavBar from "./components/ui/navBar";
@@ -57,12 +57,12 @@ export const meta: Route.MetaFunction = () => {
       content:
         "Weblaud LLC is a software company and innovation lab building the future of digital products and providing premium engineering services for global businesses.",
     },
-    { property: "og:site_name", content: "Weblaud LLC" },
+    { property: "og:site_name", content: COMPANY.name },
     { property: "og:locale", content: "en_US" },
-    { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
+    { property: "og:image", content: COMPANY.ogImage },
     { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:site", content: "@weblaud" },
-    { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    { name: "twitter:site", content: COMPANY.twitterHandle },
+    { name: "twitter:image", content: COMPANY.ogImage },
     { name: "theme-color", content: "#000000" },
     { name: "geo.region", content: "US-WY" },
     { name: "geo.placename", content: "Cheyenne" },
@@ -75,11 +75,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": ["Organization", "ProfessionalService"],
-    name: "Weblaud LLC",
-    legalName: "Weblaud LLC",
-    url: "https://weblaud.com",
-    logo: "https://weblaud.com/favicon.png",
-    image: "https://weblaud.com/og-image.jpg",
+    name: COMPANY.name,
+    legalName: COMPANY.legalName,
+    url: COMPANY.url,
+    logo: COMPANY.logo,
+    image: COMPANY.ogImage,
     description:
       "Weblaud LLC is a software company and innovation lab building digital products, operations platforms, AI tools, and mobile apps for global businesses.",
     priceRange: "$$",
@@ -91,35 +91,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
       "Cloud Infrastructure & DevOps",
       "Enterprise Operations Platforms",
     ],
-    sameAs: [
-      "https://github.com/weblaud-us",
-      "https://www.facebook.com/weblaud",
-      "https://www.instagram.com/weblaud",
-      "https://www.linkedin.com/company/weblaud",
-    ],
+    sameAs: COMPANY.sameAs,
     contactPoint: [
       {
         "@type": "ContactPoint",
-        telephone: "+1-307-220-9766",
+        telephone: COMPANY.phone,
         contactType: "customer service",
-        email: "info@weblaud.com",
+        email: COMPANY.email,
         availableLanguage: ["English"],
       },
     ],
     address: {
       "@type": "PostalAddress",
-      streetAddress: "1621 Central Ave",
-      addressLocality: "Cheyenne",
-      addressRegion: "WY",
-      postalCode: "82001",
-      addressCountry: "US",
+      streetAddress: COMPANY.address.streetAddress,
+      addressLocality: COMPANY.address.addressLocality,
+      addressRegion: COMPANY.address.addressRegion,
+      postalCode: COMPANY.address.postalCode,
+      addressCountry: COMPANY.address.addressCountry,
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: 41.1400,
-      longitude: -104.8202,
+      latitude: COMPANY.geo.latitude,
+      longitude: COMPANY.geo.longitude,
     },
-    areaServed: ["US", "CA", "GB", "EU", "Worldwide"],
+    areaServed: COMPANY.areaServed,
     employee: [
       { "@type": "Person", name: "Sakib Al Jaber", jobTitle: "Lead Software Engineer" },
       { "@type": "Person", name: "Manirul Islam", jobTitle: "Business Development" },
