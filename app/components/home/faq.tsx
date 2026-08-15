@@ -212,6 +212,10 @@ export default function FAQ({ faqs }: FAQProps) {
 
   return (
     <section className="relative py-14 pb-16 bg-black text-white overflow-hidden scroll-mt-24">
+      {/* Ambient Gradient Lights */}
+      <motion.div className="absolute top-10 -left-20 w-72 h-72 rounded-full bg-primary/15 blur-[120px] pointer-events-none" />
+      <motion.div className="absolute bottom-10 -right-20 w-80 h-80 rounded-full bg-blue-500/15 blur-[140px] pointer-events-none" />
+
       <div className="max-w-5xl mx-auto px-4 md:px-6 relative z-10">
         <div
           ref={titleRef}

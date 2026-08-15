@@ -4,6 +4,7 @@ import heroBanner from "~/assets/hero-icon.png";
 import dashedArrow from "~/assets/dashed-arrow.svg";
 import { TIMELINE } from "~/lib/constants";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
+import { ChevronRight } from "lucide-react";
 
 const BannerHome = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,9 +69,7 @@ const BannerHome = () => {
                   >
                     <span className="relative z-10 flex items-center">
                       Check our Services
-                      <svg className="w-4 h-4 ml-2 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
+                      <ChevronRight className="w-4 h-4 ml-1.5 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
                     </span>
                   </Link>
                 </div>
