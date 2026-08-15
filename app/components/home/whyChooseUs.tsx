@@ -77,18 +77,10 @@ const WhyChooseUs = () => {
           {reasons.map((reason, index) => {
             const Icon = reason.icon;
             return (
-              <motion.div
+              <div
                 key={reason.title}
-                initial={{ opacity: 0, y: 24, filter: "blur(12px)" }}
-                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{
-                  duration: 0.55,
-                  delay: index * 0.1,
-                  ease: "easeOut",
-                }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="group relative rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-300 flex flex-col justify-between cursor-default"
+                style={{ transitionDelay: `${index * 90}ms` }}
+                className={`group relative rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-700 hover:-translate-y-1 flex flex-col justify-between cursor-default ${getBlurAnimationClasses(areCardsVisible)}`}
               >
                 <div>
                   {/* Top Row: Icon Box + Step Index */}
@@ -108,12 +100,12 @@ const WhyChooseUs = () => {
                   </span>
 
                   {/* Title */}
-                  <h3 className="text-white font-barlow font-bold text-base sm:text-lg md:text-xl mb-1.5 sm:mb-3 tracking-wide group-hover:text-white transition-colors duration-300">
+                  <h3 className="text-sm sm:text-base md:text-lg font-bold font-barlow text-white tracking-tight mb-2 group-hover:text-primary transition-colors duration-300">
                     {reason.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-[#8e8e93] font-barlow text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 group-hover:text-[#a1a1aa] transition-colors duration-300">
+                  <p className="text-gray-400 font-barlow text-xs sm:text-sm leading-relaxed mb-4">
                     {reason.description}
                   </p>
                 </div>
@@ -127,7 +119,7 @@ const WhyChooseUs = () => {
                     {reason.highlightValue}
                   </span>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>

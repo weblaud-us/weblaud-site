@@ -78,6 +78,7 @@ const getRecordIcon = (subtitle: string, title: string, index: number) => {
 
 const OurTrack = ({ trackRecord }: OurTrackProps) => {
   const [titleRef, isVisible] = useBlurAnimation<HTMLHeadingElement>();
+  const [cardsRef, areCardsVisible] = useBlurAnimation<HTMLDivElement>();
 
   if (trackRecord.length === 0) return null;
 
@@ -100,18 +101,17 @@ const OurTrack = ({ trackRecord }: OurTrackProps) => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
+        <div
+          ref={cardsRef}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6"
+        >
           {trackRecord.map((record, index) => {
             const { number, suffix } = splitNumberAndSuffix(record.title);
             return (
-              <motion.div
+              <div
                 key={record.subtitle}
-                initial={{ opacity: 0, y: 24, filter: "blur(12px)" }}
-                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.55, delay: index * 0.1, ease: "easeOut" }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="rounded-xl sm:rounded-2xl p-3.5 sm:p-6 md:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-300 flex flex-col justify-between"
+                style={{ transitionDelay: `${index * 90}ms` }}
+                className={`rounded-xl sm:rounded-2xl p-3.5 sm:p-6 md:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-700 hover:-translate-y-1 flex flex-col justify-between ${getBlurAnimationClasses(areCardsVisible)}`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-3 sm:mb-6">
@@ -137,7 +137,7 @@ const OurTrack = ({ trackRecord }: OurTrackProps) => {
                     {record.description}
                   </p>
                 )}
-              </motion.div>
+              </div>
             );
           })}
         </div>

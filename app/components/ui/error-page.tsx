@@ -5,8 +5,6 @@ import {
   useRouteError,
 } from "react-router";
 import type { ReactNode } from "react";
-import { FiArrowLeft } from "react-icons/fi";
-import { HiArrowRight } from "react-icons/hi";
 import { Button } from "./button";
 import pattern from "~/assets/geometric-pattern.svg";
 
@@ -111,7 +109,6 @@ const ErrorPage = ({
           <Link to={primaryAction.to}>
             <Button className="text-xs font-bold px-9 py-4.5">
               {primaryAction.label}
-              <HiArrowRight className="ml-1" />
             </Button>
           </Link>
 
@@ -119,9 +116,8 @@ const ErrorPage = ({
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="group inline-flex items-center gap-2 px-7 py-3 rounded-lg text-xs font-barlow font-semibold text-white bg-white/3 backdrop-blur-md border border-white/15 hover:border-primary/50 transition-all duration-500"
+              className="group inline-flex items-center justify-center px-7 py-3 rounded-lg text-xs font-barlow font-semibold text-white bg-white/3 backdrop-blur-md border border-white/15 hover:border-primary/50 transition-all duration-500"
             >
-              <FiArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform duration-300" />
               Go Back
             </button>
           )}

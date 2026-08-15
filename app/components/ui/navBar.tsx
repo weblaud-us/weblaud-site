@@ -67,8 +67,8 @@ const NavBar = () => {
           <div
             className={`flex items-center justify-between transition-all duration-1000 ease-out ${
               isScrolled
-                ? "bg-card-bg/90 backdrop-blur-xl border border-light-black/50 rounded-2xl px-4 md:px-6 py-2 md:py-3 shadow-lg shadow-black/50"
-                : "bg-card-bg/85 md:bg-card-bg/50 backdrop-blur-xl md:backdrop-blur-md border border-white/[0.08] md:border-light-black rounded-2xl md:rounded-3xl px-4 sm:px-6 md:px-8 py-2.5 md:py-4 shadow-lg shadow-black/40"
+                ? "bg-[#0e0e0e] border border-light-black/50 rounded-2xl px-4 md:px-6 py-2 md:py-3 shadow-lg shadow-black/50"
+                : "bg-[#0e0e0e] border border-white/[0.08] md:border-light-black rounded-2xl md:rounded-3xl px-4 sm:px-6 md:px-8 py-2.5 md:py-4 shadow-lg shadow-black/40"
             } ${
               isVisible
                 ? "opacity-100 blur-0 translate-y-0"
@@ -148,7 +148,7 @@ const NavBar = () => {
           </div>
 
           <div
-            className={`lg:hidden fixed right-6.5 top-0 bottom-4 h-fit w-[80%] max-w-sm bg-linear-to-br from-card-bg via-card-bg to-black border border-light-black rounded-xl shadow-2xl shadow-blue-500/10 z-50 transition-all duration-500 ease-out ${
+            className={`lg:hidden fixed right-6.5 top-0 bottom-4 h-fit w-[80%] max-w-sm bg-[#0e0e0e] border border-light-black rounded-xl shadow-2xl shadow-blue-500/10 z-50 transition-all duration-500 ease-out ${
               isMobileMenuOpen
                 ? "translate-x-0 opacity-100"
                 : "translate-x-[120%] opacity-0"
