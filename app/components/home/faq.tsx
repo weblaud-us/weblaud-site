@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { FiPlus } from "react-icons/fi";
 import IconTile from "../ui/icon-tile";
 import {
@@ -6,16 +6,193 @@ import {
   useBlurAnimationList,
 } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
-import { motion } from "framer-motion";
+import {
+  motion,
+  useReducedMotion,
+  type Transition,
+} from "framer-motion";
 import type { Faq } from "~/lib/types";
 import SectionBadge from "~/components/ui/section-badge";
 import { HelpCircle } from "lucide-react";
+
+// Bouncy spring transitions
+const ROW_TRANSITION: Transition = {
+  type: "spring",
+  duration: 0.55,
+  bounce: 0.38,
+};
+
+const CONTENT_OPEN_TRANSITION: Transition = {
+  type: "spring",
+  duration: 0.58,
+  bounce: 0.32,
+};
+
+const CONTENT_CLOSE_TRANSITION: Transition = {
+  type: "spring",
+  duration: 0.46,
+  bounce: 0.26,
+};
+
+const DESCRIPTION_TRANSITION: Transition = {
+  duration: 0.22,
+  ease: [0.16, 1, 0.3, 1],
+};
+
+const PLUS_TRANSITION: Transition = {
+  type: "spring",
+  duration: 0.42,
+  bounce: 0.28,
+};
+
+interface FAQRowProps {
+  item: Faq;
+  number: string;
+  isOpen: boolean;
+  panelId: string;
+  buttonId: string;
+  itemVisible: boolean;
+  reduce: boolean | null;
+  onToggle: () => void;
+  rowRef: (el: HTMLLIElement | null) => void;
+}
+
+function FAQRow({
+  item,
+  number,
+  isOpen,
+  panelId,
+  buttonId,
+  itemVisible,
+  reduce,
+  onToggle,
+  rowRef,
+}: FAQRowProps) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    const node = contentRef.current;
+    if (!node) return;
+
+    const updateHeight = () => {
+      setContentHeight(node.offsetHeight);
+    };
+
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(node);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  return (
+    <motion.li
+      ref={rowRef}
+      layout="position"
+      initial={false}
+      transition={reduce ? { duration: 0 } : ROW_TRANSITION}
+      className={`rounded-2xl border bg-[#0e0e0e] transition-colors duration-300 overflow-hidden ${
+        isOpen
+          ? "border-primary/50"
+          : "border-[#1f1f1f] hover:border-white/15"
+      } ${getBlurAnimationClasses(itemVisible)}`}
+    >
+      <div className="p-4 md:p-6">
+        <div
+          onClick={onToggle}
+          className="w-full flex items-center justify-between gap-4 cursor-pointer select-none"
+        >
+          <div className="flex items-center gap-4 min-w-0">
+            <IconTile size="lg" className="shrink-0">
+              <span
+                className={`font-semibold text-xl transition-colors duration-300 ${
+                  isOpen ? "text-primary" : "text-white"
+                }`}
+              >
+                {number}
+              </span>
+            </IconTile>
+
+            <span
+              className={`font-medium font-barlow text-sm md:text-lg transition-colors duration-300 ${
+                isOpen ? "text-primary" : "text-white"
+              }`}
+            >
+              {item.question}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            id={buttonId}
+            aria-controls={panelId}
+            aria-expanded={isOpen}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle();
+            }}
+            className={`w-9 h-9 md:w-10 md:h-10 rounded-xl border flex items-center justify-center shrink-0 transition-colors duration-300 cursor-pointer ${
+              isOpen
+                ? "bg-primary/15 border-primary/40 text-primary"
+                : "bg-white/[0.04] border-white/[0.08] text-white/70 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+            }`}
+            aria-label={isOpen ? "Collapse" : "Expand"}
+          >
+            <motion.span
+              animate={{ rotate: isOpen ? 45 : 0 }}
+              transition={reduce ? { duration: 0 } : PLUS_TRANSITION}
+              className="inline-flex"
+            >
+              <FiPlus className="text-lg md:text-xl" />
+            </motion.span>
+          </button>
+        </div>
+
+        <motion.div
+          id={panelId}
+          role="region"
+          aria-labelledby={buttonId}
+          aria-hidden={!isOpen}
+          initial={false}
+          animate={{ height: isOpen ? contentHeight : 0 }}
+          transition={
+            reduce
+              ? { duration: 0 }
+              : isOpen
+              ? CONTENT_OPEN_TRANSITION
+              : CONTENT_CLOSE_TRANSITION
+          }
+          className="overflow-hidden"
+        >
+          <motion.div
+            ref={contentRef}
+            animate={{
+              opacity: isOpen ? 1 : 0,
+              y: isOpen ? 0 : -8,
+            }}
+            transition={reduce ? { duration: 0 } : DESCRIPTION_TRANSITION}
+            className="pt-4 md:pl-[4.5rem]"
+          >
+            <p className="text-sm md:text-[15px] text-gray-400 font-barlow leading-relaxed">
+              {item.answer}
+            </p>
+          </motion.div>
+        </motion.div>
+      </div>
+    </motion.li>
+  );
+}
 
 interface FAQProps {
   faqs: Faq[];
 }
 
 export default function FAQ({ faqs }: FAQProps) {
+  const reduce = useReducedMotion();
   const items = faqs;
   const [openId, setOpenId] = React.useState<string | null>(
     items[0]?._id ?? null,
@@ -35,10 +212,6 @@ export default function FAQ({ faqs }: FAQProps) {
 
   return (
     <section className="relative py-14 pb-16 bg-black text-white overflow-hidden scroll-mt-24">
-
-      <motion.div className="absolute top-20 left-30 w-40 h-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
-      <motion.div className="absolute md:block hidden bottom-20 right-30 w-40 h-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
-
       <div className="max-w-5xl mx-auto px-4 md:px-6 relative z-10">
         <div
           ref={titleRef}
@@ -64,70 +237,20 @@ export default function FAQ({ faqs }: FAQProps) {
             const buttonId = `faq-button-${item._id}`;
             const itemVisible = isItemVisible(item._id);
             return (
-              <li
+              <FAQRow
                 key={item._id}
-                ref={(el) => {
+                item={item}
+                number={number}
+                isOpen={isOpen}
+                panelId={panelId}
+                buttonId={buttonId}
+                itemVisible={itemVisible}
+                reduce={reduce}
+                onToggle={() => toggle(item._id)}
+                rowRef={(el) => {
                   if (el) itemRefs.current.set(item._id, el);
                 }}
-                className={`rounded-2xl border bg-card-bg transition-all duration-300 ${
-                  isOpen
-                    ? "border-primary/40 border-l-2 border-l-primary shadow-sm shadow-primary/10"
-                    : "border-light-black"
-                } ${getBlurAnimationClasses(itemVisible)}`}
-              >
-                <div className="flex items-start gap-4 p-4 md:p-6">
-                  <IconTile size="lg" className="shrink-0">
-                    <span
-                      className={`font-semibold text-xl ${isOpen ? "text-primary" : "text-white"}`}
-                    >
-                      {number}
-                    </span>
-                  </IconTile>
-
-                  <div className="flex-1">
-                    <div className="w-full flex items-center justify-between gap-4">
-                      <span
-                        className={`font-medium md:font-medium font-barlow text-sm md:text-lg transition-colors ${
-                          isOpen ? "text-primary" : "text-white"
-                        }`}
-                      >
-                        {item.question}
-                      </span>
-                      <button
-                        id={buttonId}
-                        aria-controls={panelId}
-                        aria-expanded={isOpen}
-                        onClick={() => toggle(item._id)}
-                        className="grid place-items-center rounded-md size-10 -m-1 shrink-0 transition-transform"
-                        aria-label={isOpen ? "Collapse" : "Expand"}
-                      >
-                        <FiPlus
-                          className={`transition-transform duration-200 ${
-                            isOpen
-                              ? "rotate-45 text-primary"
-                              : "rotate-0 text-gray-300 "
-                          } text-2xl cursor-pointer`}
-                        />
-                      </button>
-                    </div>
-
-                    <div
-                      id={panelId}
-                      role="region"
-                      aria-labelledby={buttonId}
-                      className={`grid transition-[grid-template-rows] duration-500 ease-out motion-reduce:duration-0 ${
-                        isOpen ? "grid-rows-[1fr] mt-3" : "grid-rows-[0fr]"
-                      }`}
-                    >
-                      <div className="overflow-hidden">
-                        <p className="text-sm md:text-[15px] text-dark-gray leading-relaxed">
-                          {item.answer}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
+              />
             );
           })}
         </ul>
@@ -135,3 +258,4 @@ export default function FAQ({ faqs }: FAQProps) {
     </section>
   );
 }
+

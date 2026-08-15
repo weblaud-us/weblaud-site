@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import SectionBadge from "~/components/ui/section-badge";
-import { Cpu } from "lucide-react";
+import { Cpu, FileText, Users, Clock, Globe } from "lucide-react";
 import type { TrackRecordItem } from "~/lib/types";
 import {
   SiGooglecloud,
@@ -377,21 +377,50 @@ const TrustedPartnerships = ({ trackRecord = [] }: TrustedPartnershipsProps) => 
       {/* Track Record Stats */}
       {trackRecord.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 mt-16 relative z-10">
-          <div className="border-t border-white/10 pt-12">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-              {trackRecord.map((stat, i) => (
-                <div
-                  key={i}
-                  className="text-center group py-5 px-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-primary/30 hover:bg-white/[0.04] transition-all duration-300"
-                >
-                  <p className="text-primary font-barlow text-3xl md:text-4xl font-bold mb-1.5 group-hover:scale-105 transition-transform duration-300 inline-block">
-                    {stat.title}
-                  </p>
-                  <p className="text-gray-400 text-xs md:text-sm font-barlow tracking-wide">
-                    {stat.subtitle}
-                  </p>
-                </div>
-              ))}
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/[0.08]">
+              {trackRecord.map((stat, i) => {
+                const getStatIcon = () => {
+                  const s = `${stat.subtitle} ${stat.title}`.toLowerCase();
+                  if (s.includes("project") || s.includes("deliver"))
+                    return <FileText className="w-5 h-5 text-primary" />;
+                  if (s.includes("satisfaction") || s.includes("client") || s.includes("reviewer") || s.includes("user"))
+                    return <Users className="w-5 h-5 text-primary" />;
+                  if (s.includes("time") || s.includes("on-time") || s.includes("deliver") || s.includes("issue"))
+                    return <Clock className="w-5 h-5 text-primary" />;
+                  if (s.includes("countr") || s.includes("global") || s.includes("serve") || s.includes("volume"))
+                    return <Globe className="w-5 h-5 text-primary" />;
+                  const icons = [
+                    <FileText key="1" className="w-5 h-5 text-primary" />,
+                    <Users key="2" className="w-5 h-5 text-primary" />,
+                    <Clock key="3" className="w-5 h-5 text-primary" />,
+                    <Globe key="4" className="w-5 h-5 text-primary" />,
+                  ];
+                  return icons[i % icons.length];
+                };
+
+                return (
+                  <div
+                    key={i}
+                    className="flex items-center justify-start gap-4 p-5 sm:p-6 group hover:bg-white/[0.02] transition-colors duration-300"
+                  >
+                    {/* Icon Box */}
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(10,132,255,0.15)] group-hover:scale-105 group-hover:bg-primary/15 transition-all duration-300">
+                      {getStatIcon()}
+                    </div>
+
+                    {/* Text block */}
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-white font-barlow text-2xl sm:text-3xl font-bold tracking-tight leading-none group-hover:text-primary transition-colors duration-300">
+                        {stat.title}
+                      </span>
+                      <span className="text-gray-400 font-barlow text-[11px] sm:text-xs font-semibold tracking-[0.06em] uppercase mt-1.5 leading-tight truncate">
+                        {stat.subtitle}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
