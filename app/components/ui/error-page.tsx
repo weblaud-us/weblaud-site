@@ -6,6 +6,8 @@ import {
 } from "react-router";
 import type { ReactNode } from "react";
 import { Button } from "./button";
+import SectionBadge from "~/components/ui/section-badge";
+import { AlertCircle } from "lucide-react";
 import pattern from "~/assets/geometric-pattern.svg";
 
 interface ErrorAction {
@@ -82,15 +84,13 @@ const ErrorPage = ({
         )}
 
         {badge && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-white/7 border border-white/20 rounded-full">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
-            </span>
-            <span className="text-xs sm:text-sm font-medium text-white">
-              {badge}
-            </span>
-          </div>
+          <SectionBadge
+            icon={<AlertCircle className="w-3.5 h-3.5" />}
+            text="System Notice"
+            badgeLabel={badge}
+            color="#0a84ff"
+            className="mb-6"
+          />
         )}
 
         <h1
