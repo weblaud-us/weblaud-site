@@ -20,7 +20,7 @@ const BannerContactUs = () => {
           badgeLabel: "Direct Access",
         }}
         title="Contact Us"
-        description="Have a project in mind? Our team handles initial planning through full-scale development."
+        description="Have a product vision, complex engineering challenge, or looking to scale your infrastructure? Partner directly with our senior software architects and technical leaders to turn your requirements into high-performance software."
         button={{
           text: "Book a Call",
           onClick: handleGetInTouch,
