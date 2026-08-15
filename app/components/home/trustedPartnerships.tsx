@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
+import SectionBadge from "~/components/ui/section-badge";
+import { Cpu } from "lucide-react";
 import type { TrackRecordItem } from "~/lib/types";
 import {
   SiGooglecloud,
@@ -330,11 +332,11 @@ const TrustedPartnerships = ({ trackRecord = [] }: TrustedPartnershipsProps) => 
           ref={titleRef}
           className={`text-center mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
         >
-          {/* Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono tracking-[0.2em] uppercase mb-4 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <span className="text-primary font-semibold">Our Technology Stack</span>
-          </div>
+          <SectionBadge
+            text="Our Technology Stack"
+            color="#3b82f6"
+            className="mb-4"
+          />
 
           <h2 className="text-white font-barlow text-2xl md:text-4xl font-bold tracking-tight">
             Platforms & Tools We Build With

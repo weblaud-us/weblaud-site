@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   Smartphone,
   Boxes,
-  Sparkles,
   Server,
   Globe,
   Bot,
@@ -24,6 +23,7 @@ import {
 } from "lucide-react";
 import AnimatedGridBg from "../ui/animated-grid-bg";
 import VerticalTabs from "../ui/vertical-tabs";
+import SectionBadge from "../ui/section-badge";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import strategyImg from "~/assets/strategy.png";
@@ -70,7 +70,7 @@ const tabsData: TabContent[] = [
       { name: "Admin & Operations UI/UX", icon: LayoutDashboard },
       { name: "High-fidelity prototyping", icon: Smartphone },
       { name: "Design systems & component libraries", icon: Boxes },
-      { name: "Micro-animations & motion polish", icon: Sparkles },
+      { name: "Micro-animations & motion polish", icon: Activity },
     ],
     image: designImg,
     color: "#9d4edd",
@@ -367,43 +367,13 @@ const OurSpeciality = () => {
       <div className="lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:flex lg:flex-col lg:items-center lg:justify-center py-12 lg:py-0 max-w-7xl mx-auto w-full relative z-10">
         {/* Section Header */}
         <div className="text-center mb-5 lg:mb-7">
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono tracking-[0.2em] uppercase mb-3 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-            <span
-              className="w-2 h-2 rounded-full animate-pulse transition-colors duration-500"
-              style={{
-                backgroundColor: activeContent.color,
-                boxShadow: `0 0 10px ${activeContent.color}`,
-              }}
-            />
-            <span
-              className="transition-colors duration-500 font-semibold"
-              style={{ color: activeContent.color }}
-            >
-              Step 0{activeTab}
-            </span>
-            <span className="text-white/30">of 0{tabsData.length}</span>
-            <div className="hidden sm:flex items-center gap-1.5 ml-2 pl-2 border-l border-white/10">
-              {tabsData.map((tab) => (
-                <span
-                  key={tab.id}
-                  className={`h-1.5 rounded-full transition-all duration-500 ${tab.id === activeTab
-                      ? "w-4"
-                      : tab.id < activeTab
-                        ? "w-1.5 bg-white/40"
-                        : "w-1.5 bg-white/15"
-                    }`}
-                  style={
-                    tab.id === activeTab
-                      ? {
-                        backgroundColor: tab.color,
-                        boxShadow: `0 0 8px ${tab.color}`,
-                      }
-                      : {}
-                  }
-                />
-              ))}
-            </div>
-          </div>
+          <SectionBadge
+            icon={<Layers className="w-3.5 h-3.5" />}
+            text="Our Specialty"
+            badgeLabel="Full-Cycle Execution"
+            color={activeContent.color}
+            className="mb-3"
+          />
           <h2
             ref={titleRef}
             className={`font-barlow text-2xl md:text-4xl font-bold tracking-tight ${getBlurAnimationClasses(
@@ -559,8 +529,8 @@ const OurSpeciality = () => {
                       key={tab.id}
                       onClick={() => handleTabChange(tab.id)}
                       className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${activeTab === tab.id
-                          ? "w-7"
-                          : "bg-white/20 hover:bg-white/40 w-2.5"
+                        ? "w-7"
+                        : "bg-white/20 hover:bg-white/40 w-2.5"
                         }`}
                       style={
                         activeTab === tab.id
