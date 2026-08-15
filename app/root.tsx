@@ -8,8 +8,15 @@ import {
   useLocation,
   useRouteLoaderData,
 } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 import type { Route } from "./+types/root";
 import { TIMELINE, COMPANY } from "./lib/constants";
@@ -212,9 +219,45 @@ export default function App({ loaderData }: Route.ComponentProps) {
     }
   }, []);
 
+  const lenisRef = useRef<Lenis | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const lenis = new Lenis({
+      duration: 1.1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.2,
+    });
+    lenisRef.current = lenis;
+    (window as any).lenis = lenis;
+
+    lenis.on("scroll", ScrollTrigger.update);
+
+    let animationFrameId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      animationFrameId = requestAnimationFrame(raf);
+    }
+    animationFrameId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      lenis.destroy();
+      lenisRef.current = null;
+      (window as any).lenis = null;
+    };
+  }, []);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(0, { immediate: true });
+      } else {
+        window.scrollTo(0, 0);
+      }
     }
   }, [location.pathname]);
 

@@ -89,22 +89,6 @@ const AnimatedGridBg = forwardRef<AnimatedGridBgRef, AnimatedGridBgProps>(
               }}
             />
           ))}
-
-          {hoveredCell && (
-            <motion.div
-              className="absolute pointer-events-none bg-white/12 border border-white/25"
-              style={{
-                left: hoveredCell.x * cellWidth,
-                top: hoveredCell.y * cellHeight,
-                width: `${cellWidth}px`,
-                height: `${cellHeight}px`,
-              }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
-            />
-          )}
         </div>
 
         {showOverlay && (
