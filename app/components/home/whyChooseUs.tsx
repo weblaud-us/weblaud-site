@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import { BsLightningChargeFill, BsPeopleFill, BsShieldFillCheck, BsClockFill } from "react-icons/bs";
+import SectionBadge from "~/components/ui/section-badge";
+import { Target } from "lucide-react";
 
 const reasons = [
   {
@@ -67,9 +69,13 @@ const WhyChooseUs = () => {
           ref={titleRef}
           className={`text-center mb-12 md:mb-16 ${getBlurAnimationClasses(isTitleVisible)}`}
         >
-          <p className="text-primary text-xs font-semibold tracking-[0.2em] uppercase font-barlow mb-3">
-            THE WEBLAUD ADVANTAGE
-          </p>
+          <SectionBadge
+            icon={<Target className="w-3.5 h-3.5" />}
+            text="The Weblaud Advantage"
+            badgeLabel="Our Edge"
+            color="#0a84ff"
+            className="mb-4"
+          />
           <h2 className="text-white font-barlow text-2xl md:text-3xl font-semibold">
             Why Choose Us
           </h2>

@@ -333,8 +333,10 @@ const TrustedPartnerships = ({ trackRecord = [] }: TrustedPartnershipsProps) => 
           className={`text-center mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
         >
           <SectionBadge
+            icon={<Cpu className="w-3.5 h-3.5" />}
             text="Our Technology Stack"
-            color="#3b82f6"
+            badgeLabel="Modern Infrastructure"
+            color="#0a84ff"
             className="mb-4"
           />
 

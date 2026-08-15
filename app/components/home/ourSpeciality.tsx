@@ -371,7 +371,7 @@ const OurSpeciality = () => {
             icon={<Layers className="w-3.5 h-3.5" />}
             text="Our Specialty"
             badgeLabel="Full-Cycle Execution"
-            color={activeContent.color}
+            color="#0a84ff"
             className="mb-3"
           />
           <h2

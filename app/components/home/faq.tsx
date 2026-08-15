@@ -8,6 +8,8 @@ import {
 import { getBlurAnimationClasses } from "~/lib/animations";
 import { motion } from "framer-motion";
 import type { Faq } from "~/lib/types";
+import SectionBadge from "~/components/ui/section-badge";
+import { HelpCircle } from "lucide-react";
 
 interface FAQProps {
   faqs: Faq[];
@@ -38,12 +40,21 @@ export default function FAQ({ faqs }: FAQProps) {
       <motion.div className="absolute md:block hidden bottom-20 right-30 w-40 h-40 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-4 md:px-6 relative z-10">
-        <h2
+        <div
           ref={titleRef}
-          className={`text-center font-barlow text-2xl md:text-3xl font-semibold mb-8 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
+          className={`text-center mb-8 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
         >
-          Frequently Asked Questions
-        </h2>
+          <SectionBadge
+            icon={<HelpCircle className="w-3.5 h-3.5" />}
+            text="Got Questions?"
+            badgeLabel="We Have Answers"
+            color="#0a84ff"
+            className="mb-4"
+          />
+          <h2 className="font-barlow text-2xl md:text-3xl font-semibold">
+            Frequently Asked Questions
+          </h2>
+        </div>
 
         <ul className="space-y-4">
           {items.map((item, idx) => {

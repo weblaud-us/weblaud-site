@@ -10,6 +10,8 @@ import {
 import { Link, useLocation } from "react-router";
 import { useState } from "react";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
+import SectionBadge from "~/components/ui/section-badge";
+import { Rocket } from "lucide-react";
 
 const LetsDiscuss = () => {
   const location = useLocation();
@@ -65,6 +67,15 @@ const LetsDiscuss = () => {
           <div className="absolute bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-primary/40 rounded-br-3xl" />
 
           <div className="relative z-10 text-center">
+            <div className={getBlurAnimationClasses(isTitleVisible)}>
+              <SectionBadge
+                icon={<Rocket className="w-3.5 h-3.5" />}
+                text="Start Your Project"
+                badgeLabel="Let's Build Together"
+                color="#0a84ff"
+                className="mb-6"
+              />
+            </div>
             <h2
               ref={titleRef}
               className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-barlow mb-6 md:mb-8 ${getBlurAnimationClasses(
