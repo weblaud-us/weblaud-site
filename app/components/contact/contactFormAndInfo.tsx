@@ -6,7 +6,7 @@ import {
   FiMessageSquare,
   FiMail,
 } from "react-icons/fi";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useFetcher, useRouteLoaderData } from "react-router";
@@ -24,6 +24,8 @@ type FormData = {
   countryCode: string;
   phoneNumber: string;
   message: string;
+  /** Honeypot — hidden from humans, irresistible to bots. */
+  website: string;
 };
 
 const ContactFormAndInfo = () => {
@@ -32,6 +34,10 @@ const ContactFormAndInfo = () => {
 
   const fetcher = useFetcher<{ ok?: boolean; error?: string }>();
   const isSending = fetcher.state !== "idle";
+
+  // Time-trap: bots submit near-instantly; the action drops submissions that
+  // come in faster than a human could plausibly fill the form.
+  const mountedAt = useRef(Date.now());
 
   const {
     register,
@@ -67,10 +73,20 @@ const ContactFormAndInfo = () => {
         email: data.email,
         phone: data.phoneNumber ? `${data.countryCode} ${data.phoneNumber}` : "",
         message: data.message,
+        website: data.website ?? "",
+        renderedAt: String(mountedAt.current),
       },
       { method: "post" },
     );
 
+    // Honeypot tripped: the action already silently drops this, so don't also
+    // fire a courtesy email for spam. Bail before the Web3Forms call.
+    if (data.website?.trim()) return;
+
+    // Weblaud uses Web3Forms for a courtesy email alongside the saved
+    // record above. Get a free key at https://web3forms.com/. Deliberately
+    // fire-and-forget: a failure here must never block or misreport the
+    // success toast, since the backend save already captured the lead.
     const accessKey = import.meta.env.VITE_CONTACT_FORM_ACCESS_KEY;
     if (!accessKey) return;
 
@@ -131,12 +147,20 @@ const ContactFormAndInfo = () => {
               onSubmit={handleSubmit(onSubmit)}
               className="space-y-4 sm:space-y-5"
             >
-              {/* First & Last Name */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
-                    First Name <span className="text-primary">*</span>
-                  </label>
+              {/* Honeypot: off-screen rather than display:none so bots still fill it. */}
+              <div className="absolute left-[-9999px]" aria-hidden="true">
+                <label htmlFor="website">Website</label>
+                <input
+                  id="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  {...register("website")}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 md:gap-4">
+                <div className="group/input">
                   <div className="relative">
                     <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none z-10 text-gray-400">
                       <FiUser className="w-4 h-4" />
