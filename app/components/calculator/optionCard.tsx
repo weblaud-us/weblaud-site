@@ -16,15 +16,6 @@ interface OptionCardProps {
   className?: string;
 }
 
-/**
- * A selectable card backed by a real <input> inside its <label>.
- *
- * The input is visually hidden but still focusable, so keyboard operation
- * (arrow keys within a radio group, Space to toggle a checkbox) and screen
- * reader semantics come for free rather than being reimplemented with
- * role="radio" and key handlers. All selected/focus styling hangs off the
- * `peer-*` variants driven by that input.
- */
 export function OptionCard({
   name,
   value,
@@ -40,11 +31,11 @@ export function OptionCard({
   return (
     <label
       className={cn(
-        "relative block cursor-pointer rounded-2xl border transition-all duration-300",
-        "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10",
+        "relative block cursor-pointer rounded-2xl border transition-all duration-300 group overflow-hidden select-none",
+        "bg-[#0e0e0e] border-[#1f1f1f] hover:border-white/20 hover:bg-white/[0.02]",
         checked &&
-          "bg-primary/10 border-primary shadow-lg shadow-primary/10 hover:bg-primary/10",
-        "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-black",
+          "bg-gradient-to-br from-primary/[0.08] via-[#0e0e0e] to-[#0e0e0e] border-primary/60 ring-1 ring-primary/40 shadow-xl shadow-blue-500/10 hover:border-primary",
+        "focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-black",
         className,
       )}
     >
@@ -56,15 +47,39 @@ export function OptionCard({
         onChange={() => onSelect(value)}
         className="sr-only"
       />
-      <div className="flex items-start gap-4 p-5 sm:p-6">
-        {icon && <div className="p-3 bg-black/40 rounded-xl shrink-0">{icon}</div>}
+
+      {/* Subtle top-right ambient glow when active */}
+      {checked && (
+        <div className="absolute -top-6 -right-6 w-28 h-28 bg-primary/20 rounded-full blur-2xl pointer-events-none" />
+      )}
+
+      <div className="flex items-start gap-3 sm:gap-4 p-4 sm:p-6 relative z-10">
+        {icon && (
+          <div
+            className={cn(
+              "w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300",
+              checked
+                ? "bg-primary/15 border border-primary/40 shadow-md shadow-blue-500/20"
+                : "bg-white/[0.03] border border-white/[0.08] text-gray-300 group-hover:border-white/20 group-hover:text-white",
+            )}
+          >
+            {icon}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
-          <h4 className="text-base font-bold font-barlow text-white flex items-center justify-between gap-2">
-            <span>{title}</span>
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            <h4
+              className={cn(
+                "text-sm sm:text-lg font-bold font-barlow tracking-tight transition-colors leading-snug",
+                checked ? "text-white" : "text-gray-200 group-hover:text-white",
+              )}
+            >
+              {title}
+            </h4>
             {indicator}
-          </h4>
+          </div>
           {desc && (
-            <p className="text-xs text-gray-400 font-barlow mt-1.5 leading-relaxed">
+            <p className="text-xs sm:text-sm text-gray-400 font-barlow mt-1 sm:mt-1.5 leading-relaxed">
               {desc}
             </p>
           )}

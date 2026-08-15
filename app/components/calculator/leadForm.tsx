@@ -181,14 +181,20 @@ export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
         </div>
       </div>
 
-      <Button
-        type="submit"
-        disabled={isSending}
-        className="mt-6 w-full sm:w-auto px-8 py-4 text-base font-bold"
-      >
-        {isSending ? "Sending..." : "Send Me This Estimate"}
-        {!isSending && <FiArrowRight className="ml-2" aria-hidden="true" />}
-      </Button>
+      <div className="flex justify-end mt-5">
+        <button
+          type="submit"
+          disabled={isSending}
+          className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-xs sm:text-sm px-4.5 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
+        >
+          <span>{isSending ? "Sending..." : "Send Me This Estimate"}</span>
+          {!isSending && (
+            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
+              <FiArrowRight className="w-3 h-3 text-white -rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+            </span>
+          )}
+        </button>
+      </div>
     </form>
   );
 }

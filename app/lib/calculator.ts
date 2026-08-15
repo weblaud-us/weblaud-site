@@ -1,15 +1,6 @@
 import { TIMELINE } from "./constants";
 import type { CalculatorConfig, RateOption, TimelineSpeed } from "./types";
 
-/**
- * Pricing arithmetic for the /calculator wizard.
- *
- * Kept pure and free of React so it can be unit tested (see calculator.test.ts).
- * A port of this lives at backend/src/modules/estimates/estimate.util.ts, which
- * recomputes submitted estimates server side so a tampered payload can never
- * dictate the stored price — the two must stay in step, and both are pinned by
- * specs asserting the same fixture outputs.
- */
 
 export interface EstimateSelection {
   projectTypeId: string;

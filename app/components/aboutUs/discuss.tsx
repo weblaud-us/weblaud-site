@@ -50,11 +50,11 @@ const Discuss = () => {
             <button
               id="discuss-book-call-cta"
               onClick={() => setIsModalOpen(true)}
-              className="group relative z-10 inline-flex items-center gap-3 bg-primary hover:bg-primary/90 text-white font-barlow font-semibold text-base px-8 py-4 rounded-full transition-all duration-300 shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:scale-[1.04] cursor-pointer"
+              className="group relative z-10 inline-flex items-center gap-2 sm:gap-3 bg-primary hover:bg-primary/90 text-white font-barlow font-semibold text-xs sm:text-base px-5 py-2.5 sm:px-8 sm:py-4 rounded-full transition-all duration-300 shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:scale-[1.03] cursor-pointer"
             >
               <span>Book a free call</span>
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
-                <FiArrowRight className="w-4 h-4 text-white -rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+              <span className="flex items-center justify-center w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
+                <FiArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-white -rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
               </span>
             </button>
           </div>

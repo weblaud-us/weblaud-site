@@ -70,7 +70,7 @@ export function headers() {
   };
 }
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "Project Cost & Sprint Timeline Calculator | Weblaud LLC" },
     {
@@ -122,8 +122,8 @@ export function meta({}: Route.MetaArgs) {
 
 export default function CalculatorRoute({ loaderData }: Route.ComponentProps) {
   return (
-    <div className="bg-black text-white pt-24 md:pt-32 pb-16 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-black text-white pt-20 sm:pt-24 md:pt-32 min-h-screen">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
         <ProjectCalculator
           config={loaderData.config}
           usingFallbackConfig={loaderData.usingFallbackConfig}
