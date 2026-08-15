@@ -203,92 +203,64 @@ const OurSpeciality = () => {
                 style={{ backgroundColor: `${activeContent.color}25` }}
               />
 
-              {/* Framer Motion animated card content with blur transitions */}
+              {/* Framer Motion animated card content with smooth GPU transitions */}
               <div className="relative z-10 p-6 md:p-8 lg:p-9 min-h-[420px] md:min-h-[400px] flex flex-col justify-center overflow-hidden">
-                <AnimatePresence mode="wait">
+                <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={activeContent.id}
                     initial={{
                       opacity: 0,
-                      filter: "blur(14px)",
-                      y: 14,
+                      y: 8,
                     }}
                     animate={{
                       opacity: 1,
-                      filter: "blur(0px)",
                       y: 0,
                       transition: {
-                        duration: 0.4,
-                        ease: [0.25, 1, 0.5, 1],
+                        duration: 0.28,
+                        ease: [0.16, 1, 0.3, 1],
                       },
                     }}
                     exit={{
                       opacity: 0,
-                      filter: "blur(14px)",
-                      y: -12,
+                      y: -8,
                       transition: {
-                        duration: 0.22,
-                        ease: [0.25, 1, 0.5, 1],
+                        duration: 0.16,
+                        ease: [0.16, 1, 0.3, 1],
                       },
                     }}
-                    className="w-full flex flex-col justify-center"
+                    className="w-full flex flex-col justify-center transform-gpu"
                   >
                     {/* Title + Description */}
                     <div className="mb-5 md:mb-6">
-                      <motion.h3
-                        initial={{ opacity: 0, filter: "blur(8px)", y: 8 }}
-                        animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-                        transition={{ duration: 0.35, ease: "easeOut" }}
-                        className="font-barlow font-bold text-xl md:text-2xl mb-2 transition-colors duration-500 tracking-wide"
+                      <h3
+                        className="font-barlow font-bold text-xl md:text-2xl mb-2 transition-colors duration-300 tracking-wide"
                         style={{ color: activeContent.color }}
                       >
                         {activeContent.title}
-                      </motion.h3>
-                      <motion.p
-                        initial={{ opacity: 0, filter: "blur(6px)", y: 6 }}
-                        animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.05, ease: "easeOut" }}
-                        className="text-gray-300/90 text-sm md:text-base leading-relaxed max-w-2xl font-normal"
-                      >
+                      </h3>
+                      <p className="text-gray-300/90 text-sm md:text-base leading-relaxed max-w-2xl font-normal">
                         {activeContent.description}
-                      </motion.p>
+                      </p>
                     </div>
 
                     {/* Features + Image Grid */}
                     <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
                       <div className="flex flex-col gap-2.5">
-                        {activeContent.features.map((feature, idx) => {
+                        {activeContent.features.map((feature) => {
                           const Icon = feature.icon;
                           return (
-                            <motion.div
+                            <div
                               key={feature.name}
-                              initial={{ opacity: 0, filter: "blur(6px)", y: 8 }}
-                              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-                              transition={{ duration: 0.35, delay: 0.05 + idx * 0.04, ease: "easeOut" }}
-                              className="group relative flex items-center justify-between gap-3.5 py-3 px-4 rounded-xl md:rounded-2xl border transition-all duration-300 cursor-default select-none overflow-hidden"
-                              style={{
-                                backgroundColor: "rgba(255, 255, 255, 0.08)",
-                                borderColor: "rgba(255, 255, 255, 0.12)",
-                                backdropFilter: "blur(20px)",
-                                WebkitBackdropFilter: "blur(20px)",
-                                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.35)",
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = `${activeContent.color}15`;
-                                e.currentTarget.style.borderColor = `${activeContent.color}60`;
-                                e.currentTarget.style.boxShadow = `0 0 20px ${activeContent.color}25, 0 8px 24px rgba(0,0,0,0.5)`;
-                                e.currentTarget.style.transform = "translateY(-1px)";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.12)";
-                                e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.35)";
-                                e.currentTarget.style.transform = "translateY(0)";
-                              }}
+                              className="feature-card group relative flex items-center justify-between gap-3.5 py-3 px-4 rounded-xl md:rounded-2xl border border-white/[0.1] bg-white/[0.06] hover:bg-white/[0.1] transition-all duration-300 cursor-default select-none overflow-hidden hover:-translate-y-[1px] shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+                              style={
+                                {
+                                  "--active-color": activeContent.color,
+                                } as React.CSSProperties
+                              }
                             >
                               <div className="flex items-center gap-3 min-w-0">
                                 <div
-                                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-500 border"
+                                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300 border"
                                   style={{
                                     backgroundColor: `${activeContent.color}15`,
                                     borderColor: `${activeContent.color}40`,
@@ -312,28 +284,25 @@ const OurSpeciality = () => {
                               >
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                               </div>
-                            </motion.div>
+                            </div>
                           );
                         })}
                       </div>
 
                       <div className="hidden md:flex items-center justify-center">
-                        <motion.div
-                          initial={{ opacity: 0, filter: "blur(10px)", scale: 0.94 }}
-                          animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-                          transition={{ duration: 0.45, delay: 0.08, ease: [0.25, 1, 0.5, 1] }}
-                          className="relative w-full max-w-[250px] mx-auto"
-                        >
+                        <div className="relative w-full max-w-[250px] mx-auto transform-gpu">
                           <img
                             src={activeContent.image}
                             alt={activeContent.title}
+                            loading="eager"
+                            decoding="async"
                             className="relative z-10 w-full h-auto object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.6)]"
                           />
                           <div
                             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full blur-[70px] opacity-35 pointer-events-none transition-colors duration-500"
                             style={{ backgroundColor: activeContent.color }}
                           />
-                        </motion.div>
+                        </div>
                       </div>
                     </div>
                   </motion.div>

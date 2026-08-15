@@ -233,43 +233,32 @@ const partnersRow2: Partner[] = [
 ];
 
 const PartnerLogoCard = ({ partner }: { partner: Partner }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <div
       aria-label={`${partner.name} - ${partner.category}`}
       role="img"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex items-center gap-2.5 sm:gap-3.5 mx-1.5 sm:mx-2 md:mx-2.5 rounded-xl sm:rounded-2xl px-3.5 sm:px-4 md:px-5 h-[48px] sm:h-[56px] md:h-[64px] min-w-[135px] sm:min-w-[155px] md:min-w-[170px] cursor-pointer shrink-0 transition-all duration-300 backdrop-blur-2xl overflow-hidden select-none"
-      style={{
-        backgroundColor: isHovered ? `${partner.color}20` : "rgba(255, 255, 255, 0.07)",
-        borderColor: isHovered ? `${partner.color}75` : "rgba(255, 255, 255, 0.12)",
-        borderWidth: "1px",
-        borderStyle: "solid",
-        boxShadow: isHovered
-          ? `0 0 25px ${partner.color}25, 0 10px 30px rgba(0,0,0,0.6), inset 0 0 15px ${partner.color}15`
-          : "0 4px 20px rgba(0,0,0,0.3)",
-        transform: isHovered ? "translateY(-3px)" : "translateY(0)",
-      }}
+      className="partner-card group relative flex items-center gap-2.5 sm:gap-3.5 mx-1.5 sm:mx-2 md:mx-2.5 rounded-xl sm:rounded-2xl px-3.5 sm:px-4 md:px-5 h-[48px] sm:h-[56px] md:h-[64px] min-w-[135px] sm:min-w-[155px] md:min-w-[170px] cursor-pointer shrink-0 transition-all duration-300 overflow-hidden select-none bg-[#111111] border border-white/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:-translate-y-[2px]"
+      style={
+        {
+          "--brand-color": partner.color,
+          contain: "paint layout",
+          willChange: "transform",
+        } as React.CSSProperties
+      }
     >
       {/* Dynamic Brand Gradient Background on Hover */}
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 90% 80% at 50% 50%, ${partner.color}22 0%, transparent 80%)`,
+          background: `radial-gradient(ellipse 90% 80% at 50% 50%, ${partner.color}25 0%, transparent 80%)`,
         }}
       />
 
       {/* Icon with Brand Color */}
       <div
-        className="text-base sm:text-lg md:text-xl shrink-0 transition-all duration-300"
+        className="text-base sm:text-lg md:text-xl shrink-0 transition-transform duration-300 group-hover:scale-110"
         style={{
           color: partner.color,
-          transform: isHovered ? "scale(1.15)" : "scale(1)",
-          filter: isHovered
-            ? `drop-shadow(0 0 10px ${partner.color}90)`
-            : `drop-shadow(0 0 2px ${partner.color}30)`,
         }}
       >
         {partner.icon}
@@ -277,22 +266,11 @@ const PartnerLogoCard = ({ partner }: { partner: Partner }) => {
 
       {/* Partner Name */}
       {partner.showName && (
-        <div className="flex flex-col min-w-0">
-          <span
-            className="text-[11px] sm:text-xs font-bold tracking-[0.06em] sm:tracking-[0.08em] uppercase font-barlow whitespace-nowrap transition-colors duration-300"
-            style={{
-              color: isHovered ? "#FFFFFF" : "rgba(255, 255, 255, 0.85)",
-              textShadow: isHovered ? `0 0 12px ${partner.color}50` : "none",
-            }}
-          >
+        <div className="flex flex-col min-w-0 relative z-10">
+          <span className="text-[11px] sm:text-xs font-bold tracking-[0.06em] sm:tracking-[0.08em] uppercase font-barlow whitespace-nowrap text-white/85 group-hover:text-white transition-colors duration-300">
             {partner.name}
           </span>
-          <span
-            className="text-[8px] sm:text-[9px] font-mono tracking-wider transition-colors duration-300"
-            style={{
-              color: isHovered ? partner.color : "rgba(255, 255, 255, 0.4)",
-            }}
-          >
+          <span className="text-[8px] sm:text-[9px] font-mono tracking-wider text-white/40 group-hover:text-[var(--brand-color)] transition-colors duration-300">
             {partner.category}
           </span>
         </div>
@@ -348,47 +326,54 @@ const TrustedPartnerships = () => {
         style={{
           maskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
           WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
+          contain: "content",
         }}
       >
-
         {/* Row 1: Scrolling Left */}
-        <div className="flex items-center animate-marquee-left py-1.5 sm:py-2">
+        <div className="flex items-center animate-marquee-left py-1.5 sm:py-2 transform-gpu">
           {tripledRow1.map((partner, index) => (
             <PartnerLogoCard key={`r1-${partner.name}-${index}`} partner={partner} />
           ))}
         </div>
 
         {/* Row 2: Scrolling Right */}
-        <div className="flex items-center animate-marquee-right py-1.5 sm:py-2">
+        <div className="flex items-center animate-marquee-right py-1.5 sm:py-2 transform-gpu">
           {tripledRow2.map((partner, index) => (
             <PartnerLogoCard key={`r2-${partner.name}-${index}`} partner={partner} />
           ))}
         </div>
       </div>
 
-      {/* Scoped Keyframes */}
+      {/* Scoped Keyframes & High Performance Rules */}
       <style>{`
         @keyframes marquee-left {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(calc(-100% / 3)); }
+          0%   { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(calc(-100% / 3), 0, 0); }
         }
         @keyframes marquee-right {
-          0%   { transform: translateX(calc(-100% / 3)); }
-          100% { transform: translateX(0); }
+          0%   { transform: translate3d(calc(-100% / 3), 0, 0); }
+          100% { transform: translate3d(0, 0, 0); }
         }
         .animate-marquee-left {
           animation: marquee-left 42s linear infinite;
           will-change: transform;
+          transform: translate3d(0, 0, 0);
           width: max-content;
         }
         .animate-marquee-right {
           animation: marquee-right 45s linear infinite;
           will-change: transform;
+          transform: translate3d(0, 0, 0);
           width: max-content;
         }
         .animate-marquee-left:hover,
         .animate-marquee-right:hover {
           animation-play-state: paused;
+        }
+        .partner-card:hover {
+          background-color: color-mix(in srgb, var(--brand-color) 16%, #111111);
+          border-color: color-mix(in srgb, var(--brand-color) 60%, transparent);
+          box-shadow: 0 0 25px color-mix(in srgb, var(--brand-color) 25%, transparent), 0 10px 30px rgba(0,0,0,0.6);
         }
       `}</style>
     </section>
