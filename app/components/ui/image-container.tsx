@@ -1,8 +1,10 @@
 interface ImageContainerProps {
   image: string;
   alt: string;
-  variant: "blue" | "purple";
+  variant: "blue" | "purple" | "green";
   clipPath: "left" | "right";
+  imageClassName?: string;
+  containerClassName?: string;
 }
 
 export const ImageContainer = ({
@@ -10,6 +12,8 @@ export const ImageContainer = ({
   alt,
   variant,
   clipPath,
+  imageClassName,
+  containerClassName,
 }: ImageContainerProps) => {
   const colors = {
     blue: {
@@ -37,6 +41,19 @@ export const ImageContainer = ({
       shadow: "group-hover:shadow-[0_20px_80px_rgba(168,85,247,0.4)]",
       scanLine: "via-purple-400/10",
       imageShadow: "group-hover:drop-shadow-[0_0_30px_rgba(168,85,247,0.6)]",
+    },
+    green: {
+      ring1: "border-emerald-400/20",
+      ring2: "border-emerald-400/10",
+      ring3: "border-teal-400/5",
+      glow: "bg-emerald-500/20",
+      dot1: "bg-emerald-400",
+      dot2: "bg-teal-400",
+      gradient: "from-emerald-500/20 to-teal-500/20",
+      border: "border-white/20 hover:border-emerald-400/50",
+      shadow: "group-hover:shadow-[0_20px_80px_rgba(16,185,129,0.4)]",
+      scanLine: "via-emerald-400/10",
+      imageShadow: "group-hover:drop-shadow-[0_0_30px_rgba(16,185,129,0.6)]",
     },
   };
 
@@ -83,14 +100,17 @@ export const ImageContainer = ({
           ></div>
         </div>
 
-        <div className="relative p-8 sm:p-12 md:p-16">
+        <div className={containerClassName || "relative p-6 sm:p-8 md:p-10 lg:p-12"}>
           <img
             src={image}
             alt={alt}
-            width={384}
-            height={384}
+            width={320}
+            height={320}
             loading="lazy"
-            className={`w-48 h-48 sm:w-56 sm:h-56 md:w-96 md:h-96 object-contain drop-shadow-2xl ${color.imageShadow} transition-all duration-500`}
+            className={
+              imageClassName ||
+              `w-36 h-36 sm:w-44 sm:h-44 md:w-60 md:h-60 lg:w-68 lg:h-68 object-contain drop-shadow-2xl ${color.imageShadow} transition-all duration-500`
+            }
           />
         </div>
       </div>

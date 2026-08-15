@@ -100,7 +100,7 @@ const OurTrack = ({ trackRecord }: OurTrackProps) => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
           {trackRecord.map((record, index) => {
             const { number, suffix } = splitNumberAndSuffix(record.title);
             return (
@@ -111,29 +111,29 @@ const OurTrack = ({ trackRecord }: OurTrackProps) => {
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="rounded-2xl p-6 sm:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-300 flex flex-col justify-between"
+                className="rounded-xl sm:rounded-2xl p-3.5 sm:p-6 md:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-11 h-11 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-primary">
+                  <div className="flex items-center justify-between mb-3 sm:mb-6">
+                    <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-primary">
                       {getRecordIcon(record.subtitle, record.title, index)}
                     </div>
-                    <span className="font-mono text-xs font-bold text-white/20">
+                    <span className="font-mono text-[10px] sm:text-xs font-bold text-white/20">
                       0{index + 1}
                     </span>
                   </div>
 
-                  <h3 className="text-3xl sm:text-4xl font-bold font-barlow text-white tracking-tight mb-2">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold font-barlow text-white tracking-tight mb-1 sm:mb-2">
                     <Counter value={number} suffix={suffix} />
                   </h3>
 
-                  <h4 className="text-sm font-semibold font-barlow text-gray-300 tracking-wide uppercase">
+                  <h4 className="text-[11px] sm:text-xs md:text-sm font-semibold font-barlow text-gray-300 tracking-wide uppercase leading-snug">
                     {record.subtitle}
                   </h4>
                 </div>
 
                 {record.description && (
-                  <p className="text-xs text-gray-400 leading-relaxed font-barlow mt-4 pt-3 border-t border-white/[0.06]">
+                  <p className="text-[10px] sm:text-xs text-gray-400 leading-normal sm:leading-relaxed font-barlow mt-2.5 sm:mt-4 pt-2 sm:pt-3 border-t border-white/[0.06]">
                     {record.description}
                   </p>
                 )}

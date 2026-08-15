@@ -149,7 +149,11 @@ const AboutUs = ({ loaderData }: Route.ComponentProps) => {
   return (
     <div>
       <BannerAboutUs />
-      <OurMissionAndStory story={aboutInfo?.story} mission={aboutInfo?.mission} />
+      <OurMissionAndStory
+        story={aboutInfo?.story}
+        mission={aboutInfo?.mission}
+        vision={aboutInfo?.vision}
+      />
       <OurTrack trackRecord={aboutInfo?.trackRecord ?? []} />
       <TheTeam teamMembers={team} />
       <Discuss />

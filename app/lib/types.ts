@@ -169,6 +169,7 @@ export interface AboutInfo {
   isActive: boolean;
   story?: string;
   mission?: string;
+  vision?: string;
   stats: AboutStats;
   trackRecord: TrackRecordItem[];
 }
