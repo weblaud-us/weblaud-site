@@ -1,14 +1,14 @@
-import bg from "~/assets/bg-pattern.svg";
-import pattern from "~/assets/geometric-pattern.svg";
-import { Button } from "./button";
 import type { ReactNode } from "react";
+import SectionBadge from "./section-badge";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 
-interface HeroBannerProps {
+export interface HeroBannerProps {
   badge?: {
     text: string;
     showPulse?: boolean;
+    badgeLabel?: string;
+    icon?: ReactNode;
   };
   title: string | ReactNode;
   description: string | ReactNode;
@@ -33,7 +33,6 @@ const HeroBanner = ({
   description,
   button,
   image,
-  showPatterns = true,
   className = "",
   contentAlignment = "left",
 }: HeroBannerProps) => {
@@ -49,74 +48,51 @@ const HeroBanner = ({
   return (
     <div
       ref={containerRef}
-      className={`bg-black px-4 sm:px-6 lg:px-8 xl:px-10 pt-28 sm:pt-32 md:pt-36 lg:pt-36 pb-3 sm:pb-4 md:pb-5 ${className}`}
+      className={`relative bg-black text-white px-4 sm:px-6 lg:px-8 xl:px-12 pt-28 sm:pt-32 md:pt-36 lg:pt-40 pb-20 sm:pb-24 md:pb-28 lg:pb-32 min-h-[90vh] lg:min-h-screen flex flex-col justify-center overflow-hidden ${className}`}
     >
-      <div
-        className={`relative w-full mx-auto bg-card-bg border border-light-black px-4 sm:px-6 md:px-8 lg:px-8 xl:px-10 py-5 sm:py-6 md:py-8 lg:py-14 rounded-2xl md:rounded-3xl overflow-hidden group ${getBlurAnimationClasses(isVisible)}`}
-        style={{
-          backgroundImage: `url(${bg})`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "auto",
-        }}
-      >
-        {showPatterns && (
-          <>
-            <img
-              src={pattern}
-              className="w-44 sm:w-56 md:w-64 lg:w-80 absolute bottom-0 left-0 opacity-10 z-10"
-              alt="Pattern decoration"
-            />
+      {/* Ambient background glow on the left/content side */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-0 left-10 w-[450px] h-[450px] bg-blue-600/10 rounded-full blur-[130px] pointer-events-none" />
 
-            <img
-              src={pattern}
-              className="w-44 sm:w-56 md:w-64 lg:w-80 absolute top-0 right-0 opacity-10 z-10 rotate-180"
-              alt="Pattern decoration"
-            />
-          </>
-        )}
-
+      <div className="max-w-7xl mx-auto w-full relative z-10 my-auto">
         <div
-          className={`relative z-10 w-full mx-auto px-2 sm:px-4 md:px-6 flex flex-col ${image ? "lg:flex-row" : ""} items-center lg:items-center justify-between gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16`}
+          className={`flex flex-col ${image ? "lg:flex-row" : ""} items-center justify-between gap-8 sm:gap-10 md:gap-12 lg:gap-16`}
         >
           <div
             className={`flex-1 w-full ${image ? "lg:w-auto" : ""} ${textAlign}`}
           >
             {badge && (
               <div
-                className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 mb-4 bg-white/7 border border-white/20 rounded-full ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
-              style={{ transitionDelay: "80ms" }}
+                className={`mb-5 sm:mb-6 flex ${justifyContent} ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+                style={{ transitionDelay: "80ms" }}
               >
-                {badge.showPulse !== false && (
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
-                  </span>
-                )}
-                <span className="text-xs sm:text-sm font-medium text-white">
-                  {badge.text}
-                </span>
+                <SectionBadge
+                  icon={badge.icon}
+                  text={badge.text}
+                  badgeLabel={badge.badgeLabel}
+                  pulsingDot={badge.showPulse ?? false}
+                  color="#0a84ff"
+                />
               </div>
             )}
 
             <h1
-              className={`text-2xl text-white sm:text-3xl md:text-4xl lg:text-[2.8rem] font-barlow font-bold leading-tight mb-4 sm:mb-6 ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+              className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-barlow font-bold text-white tracking-tight leading-[1.12] mb-5 sm:mb-6 ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
               style={{ transitionDelay: "160ms" }}
             >
               {typeof title === "string" ? (
-                <span className="text-white">{title}</span>
+                <span>{title}</span>
               ) : (
                 title
               )}
             </h1>
 
             <div
-              className={`mt-6 sm:mt-7 max-w-2xl mx-auto lg:mx-0 text-sm sm:text-base text-white font-barlow ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+              className={`max-w-2xl mx-auto lg:mx-0 text-gray-300 font-barlow text-sm sm:text-base md:text-lg leading-relaxed ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
               style={{ transitionDelay: "240ms" }}
             >
               {typeof description === "string" ? (
-                <p className="leading-relaxed md:leading-normal">
-                  {description}
-                </p>
+                <p>{description}</p>
               ) : (
                 description
               )}
@@ -124,22 +100,28 @@ const HeroBanner = ({
 
             {button && (
               <div
-                className={`flex mt-6 sm:mt-7 flex-col sm:flex-row gap-3 sm:gap-4 items-center lg:items-start ${justifyContent} ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+                className={`flex mt-8 sm:mt-9 flex-col sm:flex-row gap-3 sm:gap-4 items-center ${justifyContent} ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
                 style={{ transitionDelay: "320ms" }}
               >
                 {button.href ? (
-                  <a href={button.href}>
-                    <Button className="text-xs font-bold px-9 py-4.5">
-                      {button.text}
-                    </Button>
+                  <a
+                    href={button.href}
+                    className="relative group h-[38px] w-auto inline-flex items-center justify-center px-4.5 sm:px-5 rounded-[10px] text-[13px] font-semibold text-white bg-[#0A84FF] overflow-hidden shadow-[0_2px_10px_rgba(10,132,255,0.35)] hover:shadow-[0_6px_20px_rgba(10,132,255,0.3)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer shrink-0"
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    <span className="absolute inset-0 bg-gradient-to-b from-white/15 to-transparent opacity-100 mix-blend-overlay"></span>
+                    <span className="relative z-10 flex items-center">{button.text}</span>
                   </a>
                 ) : (
-                  <Button
-                    className="text-xs font-bold px-9 py-4.5"
+                  <button
+                    type="button"
                     onClick={button.onClick}
+                    className="relative group h-[38px] w-auto inline-flex items-center justify-center px-4.5 sm:px-5 rounded-[10px] text-[13px] font-semibold text-white bg-[#0A84FF] overflow-hidden shadow-[0_2px_10px_rgba(10,132,255,0.35)] hover:shadow-[0_6px_20px_rgba(10,132,255,0.3)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer shrink-0"
                   >
-                    {button.text}
-                  </Button>
+                    <span className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    <span className="absolute inset-0 bg-gradient-to-b from-white/15 to-transparent opacity-100 mix-blend-overlay"></span>
+                    <span className="relative z-10 flex items-center">{button.text}</span>
+                  </button>
                 )}
               </div>
             )}
@@ -147,15 +129,13 @@ const HeroBanner = ({
 
           {image && (
             <div
-              className={`${image.showOnMobile ? "flex" : "hidden lg:flex"} shrink-0 w-auto justify-end relative ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
+              className={`${image.showOnMobile ? "flex" : "hidden lg:flex"} shrink-0 w-auto justify-center lg:justify-end relative ${getBlurAnimationClasses(isVisible, { variant: "light" })}`}
               style={{ transitionDelay: "400ms" }}
             >
               <img
-                className="w-64 max-w-full h-auto hover:scale-105 transition-transform duration-500"
+                className="w-64 sm:w-72 md:w-80 lg:w-96 max-w-full h-auto hover:scale-105 transition-transform duration-500"
                 src={image.src}
                 alt={image.alt}
-                width={256}
-                height={256}
                 loading="lazy"
               />
             </div>

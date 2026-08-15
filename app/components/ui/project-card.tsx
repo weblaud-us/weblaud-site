@@ -49,30 +49,32 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         {/* The cover image and the title below are separate links to the same
             case study. The image one is hidden from assistive tech so screen
             reader and keyboard users hit the title link only, not both. */}
-        <Link
-          to={href}
-          tabIndex={-1}
-          aria-hidden="true"
-          className="relative block cursor-pointer overflow-hidden rounded-t-3xl bg-linear-to-br from-gray-800 to-gray-900"
-        >
-          <img
-            src={image}
-            alt={imageAlt}
-            width={400}
-            height={192}
-            loading="lazy"
-            className="w-full h-48 object-cover group-hover:scale-115 group-hover:rotate-2 group-hover:brightness-110 transition-all duration-700"
-          />
-          <div className="absolute inset-0 bg-linear-to-t from-card-bg/60 to-transparent group-hover:from-card-bg/20 transition-colors duration-500"></div>
+        <div className="p-3 sm:p-3.5 pb-0">
+          <Link
+            to={href}
+            tabIndex={-1}
+            aria-hidden="true"
+            className="relative block cursor-pointer overflow-hidden rounded-2xl bg-linear-to-br from-gray-800 to-gray-900 border border-white/[0.06]"
+          >
+            <img
+              src={image}
+              alt={imageAlt}
+              width={400}
+              height={192}
+              loading="lazy"
+              className="w-full h-48 object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-700 rounded-2xl"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-card-bg/40 to-transparent group-hover:from-card-bg/10 transition-colors duration-500 rounded-2xl"></div>
 
-          <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-primary/0 group-hover:border-primary/70 rounded-tr-2xl transition-all duration-500 group-hover:w-20 group-hover:h-20"></div>
-          <div
-            className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-blue-500/0 group-hover:border-blue-500/70 rounded-bl-2xl transition-all duration-500 group-hover:w-20 group-hover:h-20"
-            style={{ transitionDelay: "100ms" }}
-          ></div>
-        </Link>
+            <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-primary/0 group-hover:border-primary/70 rounded-tr-xl transition-all duration-500 group-hover:w-12 group-hover:h-12 pointer-events-none"></div>
+            <div
+              className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-blue-500/0 group-hover:border-blue-500/70 rounded-bl-xl transition-all duration-500 group-hover:w-12 group-hover:h-12 pointer-events-none"
+              style={{ transitionDelay: "100ms" }}
+            ></div>
+          </Link>
+        </div>
 
-        <div className="flex flex-col flex-1 p-6 relative">
+        <div className="flex flex-col flex-1 p-5 sm:p-6 relative">
           <h3 className="mb-4 text-white font-barlow font-bold text-xl leading-snug text-balance">
             <Link
               to={href}

@@ -3,8 +3,9 @@ import {
   useBlurAnimationList,
 } from "~/hooks/useBlurAnimation";
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
-import { RESULTS_DISCLOSURE } from "~/lib/constants";
 import { ProjectCard } from "../ui/project-card";
+import SectionBadge from "../ui/section-badge";
+import { FiLayers } from "react-icons/fi";
 import type { Project } from "~/lib/types";
 
 interface OurCaseStudiesProps {
@@ -28,26 +29,27 @@ const OurCaseStudies = ({ projects }: OurCaseStudiesProps) => {
     <div className="bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-12 md:py-16 lg:py-25">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12 md:mb-16">
+          <SectionBadge
+            icon={<FiLayers className="w-3.5 h-3.5" />}
+            text="Our Case Studies"
+            badgeLabel="Featured Work"
+            color="#0a84ff"
+            className="mb-4"
+          />
           <h2
             ref={titleRef}
-            className={`text-white font-barlow font-bold text-2xl md:text-3xl mb-4 ${getBlurAnimationClasses(isTitleVisible)}`}
+            className={`text-white font-barlow font-bold text-2xl md:text-3xl lg:text-4xl mb-4 tracking-tight ${getBlurAnimationClasses(isTitleVisible)}`}
           >
             Our Case Studies
           </h2>
           <p
             ref={descRef}
-            className={`text-white/70 font-barlow text-base md:text-lg max-w-3xl mx-auto ${getBlurAnimationClasses(isDescVisible)}`}
+            className={`text-white/70 font-barlow text-base md:text-lg max-w-3xl mx-auto leading-relaxed ${getBlurAnimationClasses(isDescVisible)}`}
             style={{ transitionDelay: "200ms" }}
           >
             Explore our portfolio of recent projects spanning cloud infrastructure,
             machine learning, and enterprise platforms. Each case study demonstrates
-            our technical approach and final deliverables.
-          </p>
-          <p
-            className={`text-white/45 font-barlow text-xs md:text-sm max-w-3xl mx-auto mt-4 ${getBlurAnimationClasses(isDescVisible)}`}
-            style={{ transitionDelay: "300ms" }}
-          >
-            {RESULTS_DISCLOSURE}
+            our technical approach, deliverables, and typical engagement outcomes.
           </p>
         </div>
 

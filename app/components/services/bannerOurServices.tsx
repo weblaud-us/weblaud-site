@@ -1,12 +1,14 @@
 import HeroBanner from "../ui/hero-banner";
 import ourServicesImg from "~/assets/our-services.png";
+import { FiCode } from "react-icons/fi";
 
 const BannerOurServices = () => {
   return (
     <HeroBanner
       badge={{
-        text: "Engineering Capabilities",
-        showPulse: true,
+        icon: <FiCode className="w-3.5 h-3.5" />,
+        text: "Engineering",
+        badgeLabel: "Capabilities",
       }}
       title={
         <>

@@ -2,6 +2,7 @@ import contactImage from "~/assets/contact-us.png";
 import HeroBanner from "../ui/hero-banner";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import { useState } from "react";
+import { FiMail } from "react-icons/fi";
 
 const BannerContactUs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,8 +15,9 @@ const BannerContactUs = () => {
     <>
       <HeroBanner
         badge={{
-          text: "Contact Us",
-          showPulse: true,
+          icon: <FiMail className="w-3.5 h-3.5" />,
+          text: "Get in Touch",
+          badgeLabel: "Direct Access",
         }}
         title="Contact Us"
         description="Have a project in mind? Our team handles initial planning through full-scale development."

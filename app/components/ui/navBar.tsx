@@ -46,6 +46,7 @@ const NavBar = () => {
     { name: "Services", href: "/services" },
     { name: "Projects", href: "/projects" },
     { name: "Insights", href: "/insights" },
+    { name: "Career", href: "/career" },
     { name: "Contact", href: "/contact" },
   ];
 
@@ -93,13 +94,16 @@ const NavBar = () => {
 
             <div className="hidden lg:flex items-center space-x-1">
               {navLinks.map((link) => {
-                const isActive = location.pathname === link.href;
+                const isActive =
+                  link.href === "/"
+                    ? location.pathname === "/"
+                    : location.pathname.startsWith(link.href);
                 return (
                   <Link
                     key={link.name}
                     to={link.href}
                     viewTransition
-                    className={`relative text-white font-barlow font-medium px-4 py-2 rounded-lg hover:text-blue-500 transition-all duration-300 group ${
+                    className={`relative text-white font-barlow font-medium px-3.5 py-2 rounded-lg hover:text-blue-500 transition-all duration-300 group ${
                       isScrolled ? "text-sm" : "text-base"
                     } ${isActive ? "text-blue-500" : ""}`}
                   >
@@ -163,7 +167,10 @@ const NavBar = () => {
             <div className="relative flex flex-col h-full px-6 py-8">
               <nav className="flex flex-col space-y-3 mb-8">
                 {navLinks.map((link, index) => {
-                  const isActive = location.pathname === link.href;
+                  const isActive =
+                    link.href === "/"
+                      ? location.pathname === "/"
+                      : location.pathname.startsWith(link.href);
                   return (
                     <Link
                       key={link.name}
