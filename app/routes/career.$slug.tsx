@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import type { Route } from "./+types/career.$slug";
 import SectionBadge from "~/components/ui/section-badge";
 import {
-  FiArrowLeft,
+  FiChevronLeft,
   FiArrowRight,
   FiBriefcase,
   FiCalendar,
@@ -184,7 +184,7 @@ export default function CareerDetail({ loaderData }: Route.ComponentProps) {
             to="/career"
             className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 text-gray-300 hover:text-white text-xs font-barlow font-medium transition-all duration-300 group shrink-0"
           >
-            <FiArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform text-white shrink-0" />
+            <FiChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-white shrink-0" />
             <span className="sm:hidden">Back</span>
             <span className="hidden sm:inline">Back to All Positions</span>
           </Link>
