@@ -72,7 +72,7 @@ const WhyChooseUs = () => {
 
         <div
           ref={cardsRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
         >
           {reasons.map((reason, index) => {
             const Icon = reason.icon;
@@ -88,42 +88,42 @@ const WhyChooseUs = () => {
                   ease: "easeOut",
                 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="group relative rounded-2xl p-6 sm:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-300 flex flex-col justify-between cursor-default"
+                className="group relative rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-300 flex flex-col justify-between cursor-default"
               >
                 <div>
                   {/* Top Row: Icon Box + Step Index */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.08] group-hover:border-primary/30 group-hover:bg-primary/10 flex items-center justify-center text-primary transition-all duration-300">
-                      <Icon className="w-5 h-5" />
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-white/[0.03] border border-white/[0.08] group-hover:border-primary/30 group-hover:bg-primary/10 flex items-center justify-center text-primary transition-all duration-300">
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
 
-                    <span className="font-mono text-xs font-bold tracking-widest text-white/20 group-hover:text-primary transition-colors duration-300">
+                    <span className="font-mono text-[10px] sm:text-xs font-bold tracking-widest text-white/20 group-hover:text-primary transition-colors duration-300">
                       {reason.number}
                     </span>
                   </div>
 
                   {/* Category Tag */}
-                  <span className="text-[11px] font-mono tracking-wider uppercase text-primary block mb-2 font-medium">
+                  <span className="text-[9px] sm:text-[10px] md:text-[11px] font-mono tracking-wider uppercase text-primary block mb-1 sm:mb-2 font-medium">
                     {reason.tag}
                   </span>
 
                   {/* Title */}
-                  <h3 className="text-white font-barlow font-bold text-xl mb-3 tracking-wide group-hover:text-white transition-colors duration-300">
+                  <h3 className="text-white font-barlow font-bold text-base sm:text-lg md:text-xl mb-1.5 sm:mb-3 tracking-wide group-hover:text-white transition-colors duration-300">
                     {reason.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-[#8e8e93] font-barlow text-sm leading-relaxed mb-6 group-hover:text-[#a1a1aa] transition-colors duration-300">
+                  <p className="text-[#8e8e93] font-barlow text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 group-hover:text-[#a1a1aa] transition-colors duration-300">
                     {reason.description}
                   </p>
                 </div>
 
                 {/* Structured Metadata Bottom Bar */}
-                <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
-                  <span className="text-white/35 uppercase tracking-wider text-[11px]">
+                <div className="pt-3 sm:pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
+                  <span className="text-white/35 uppercase tracking-wider text-[9px] sm:text-[11px]">
                     {reason.highlightLabel}
                   </span>
-                  <span className="text-primary font-medium tracking-wide text-[11px]">
+                  <span className="text-primary font-medium tracking-wide text-[9px] sm:text-[11px]">
                     {reason.highlightValue}
                   </span>
                 </div>

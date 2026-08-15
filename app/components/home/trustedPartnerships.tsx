@@ -241,7 +241,7 @@ const PartnerLogoCard = ({ partner }: { partner: Partner }) => {
       role="img"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex items-center gap-3.5 mx-2.5 rounded-2xl px-5 h-[64px] min-w-[170px] cursor-pointer shrink-0 transition-all duration-300 backdrop-blur-2xl overflow-hidden select-none"
+      className="group relative flex items-center gap-2.5 sm:gap-3.5 mx-1.5 sm:mx-2 md:mx-2.5 rounded-xl sm:rounded-2xl px-3.5 sm:px-4 md:px-5 h-[48px] sm:h-[56px] md:h-[64px] min-w-[135px] sm:min-w-[155px] md:min-w-[170px] cursor-pointer shrink-0 transition-all duration-300 backdrop-blur-2xl overflow-hidden select-none"
       style={{
         backgroundColor: isHovered ? `${partner.color}20` : "rgba(255, 255, 255, 0.07)",
         borderColor: isHovered ? `${partner.color}75` : "rgba(255, 255, 255, 0.12)",
@@ -263,7 +263,7 @@ const PartnerLogoCard = ({ partner }: { partner: Partner }) => {
 
       {/* Icon with Brand Color */}
       <div
-        className="text-xl shrink-0 transition-all duration-300"
+        className="text-base sm:text-lg md:text-xl shrink-0 transition-all duration-300"
         style={{
           color: partner.color,
           transform: isHovered ? "scale(1.15)" : "scale(1)",
@@ -279,7 +279,7 @@ const PartnerLogoCard = ({ partner }: { partner: Partner }) => {
       {partner.showName && (
         <div className="flex flex-col min-w-0">
           <span
-            className="text-xs font-bold tracking-[0.08em] uppercase font-barlow whitespace-nowrap transition-colors duration-300"
+            className="text-[11px] sm:text-xs font-bold tracking-[0.06em] sm:tracking-[0.08em] uppercase font-barlow whitespace-nowrap transition-colors duration-300"
             style={{
               color: isHovered ? "#FFFFFF" : "rgba(255, 255, 255, 0.85)",
               textShadow: isHovered ? `0 0 12px ${partner.color}50` : "none",
@@ -288,7 +288,7 @@ const PartnerLogoCard = ({ partner }: { partner: Partner }) => {
             {partner.name}
           </span>
           <span
-            className="text-[9px] font-mono tracking-wider transition-colors duration-300"
+            className="text-[8px] sm:text-[9px] font-mono tracking-wider transition-colors duration-300"
             style={{
               color: isHovered ? partner.color : "rgba(255, 255, 255, 0.4)",
             }}
@@ -310,59 +310,56 @@ const TrustedPartnerships = () => {
   const tripledRow2 = [...partnersRow2, ...partnersRow2, ...partnersRow2];
 
   return (
-    <section className="bg-black py-16 sm:py-20 md:py-24 relative overflow-hidden">
+    <section className="bg-black py-10 sm:py-16 md:py-24 relative overflow-hidden">
       {/* Ambient background glows */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[250px] bg-[#635BFF]/8 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/3 right-1/4 translate-x-1/2 translate-y-1/2 w-[550px] h-[250px] bg-[#00C3F7]/8 rounded-full blur-[120px]" />
       </div>
 
-      {/* Top & Bottom decorative gradient dividers */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
       {/* Section Header */}
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div
           ref={titleRef}
-          className={`text-center mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
+          className={`text-center mb-8 sm:mb-10 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
         >
           <SectionBadge
             icon={<Cpu className="w-3.5 h-3.5" />}
             text="Our Technology Stack"
             badgeLabel="Modern Infrastructure"
             color="#0a84ff"
-            className="mb-4"
+            className="mb-3 sm:mb-4"
           />
 
-          <h2 className="text-white font-barlow text-2xl md:text-4xl font-bold tracking-tight">
+          <h2 className="text-white font-barlow text-xl sm:text-2xl md:text-4xl font-bold tracking-tight">
             Platforms & Tools We Build With
           </h2>
-          <p className="text-gray-400 text-sm md:text-base font-barlow mt-3 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-gray-400 text-xs sm:text-sm md:text-base font-barlow mt-2 sm:mt-3 max-w-2xl mx-auto leading-relaxed">
             We engineer on modern, industry-standard cloud, AI, and payment
             infrastructure — no legacy stacks, no vendor lock-in.
           </p>
         </div>
       </div>
 
-      {/* Dual Direction Marquee Container */}
+      {/* Dual Direction Marquee Container with Smooth Edge Mask */}
       <div
         ref={marqueeRef}
-        className={`relative overflow-hidden py-3 space-y-3 ${getBlurAnimationClasses(isMarqueeVisible)}`}
+        className={`relative overflow-hidden py-2 sm:py-3 space-y-2 sm:space-y-3 ${getBlurAnimationClasses(isMarqueeVisible)}`}
+        style={{
+          maskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)",
+        }}
       >
-        {/* Soft edge fade masks */}
-        <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-48 bg-gradient-to-r from-black via-black/80 to-transparent z-20 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-48 bg-gradient-to-l from-black via-black/80 to-transparent z-20 pointer-events-none" />
 
         {/* Row 1: Scrolling Left */}
-        <div className="flex items-center animate-marquee-left py-2">
+        <div className="flex items-center animate-marquee-left py-1.5 sm:py-2">
           {tripledRow1.map((partner, index) => (
             <PartnerLogoCard key={`r1-${partner.name}-${index}`} partner={partner} />
           ))}
         </div>
 
         {/* Row 2: Scrolling Right */}
-        <div className="flex items-center animate-marquee-right py-2">
+        <div className="flex items-center animate-marquee-right py-1.5 sm:py-2">
           {tripledRow2.map((partner, index) => (
             <PartnerLogoCard key={`r2-${partner.name}-${index}`} partner={partner} />
           ))}

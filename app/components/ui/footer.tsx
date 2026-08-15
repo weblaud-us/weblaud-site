@@ -104,24 +104,24 @@ const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
           isFooterVisible
         )}`}
       >
-        {/* Main Grid with List Columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-8 pt-12 pb-14">
-          {/* Brand Column (takes 2 cols on lg) */}
-          <div className="sm:col-span-2 lg:col-span-2 space-y-4">
+        {/* Main Grid with 2-col on mobile, expanding to 6-col on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-8 pt-8 sm:pt-12 pb-10 sm:pb-14">
+          {/* Brand Column (takes 2 cols on mobile and lg) */}
+          <div className="col-span-2 sm:col-span-2 lg:col-span-2 space-y-3.5 sm:space-y-4">
             <Link to="/" className="inline-block">
               <img
                 src={weblaudFooterLogo}
                 alt="Weblaud LLC"
-                className="h-10 md:h-12 w-auto"
+                className="h-8 sm:h-10 md:h-12 w-auto"
               />
             </Link>
-            <p className="text-gray-400 font-barlow text-sm max-w-sm leading-relaxed">
+            <p className="text-gray-400 font-barlow text-xs sm:text-sm max-w-sm leading-relaxed">
               Custom operations platforms, B2B web applications, and AI integrations built for high-growth businesses.
             </p>
 
             {/* Contact Details */}
             {contactItems.length > 0 && (
-              <div className="pt-2 space-y-2">
+              <div className="pt-1.5 sm:pt-2 space-y-2">
                 {contactItems.map(({ icon, text, href }, index) => (
                   <div
                     key={index}
@@ -152,16 +152,16 @@ const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
 
           {/* Navigation List Columns */}
           {footerNavGroups.map((group) => (
-            <div key={group.title} className="space-y-4">
-              <h4 className="text-xs font-mono font-semibold tracking-wider text-white uppercase select-none">
+            <div key={group.title} className="col-span-1 space-y-3 sm:space-y-4">
+              <h4 className="text-[11px] sm:text-xs font-mono font-semibold tracking-wider text-white uppercase select-none">
                 {group.title}
               </h4>
-              <ul className="space-y-2.5">
+              <ul className="space-y-2 sm:space-y-2.5">
                 {group.links.map(({ label, href }) => (
                   <li key={label}>
                     <Link
                       to={href}
-                      className="group/link inline-flex items-center text-sm font-barlow text-gray-400 hover:text-white transition-colors duration-200"
+                      className="group/link inline-flex items-center text-xs sm:text-sm font-barlow text-gray-400 hover:text-white transition-colors duration-200"
                     >
                       <span className="transition-transform duration-200 group-hover/link:translate-x-1">
                         {label}
@@ -175,11 +175,11 @@ const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
           ))}
 
           {/* Social Links Column */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-mono font-semibold tracking-wider text-white uppercase select-none">
+          <div className="col-span-1 space-y-3 sm:space-y-4">
+            <h4 className="text-[11px] sm:text-xs font-mono font-semibold tracking-wider text-white uppercase select-none">
               Connect
             </h4>
-            <div className="grid grid-cols-2 gap-2.5 max-w-max">
+            <div className="grid grid-cols-2 gap-2 sm:gap-2.5 max-w-max">
               {socialLinks.map(({ icon, url }, index) => (
                 <motion.div
                   key={index}
@@ -196,9 +196,9 @@ const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
         </div>
 
         {/* Bottom Bar: Copyright & Legal */}
-        <div className="border-t border-white/[0.06] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-barlow text-gray-500">
+        <div className="border-t border-white/[0.06] pt-5 sm:pt-6 pb-2 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-[11px] sm:text-xs font-barlow text-gray-500 text-center sm:text-left">
           <p>&copy; {new Date().getFullYear()} Weblaud LLC. All rights reserved.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             {legalLinks.map(({ label, href }) => (
               <Link
                 key={label}

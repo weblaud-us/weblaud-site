@@ -11,12 +11,6 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Lenis from "lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 import type { Route } from "./+types/root";
 import { TIMELINE, COMPANY } from "./lib/constants";
@@ -233,8 +227,6 @@ export default function App({ loaderData }: Route.ComponentProps) {
     });
     lenisRef.current = lenis;
     (window as any).lenis = lenis;
-
-    lenis.on("scroll", ScrollTrigger.update);
 
     let animationFrameId: number;
     function raf(time: number) {
