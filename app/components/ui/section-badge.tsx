@@ -31,7 +31,7 @@ export const SectionBadge = React.forwardRef<HTMLDivElement, SectionBadgeProps>(
       <div
         ref={ref}
         className={cn(
-          "group relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-barlow tracking-[0.06em] uppercase select-none transition-all duration-300 backdrop-blur-xl",
+          "group relative inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-barlow tracking-[0.05em] sm:tracking-[0.06em] uppercase select-none transition-all duration-300 backdrop-blur-xl whitespace-nowrap max-w-full",
           variant === "glass" &&
           "bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.18] shadow-[0_0_20px_rgba(0,0,0,0.5)]",
           variant === "glow" &&
@@ -101,7 +101,7 @@ export const SectionBadge = React.forwardRef<HTMLDivElement, SectionBadgeProps>(
           children
         ) : (
           <span
-            className="font-bold transition-colors duration-500 tracking-[0.06em]"
+            className="font-bold transition-colors duration-500 tracking-[0.05em] sm:tracking-[0.06em] whitespace-nowrap"
             style={{ color: color || "inherit" }}
           >
             {text}
@@ -109,7 +109,7 @@ export const SectionBadge = React.forwardRef<HTMLDivElement, SectionBadgeProps>(
         )}
 
         {badgeLabel && (
-          <span className="text-white/50 pl-2 border-l border-white/10 font-medium tracking-[0.04em] text-[11px]">
+          <span className="text-white/50 pl-1.5 sm:pl-2 border-l border-white/10 font-medium tracking-[0.03em] sm:tracking-[0.04em] text-[9.5px] sm:text-[11px] whitespace-nowrap">
             {badgeLabel}
           </span>
         )}
