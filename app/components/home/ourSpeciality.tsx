@@ -143,7 +143,7 @@ const OurSpeciality = () => {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // ─── Stacked Card Peel Transition (Lenis-style) ───────────────────────────────
+  // ─── Authentic 3D Card Stack Animation ───────────────────────────────────────
   const runTabTransition = useCallback((nextTab: number, dir: number) => {
     const el = contentRef.current;
     if (!el) {
@@ -159,50 +159,87 @@ const OurSpeciality = () => {
     const tl = gsap.timeline({
       onComplete: () => {
         animTlRef.current = null;
-        gsap.set(el, { clearProps: "rotationZ,rotationX" });
+        gsap.set(el, { clearProps: "rotationZ,rotationX,transformOrigin" });
       },
     });
     animTlRef.current = tl;
 
-    // ── Card peels away (lifts off the stack with rotation) ──
-    tl.to(el, {
-      opacity: 0,
-      y: dir * -50,
-      x: dir * -12,
-      scale: 0.88,
-      rotationZ: dir * -3,
-      rotationX: dir * 4,
-      duration: 0.22,
-      ease: "power3.in",
-    });
+    // Set 3D transform origin at card bottom center for natural stack pivoting
+    gsap.set(el, { transformOrigin: "50% 100%" });
 
-    // ── Swap content ──
-    tl.add(() => {
-      setDisplayTab(nextTab);
-    });
-
-    // ── New card emerges from behind the stack ──
-    tl.fromTo(
-      el,
-      {
+    if (dir > 0) {
+      // ── FORWARD: Top card lifts up & flies off the stack ──
+      tl.to(el, {
         opacity: 0,
-        y: dir * 40,
-        x: dir * 8,
+        y: -75,
+        scale: 1.05,
+        rotationX: 12,
+        rotationZ: -3,
+        duration: 0.22,
+        ease: "power2.in",
+      });
+
+      tl.add(() => {
+        setDisplayTab(nextTab);
+      });
+
+      // ── Underneath card expands up to become top of stack ──
+      tl.fromTo(
+        el,
+        {
+          opacity: 0,
+          y: 45,
+          scale: 0.92,
+          rotationX: -10,
+          rotationZ: 2,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotationX: 0,
+          rotationZ: 0,
+          duration: 0.42,
+          ease: "back.out(1.5)",
+        }
+      );
+    } else {
+      // ── BACKWARD: Current card sinks back down into the deck ──
+      tl.to(el, {
+        opacity: 0,
+        y: 45,
         scale: 0.92,
-        rotationZ: dir * 2,
-        rotationX: dir * -3,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        x: 0,
-        scale: 1,
-        rotationZ: 0,
-        rotationX: 0,
-        duration: 0.38,
-        ease: "back.out(1.4)",
-      }
-    );
+        rotationX: -10,
+        rotationZ: 2,
+        duration: 0.22,
+        ease: "power2.in",
+      });
+
+      tl.add(() => {
+        setDisplayTab(nextTab);
+      });
+
+      // ── Previous card drops back down onto top of the stack ──
+      tl.fromTo(
+        el,
+        {
+          opacity: 0,
+          y: -75,
+          scale: 1.05,
+          rotationX: 12,
+          rotationZ: -3,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotationX: 0,
+          rotationZ: 0,
+          duration: 0.42,
+          ease: "back.out(1.5)",
+        }
+      );
+    }
   }, []);
 
   // ─── Tab Click Handler (scrolls to matching position) ──────────────────────────
@@ -393,8 +430,18 @@ const OurSpeciality = () => {
           </div>
 
           {/* Right: Content Card with 3D Perspective */}
-          <div className="w-full lg:flex-1 min-w-0" style={{ perspective: "1200px" }}>
-            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden w-full border border-white/[0.09] bg-white/[0.03] backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+          <div className="w-full lg:flex-1 min-w-0 relative" style={{ perspective: "1200px" }}>
+            {/* Physical stacked card deck shadow layers */}
+            <div
+              className="absolute -bottom-2.5 left-3 right-3 h-full rounded-2xl md:rounded-3xl border border-white/[0.05] bg-white/[0.015] pointer-events-none transition-all duration-500 z-0"
+              style={{ transform: "scale(0.98)" }}
+            />
+            <div
+              className="absolute -bottom-5 left-6 right-6 h-full rounded-2xl md:rounded-3xl border border-white/[0.025] bg-white/[0.008] pointer-events-none transition-all duration-500 z-0"
+              style={{ transform: "scale(0.96)" }}
+            />
+
+            <div className="relative z-10 rounded-2xl md:rounded-3xl overflow-hidden w-full border border-white/[0.09] bg-white/[0.03] backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
               <AnimatedGridBg />
 
               {/* Ambient glows */}
@@ -436,29 +483,49 @@ const OurSpeciality = () => {
                       return (
                         <div
                           key={feature.name}
-                          className="group relative flex items-center justify-between gap-3.5 py-2.5 px-3.5 rounded-xl md:rounded-2xl bg-white/[0.025] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.14] transition-all duration-300 backdrop-blur-sm cursor-default"
+                          className="group relative flex items-center justify-between gap-3.5 py-3 px-4 rounded-xl md:rounded-2xl border transition-all duration-300 cursor-default select-none overflow-hidden"
+                          style={{
+                            backgroundColor: "rgba(255, 255, 255, 0.08)",
+                            borderColor: "rgba(255, 255, 255, 0.12)",
+                            backdropFilter: "blur(20px)",
+                            WebkitBackdropFilter: "blur(20px)",
+                            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.35)",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = `${activeContent.color}15`;
+                            e.currentTarget.style.borderColor = `${activeContent.color}60`;
+                            e.currentTarget.style.boxShadow = `0 0 20px ${activeContent.color}25, 0 8px 24px rgba(0,0,0,0.5)`;
+                            e.currentTarget.style.transform = "translateY(-1px)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                            e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.12)";
+                            e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.35)";
+                            e.currentTarget.style.transform = "translateY(0)";
+                          }}
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             <div
                               className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-500 border"
                               style={{
                                 backgroundColor: `${activeContent.color}15`,
-                                borderColor: `${activeContent.color}35`,
+                                borderColor: `${activeContent.color}40`,
                                 color: activeContent.color,
-                                boxShadow: `0 0 12px ${activeContent.color}18`,
+                                boxShadow: `0 0 12px ${activeContent.color}20`,
                               }}
                             >
                               <Icon className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                             </div>
-                            <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors duration-300 truncate">
+                            <span className="text-gray-100 text-sm font-medium group-hover:text-white transition-colors duration-300 truncate">
                               {feature.name}
                             </span>
                           </div>
                           <div
                             className="w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shrink-0"
                             style={{
-                              backgroundColor: `${activeContent.color}20`,
+                              backgroundColor: `${activeContent.color}25`,
                               color: activeContent.color,
+                              boxShadow: `0 0 8px ${activeContent.color}40`,
                             }}
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" />
