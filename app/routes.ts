@@ -11,6 +11,7 @@ export default [
   route("insights/:slug", "routes/insights.$slug.tsx"),
   route("career", "routes/career.tsx"),
   route("career/:slug", "routes/career.$slug.tsx"),
+  route("career/:slug/apply", "routes/career.$slug.apply.tsx"),
   // Intent landing pages (GEO content system). The /vs/* and /solutions/* groups
   // are data-driven: one dynamic route each, backed by the app/data/landing
   // catalog. Standalone hub/guide/segment pages get their own route files.

@@ -13,6 +13,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme="dark"
       className="toaster group"
       position="bottom-right"
+      closeButton={true}
       icons={{
         success: <CircleCheckIcon className="size-5 text-primary" />,
         info: <InfoIcon className="size-5 text-blue-400" />,
@@ -23,12 +24,14 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "group toast border-light-black shadow-xl shadow-primary/10 backdrop-blur-sm !bg-[#0e0e0e]",
+            "group toast border border-white/[0.12] shadow-2xl shadow-primary/10 backdrop-blur-md !bg-[#0e0e0e] rounded-2xl",
           title: "text-white font-barlow font-semibold text-sm",
           description: "text-white/70 font-barlow text-xs",
           actionButton:
             "bg-primary hover:bg-primary/90 text-white font-barlow font-medium",
           cancelButton: "bg-white/10 hover:bg-white/20 text-white font-barlow",
+          closeButton:
+            "!bg-[#1a1a1a] !border !border-white/10 !text-gray-400 hover:!text-white hover:!bg-white/20 transition-all !cursor-pointer",
           success: "border-primary/50",
           error: "border-red-500/50",
           warning: "border-yellow-500/50",

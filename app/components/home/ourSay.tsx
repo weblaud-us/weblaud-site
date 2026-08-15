@@ -8,6 +8,8 @@ import { getBlurAnimationClasses } from "~/lib/animations";
 import { motion } from "framer-motion";
 import type { Swiper as SwiperType } from "swiper";
 import type { Testimonial } from "~/lib/types";
+import SectionBadge from "~/components/ui/section-badge";
+import { MessageSquareQuote } from "lucide-react";
 
 interface OurSayProps {
   testimonials: Testimonial[];
@@ -27,11 +29,18 @@ export default function OurSay({ testimonials }: OurSayProps) {
   return (
     <section ref={containerRef} className="bg-black text-white py-12 md:py-16">
       <div className="max-w-5xl mx-auto px-4 md:px-6">
-        <h2
-          className={`text-center text-2xl md:text-3xl font-semibold mb-8 ${getBlurAnimationClasses(isVisible)}`}
-        >
-          What Our Clients Say
-        </h2>
+        <div className={`text-center mb-8 ${getBlurAnimationClasses(isVisible)}`}>
+          <SectionBadge
+            icon={<MessageSquareQuote className="w-3.5 h-3.5" />}
+            text="Client Stories"
+            badgeLabel="Real Feedback"
+            color="#0a84ff"
+            className="mb-4"
+          />
+          <h2 className="text-2xl md:text-3xl font-semibold">
+            What Our Clients Say
+          </h2>
+        </div>
 
         <div
           className={`relative ${getBlurAnimationClasses(isVisible)}`}

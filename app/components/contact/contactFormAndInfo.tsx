@@ -10,15 +10,11 @@ import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useFetcher, useRouteLoaderData } from "react-router";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Select } from "../ui/select";
 import { ContactInfo } from "../ui/contact-info";
 import { BookMeeting } from "../ui/book-meeting";
+import { CountryCodeSelect } from "../ui/country-code-select";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
-import { countryCodes } from "~/data/country-codes";
 import type { loader as rootLoader } from "~/root";
 
 type FormData = {
@@ -36,10 +32,6 @@ const ContactFormAndInfo = () => {
   const rootData = useRouteLoaderData<typeof rootLoader>("root");
   const [formRef, isFormVisible] = useBlurAnimation();
 
-  // Posts to this route's `action`, which saves the lead via
-  // POST /contact/submit — the record admins see in
-  // /cpadmin/contact-submissions. Web3Forms below is a best-effort courtesy
-  // email only; it never decides whether the visitor sees "sent".
   const fetcher = useFetcher<{ ok?: boolean; error?: string }>();
   const isSending = fetcher.state !== "idle";
 
@@ -52,11 +44,15 @@ const ContactFormAndInfo = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    watch,
   } = useForm<FormData>({
     defaultValues: {
       countryCode: "+1",
     },
   });
+
+  const currentCountryCode = watch("countryCode") || "+1";
 
   useEffect(() => {
     if (fetcher.state !== "idle" || !fetcher.data) return;
@@ -114,25 +110,42 @@ const ContactFormAndInfo = () => {
   };
 
   return (
-    <div className="bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-8 sm:py-12 md:py-16 lg:py-20 relative overflow-hidden">
+    <div className="bg-black px-4 sm:px-6 lg:px-8 xl:px-12 py-10 sm:py-16 md:py-20 relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[140px] pointer-events-none" />
+
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+          {/* Left Form Card (7 cols) */}
           <div
             ref={formRef}
-            className={`group bg-card-bg border border-light-black rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 hover:border-primary/30 transition-all duration-500 hover:shadow-lg hover:shadow-primary/10 ${getBlurAnimationClasses(isFormVisible)}`}
+            className={`lg:col-span-7 bg-[#0c0c0c] border border-white/[0.08] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 hover:border-primary/30 transition-all duration-500 shadow-2xl relative ${getBlurAnimationClasses(
+              isFormVisible
+            )}`}
           >
-            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-primary/10 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shrink-0">
-                <FiSend className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-primary" />
+            {/* Ambient accent top light */}
+            <div className="absolute inset-0 overflow-hidden rounded-2xl sm:rounded-3xl pointer-events-none">
+              <div className="absolute -top-16 -right-16 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+            </div>
+
+            <div className="flex items-center gap-3.5 mb-6 sm:mb-8">
+              <div className="w-11 h-11 bg-primary/15 border border-primary/30 rounded-xl flex items-center justify-center text-primary shrink-0 shadow-lg">
+                <FiSend className="w-5 h-5" />
               </div>
-              <h2 className="text-white font-barlow font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
-                Send Us a Message
-              </h2>
+              <div>
+                <h2 className="text-white font-barlow font-bold text-2xl sm:text-3xl tracking-tight">
+                  Send Us a Message
+                </h2>
+                <p className="text-gray-400 font-barlow text-xs sm:text-sm mt-0.5">
+                  Tell us about your project or inquiry. We typically reply within 24 hours.
+                </p>
+              </div>
             </div>
 
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-3 sm:space-y-4 md:space-y-5"
+              className="space-y-4 sm:space-y-5"
             >
               {/* Honeypot: off-screen rather than display:none so bots still fill it. */}
               <div className="absolute left-[-9999px]" aria-hidden="true">
@@ -149,12 +162,12 @@ const ContactFormAndInfo = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 md:gap-4">
                 <div className="group/input">
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
-                      <FiUser className="w-4 h-4 text-white/40 group-hover/input:text-primary transition-colors duration-300" />
+                    <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none z-10 text-gray-400">
+                      <FiUser className="w-4 h-4" />
                     </div>
-                    <Input
+                    <input
                       type="text"
-                      placeholder="First Name"
+                      placeholder="John"
                       {...register("firstName", {
                         required: "First name is required",
                         minLength: {
@@ -166,13 +179,13 @@ const ContactFormAndInfo = () => {
                           message: "First name can only contain letters",
                         },
                       })}
-                      className={`pl-10 group-hover/input:border-primary/40 group-hover/input:shadow-sm group-hover/input:shadow-primary/20 transition-all duration-300 ${
-                        errors.firstName ? "border-red-500" : ""
-                      }`}
+                      className={`w-full bg-black/60 border ${
+                        errors.firstName ? "border-red-500/80 focus:border-red-500" : "border-white/[0.08] focus:border-primary/60"
+                      } focus:bg-black/90 rounded-xl pl-10 pr-4 py-3 text-white font-barlow text-sm placeholder:text-gray-600 outline-none transition-all duration-200`}
                     />
                   </div>
                   {errors.firstName && (
-                    <div className="flex items-center gap-1.5 mt-1 animate-[scale-in_0.2s_ease-out]">
+                    <div className="flex items-center gap-1.5 mt-1">
                       <FiAlertCircle className="w-3 h-3 text-red-400 shrink-0" />
                       <p className="text-red-400 text-xs font-barlow">
                         {errors.firstName.message}
@@ -180,14 +193,18 @@ const ContactFormAndInfo = () => {
                     </div>
                   )}
                 </div>
-                <div className="group/input">
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                    Last Name <span className="text-primary">*</span>
+                  </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
-                      <FiUser className="w-4 h-4 text-white/40 group-hover/input:text-primary transition-colors duration-300" />
+                    <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none z-10 text-gray-400">
+                      <FiUser className="w-4 h-4" />
                     </div>
-                    <Input
+                    <input
                       type="text"
-                      placeholder="Last Name"
+                      placeholder="Doe"
                       {...register("lastName", {
                         required: "Last name is required",
                         minLength: {
@@ -199,13 +216,13 @@ const ContactFormAndInfo = () => {
                           message: "Last name can only contain letters",
                         },
                       })}
-                      className={`pl-10 group-hover/input:border-primary/40 group-hover/input:shadow-sm group-hover/input:shadow-primary/20 transition-all duration-300 ${
-                        errors.lastName ? "border-red-500" : ""
-                      }`}
+                      className={`w-full bg-black/60 border ${
+                        errors.lastName ? "border-red-500/80 focus:border-red-500" : "border-white/[0.08] focus:border-primary/60"
+                      } focus:bg-black/90 rounded-xl pl-10 pr-4 py-3 text-white font-barlow text-sm placeholder:text-gray-600 outline-none transition-all duration-200`}
                     />
                   </div>
                   {errors.lastName && (
-                    <div className="flex items-center gap-1.5 mt-1 animate-[scale-in_0.2s_ease-out]">
+                    <div className="flex items-center gap-1.5 mt-1">
                       <FiAlertCircle className="w-3 h-3 text-red-400 shrink-0" />
                       <p className="text-red-400 text-xs font-barlow">
                         {errors.lastName.message}
@@ -215,14 +232,18 @@ const ContactFormAndInfo = () => {
                 </div>
               </div>
 
-              <div className="group/input">
+              {/* Email */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                  Work Email <span className="text-primary">*</span>
+                </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
-                    <FiMail className="w-4 h-4 text-white/40 group-hover/input:text-primary transition-colors duration-300" />
+                  <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none z-10 text-gray-400">
+                    <FiMail className="w-4 h-4" />
                   </div>
-                  <Input
+                  <input
                     type="email"
-                    placeholder="Email"
+                    placeholder="john@company.com"
                     {...register("email", {
                       required: "Email is required",
                       pattern: {
@@ -230,13 +251,13 @@ const ContactFormAndInfo = () => {
                         message: "Invalid email address",
                       },
                     })}
-                    className={`pl-10 group-hover/input:border-primary/40 group-hover/input:shadow-sm group-hover/input:shadow-primary/20 transition-all duration-300 ${
-                      errors.email ? "border-red-500" : ""
-                    }`}
+                    className={`w-full bg-black/60 border ${
+                      errors.email ? "border-red-500/80 focus:border-red-500" : "border-white/[0.08] focus:border-primary/60"
+                    } focus:bg-black/90 rounded-xl pl-10 pr-4 py-3 text-white font-barlow text-sm placeholder:text-gray-600 outline-none transition-all duration-200`}
                   />
                 </div>
                 {errors.email && (
-                  <div className="flex items-center gap-1.5 mt-1 animate-[scale-in_0.2s_ease-out]">
+                  <div className="flex items-center gap-1.5 mt-1">
                     <FiAlertCircle className="w-3 h-3 text-red-400 shrink-0" />
                     <p className="text-red-400 text-xs font-barlow">
                       {errors.email.message}
@@ -245,74 +266,54 @@ const ContactFormAndInfo = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-3 sm:gap-2">
-                <div className="relative group/select w-full sm:w-36">
-                  <div className="absolute top-4 left-3 flex items-center pointer-events-none z-10">
-                    <FiPhone className="w-4 h-4 text-white/40 group-hover/select:text-primary transition-colors duration-300" />
-                  </div>
-                  <Select
-                    {...register("countryCode")}
-                    className="w-full pl-10 pr-8 appearance-none text-white/40 hover:border-primary/40 hover:shadow-sm hover:shadow-primary/20 group-hover/select:border-primary/50 transition-all duration-300 cursor-pointer"
-                  >
-                    {countryCodes.map((country, index) => (
-                      <option key={`${country.code}-${index}`} value={country.code}>
-                        {country.flag} {country.code}
-                      </option>
-                    ))}
-                  </Select>
-                  <div className="absolute top-4 right-3 flex items-center pointer-events-none z-10">
-                    <svg
-                      className="w-4 h-4 text-white/40 group-hover/select:text-primary transition-colors duration-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div className="group/input w-full">
+              {/* Phone with Country Code */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                  Phone Number
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-2.5">
+                  <CountryCodeSelect
+                    value={currentCountryCode}
+                    onChange={(val) => setValue("countryCode", val)}
+                  />
+
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
-                      <FiPhone className="w-4 h-4 text-white/40 group-hover/input:text-primary transition-colors duration-300" />
-                    </div>
-                    <Input
+                    <input
                       type="tel"
-                      placeholder="Phone Number"
+                      placeholder="123 456 7890"
                       {...register("phoneNumber", {
                         pattern: {
-                          value: /^[0-9]{10,15}$/,
-                          message: "Phone number must be 10-15 digits",
+                          value: /^[0-9\s\-()]{7,20}$/,
+                          message: "Please enter a valid phone number",
                         },
                       })}
-                      className={`pl-10 group-hover/input:border-primary/40 group-hover/input:shadow-sm group-hover/input:shadow-primary/20 transition-all duration-300 ${
-                        errors.phoneNumber ? "border-red-500" : ""
-                      }`}
+                      className={`w-full bg-black/60 border ${
+                        errors.phoneNumber ? "border-red-500/80 focus:border-red-500" : "border-white/[0.08] focus:border-primary/60"
+                      } focus:bg-black/90 rounded-xl px-4 py-3 text-white font-barlow text-sm placeholder:text-gray-600 outline-none transition-all duration-200`}
                     />
                   </div>
-                  {errors.phoneNumber && (
-                    <div className="flex items-center gap-1.5 mt-1 animate-[scale-in_0.2s_ease-out]">
-                      <FiAlertCircle className="w-3 h-3 text-red-400 shrink-0" />
-                      <p className="text-red-400 text-xs font-barlow">
-                        {errors.phoneNumber.message}
-                      </p>
-                    </div>
-                  )}
                 </div>
+                {errors.phoneNumber && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <FiAlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                    <p className="text-red-400 text-xs font-barlow">
+                      {errors.phoneNumber.message}
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <div className="group/input">
+              {/* Message */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                  Your Message <span className="text-primary">*</span>
+                </label>
                 <div className="relative">
-                  <div className="absolute top-4 left-3 flex items-center pointer-events-none z-10">
-                    <FiMessageSquare className="w-4 h-4 text-white/40 group-hover/input:text-primary transition-colors duration-300" />
+                  <div className="absolute top-3.5 left-3.5 flex items-center pointer-events-none z-10 text-gray-400">
+                    <FiMessageSquare className="w-4 h-4" />
                   </div>
-                  <Textarea
-                    placeholder="Message"
+                  <textarea
+                    placeholder="Tell us about your project scope, requirements, or timeline..."
                     {...register("message", {
                       required: "Message is required",
                       minLength: {
@@ -320,18 +321,18 @@ const ContactFormAndInfo = () => {
                         message: "Message must be at least 10 characters",
                       },
                       maxLength: {
-                        value: 500,
-                        message: "Message must not exceed 500 characters",
+                        value: 1000,
+                        message: "Message must not exceed 1000 characters",
                       },
                     })}
-                    rows={5}
-                    className={`pl-10 group-hover/input:border-primary/40 group-hover/input:shadow-sm group-hover/input:shadow-primary/20 transition-all duration-300 ${
-                      errors.message ? "border-red-500" : ""
-                    }`}
+                    rows={4}
+                    className={`w-full bg-black/60 border ${
+                      errors.message ? "border-red-500/80 focus:border-red-500" : "border-white/[0.08] focus:border-primary/60"
+                    } focus:bg-black/90 rounded-xl pl-10 pr-4 py-3 text-white font-barlow text-sm placeholder:text-gray-600 outline-none transition-all duration-200 resize-none`}
                   />
                 </div>
                 {errors.message && (
-                  <div className="flex items-center gap-1.5 mt-1 animate-[scale-in_0.2s_ease-out]">
+                  <div className="flex items-center gap-1.5 mt-1">
                     <FiAlertCircle className="w-3 h-3 text-red-400 shrink-0" />
                     <p className="text-red-400 text-xs font-barlow">
                       {errors.message.message}
@@ -340,20 +341,22 @@ const ContactFormAndInfo = () => {
                 )}
               </div>
 
-              <Button
+              {/* Submit Button */}
+              <button
                 type="submit"
                 disabled={isSending}
-                className="w-full font-barlow font-semibold text-xs sm:text-sm py-3 sm:py-3.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+                className="group/btn relative w-full h-[46px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-[#0A84FF] shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-[#0070e0] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
               >
-                {isSending ? "Sending..." : "Send"}
+                <span>{isSending ? "Sending Message..." : "Send Message"}</span>
                 {!isSending && (
-                  <FiSend className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-2 group-hover/btn:rotate-12 transition-all duration-300" />
+                  <FiSend className="w-4 h-4 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-0.5 transition-transform" />
                 )}
-              </Button>
+              </button>
             </form>
           </div>
 
-          <div className="space-y-3 sm:space-y-4 md:space-y-6">
+          {/* Right Info & Consultation (5 cols) */}
+          <div className="lg:col-span-5 space-y-6">
             <ContactInfo contactInfo={rootData?.contactInfo ?? null} />
             <BookMeeting />
           </div>

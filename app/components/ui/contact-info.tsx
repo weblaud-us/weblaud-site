@@ -1,4 +1,4 @@
-import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
+import { FiMail, FiPhone, FiMapPin, FiCopy } from "react-icons/fi";
 import { toast } from "sonner";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
@@ -8,9 +8,6 @@ interface ContactInfoProps {
   contactInfo: ContactInfoType | null;
 }
 
-// Address is stored as one string in the backend but displayed as two
-// lines here — split on the last comma so "123 Main St, City, ST 00000,
-// USA" reads as "123 Main St, City" / "ST 00000, USA".
 function splitAddress(address: string): [string, string] {
   const lastComma = address.lastIndexOf(",");
   if (lastComma === -1) return [address, ""];
@@ -44,83 +41,98 @@ const ContactInfo = ({ contactInfo }: ContactInfoProps) => {
   return (
     <div
       ref={contactInfoRef}
-      className={`group bg-card-bg border border-light-black rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 hover:border-primary/30 transition-all duration-500 hover:shadow-lg hover:shadow-primary/10 ${getBlurAnimationClasses(isContactInfoVisible)}`}
+      className={`bg-[#0c0c0c] border border-white/[0.08] rounded-2xl sm:rounded-3xl p-6 sm:p-8 space-y-5 hover:border-primary/30 transition-all duration-500 shadow-2xl relative overflow-hidden ${getBlurAnimationClasses(
+        isContactInfoVisible
+      )}`}
       style={{ transitionDelay: "150ms" }}
     >
-      <h2 className="text-white font-barlow font-bold text-base sm:text-lg md:text-xl lg:text-2xl mb-3 sm:mb-4 md:mb-6 group-hover:text-primary transition-colors duration-300">
-        Contact Information
-      </h2>
+      {/* Ambient top light */}
+      <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
 
-      <div className="space-y-2 sm:space-y-3 md:space-y-4">
+      <div>
+        <h2 className="text-white font-barlow font-bold text-xl sm:text-2xl tracking-tight">
+          Contact Information
+        </h2>
+        <p className="text-gray-400 font-barlow text-xs sm:text-sm mt-1">
+          Reach our team directly through any of the channels below.
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        {/* Email */}
         <div
           onClick={() => copyToClipboard(contactInfo.email, "Email")}
-          className="group/item flex items-start gap-2.5 sm:gap-3 md:gap-4 p-2 sm:p-2.5 md:p-3 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+          className="group flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-black/60 border border-white/[0.06] hover:border-primary/40 hover:bg-black/90 transition-all duration-300 cursor-pointer"
         >
-          <a
-            href={`mailto:${contactInfo.email}`}
-            onClick={(e) => e.stopPropagation()}
-            className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover/item:scale-110 group-hover/item:rotate-6 group-hover/item:bg-primary/20 transition-all duration-300 hover:bg-primary/30 cursor-pointer"
-          >
-            <FiMail className="w-4 h-4 sm:w-5 sm:h-5 text-primary group-hover/item:scale-110 transition-transform duration-300" />
-          </a>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-white font-barlow font-semibold text-sm sm:text-base mb-1 group-hover/item:text-primary transition-colors duration-300">
-              Email
-            </h3>
-            <p className="text-white/70 font-barlow text-xs sm:text-sm wrap-break-word group-hover/item:text-white transition-colors duration-300">
-              {contactInfo.email}
-            </p>
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 group-hover:scale-105 group-hover:bg-primary/20 transition-all">
+              <FiMail className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-mono uppercase tracking-wider text-gray-400">
+                Email
+              </p>
+              <a
+                href={`mailto:${contactInfo.email}`}
+                onClick={(e) => e.stopPropagation()}
+                className="text-white font-barlow text-sm sm:text-base font-medium truncate hover:text-primary transition-colors block"
+              >
+                {contactInfo.email}
+              </a>
+            </div>
           </div>
+          <FiCopy className="w-3.5 h-3.5 text-gray-500 group-hover:text-primary transition-colors shrink-0" />
         </div>
 
+        {/* Phone */}
         <div
           onClick={() => copyToClipboard(contactInfo.phone, "Phone")}
-          className="group/item flex items-start gap-3 sm:gap-4 p-3 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+          className="group flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-black/60 border border-white/[0.06] hover:border-primary/40 hover:bg-black/90 transition-all duration-300 cursor-pointer"
         >
-          <a
-            href={telHref}
-            onClick={(e) => e.stopPropagation()}
-            className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover/item:scale-110 group-hover/item:rotate-6 group-hover/item:bg-primary/20 transition-all duration-300 hover:bg-primary/30 cursor-pointer"
-          >
-            <FiPhone className="w-4 h-4 sm:w-5 sm:h-5 text-primary group-hover/item:scale-110 group-hover/item:animate-pulse transition-transform duration-300" />
-          </a>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-white font-barlow font-semibold text-sm sm:text-base mb-1 group-hover/item:text-primary transition-colors duration-300">
-              Phone
-            </h3>
-            <p className="text-white/70 font-barlow text-xs sm:text-sm group-hover/item:text-white transition-colors duration-300">
-              {contactInfo.phone}
-            </p>
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 group-hover:scale-105 group-hover:bg-primary/20 transition-all">
+              <FiPhone className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-mono uppercase tracking-wider text-gray-400">
+                Phone
+              </p>
+              <a
+                href={telHref}
+                onClick={(e) => e.stopPropagation()}
+                className="text-white font-barlow text-sm sm:text-base font-medium truncate hover:text-primary transition-colors block"
+              >
+                {contactInfo.phone}
+              </a>
+            </div>
           </div>
+          <FiCopy className="w-3.5 h-3.5 text-gray-500 group-hover:text-primary transition-colors shrink-0" />
         </div>
 
+        {/* Office Address */}
         <div
-          onClick={() => copyToClipboard(contactInfo.address, "Office Address")}
-          className="group/item flex items-start gap-3 sm:gap-4 p-3 rounded-lg hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+          onClick={() => copyToClipboard(contactInfo.address, "Address")}
+          className="group flex items-start justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-black/60 border border-white/[0.06] hover:border-primary/40 hover:bg-black/90 transition-all duration-300 cursor-pointer"
         >
-          <a
-            href={`https://www.google.com/maps/search/${encodeURIComponent(contactInfo.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover/item:scale-110 group-hover/item:rotate-6 group-hover/item:bg-primary/20 transition-all duration-300 hover:bg-primary/30"
-          >
-            <FiMapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary group-hover/item:scale-110 group-hover/item:animate-bounce transition-transform duration-300" />
-          </a>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-white font-barlow font-semibold text-sm sm:text-base mb-1 group-hover/item:text-primary transition-colors duration-300">
-              Office
-            </h3>
-            <p className="text-white/70 font-barlow text-xs sm:text-sm group-hover/item:text-white transition-colors duration-300">
-              {addressLine1}
+          <div className="flex items-start gap-3.5 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5 group-hover:scale-105 group-hover:bg-primary/20 transition-all">
+              <FiMapPin className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-mono uppercase tracking-wider text-gray-400">
+                Office Location
+              </p>
+              <p className="text-white font-barlow text-sm sm:text-base font-medium leading-snug pt-0.5">
+                {addressLine1}
+              </p>
               {addressLine2 && (
-                <>
-                  <br />
+                <p className="text-gray-400 font-barlow text-xs sm:text-sm leading-snug">
                   {addressLine2}
-                </>
+                </p>
               )}
-            </p>
+            </div>
           </div>
+          <FiCopy className="w-3.5 h-3.5 text-gray-500 group-hover:text-primary transition-colors shrink-0 mt-1" />
         </div>
       </div>
     </div>
@@ -128,3 +140,4 @@ const ContactInfo = ({ contactInfo }: ContactInfoProps) => {
 };
 
 export { ContactInfo };
+export default ContactInfo;

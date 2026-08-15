@@ -23,24 +23,12 @@ const VerticalTabs = ({
   showTitleOnMobile = false,
 }: VerticalTabsProps) => {
   const [hoveredTab, setHoveredTab] = useState<number | string | null>(null);
-  const activeIndex = tabs.findIndex((t) => t.id === activeTab);
-  const progressPercent =
-    tabs.length > 1 ? (activeIndex / (tabs.length - 1)) * 100 : 0;
 
   return (
     <div
       className={`relative flex lg:flex-col gap-2 lg:gap-4 ${className}`}
       onMouseLeave={() => setHoveredTab(null)}
     >
-      {/* Vertical Connecting Laser Track line (Desktop) */}
-      <div className="hidden lg:block absolute left-[36px] top-7 bottom-7 w-[2px] bg-white/10 rounded-full z-0 overflow-hidden">
-        <motion.div
-          className="w-full bg-linear-to-b from-primary via-cyan-400 to-primary shadow-[0_0_12px_rgba(10,132,255,0.8)]"
-          animate={{ height: `${progressPercent}%` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        />
-      </div>
-
       {tabs.map((tab, index) => {
         const isActive = activeTab === tab.id;
         const isHovered = hoveredTab === tab.id;
@@ -55,18 +43,25 @@ const VerticalTabs = ({
             {isActive && (
               <motion.div
                 layoutId="activeTabPill"
-                className="absolute inset-0 bg-linear-to-r from-primary/20 via-primary/10 to-transparent rounded-2xl border border-primary/40 shadow-[0_0_20px_rgba(10,132,255,0.15)] z-0"
+                className="absolute inset-0 rounded-2xl z-0"
+                style={{
+                  backgroundColor: tab.color ? `${tab.color}15` : "rgba(10, 132, 255, 0.15)",
+                  borderColor: tab.color ? `${tab.color}45` : "rgba(10, 132, 255, 0.4)",
+                  borderWidth: "1px",
+                  borderStyle: "solid",
+                  boxShadow: tab.color ? `0 0 25px ${tab.color}20` : "0 0 20px rgba(10,132,255,0.15)",
+                }}
                 transition={{
                   type: "spring",
-                  stiffness: 380,
-                  damping: 32,
+                  stiffness: 280,
+                  damping: 28,
                 }}
               />
             )}
 
             <motion.button
               onClick={() => onTabChange(tab.id)}
-              className={`relative flex items-center gap-4 text-left transition-colors duration-300 z-10 cursor-pointer py-2.5 px-3.5 w-full rounded-2xl ${
+              className={`relative flex items-center gap-4 text-left transition-colors duration-500 z-10 cursor-pointer py-2.5 px-3.5 w-full rounded-2xl ${
                 isActive
                   ? "text-white"
                   : isHovered
@@ -77,15 +72,26 @@ const VerticalTabs = ({
               whileTap={{ scale: 0.98 }}
             >
               <motion.div
-                className={`relative flex items-center justify-center w-9 h-9 lg:w-11 lg:h-11 rounded-xl font-bold text-sm lg:text-base transition-all duration-300 z-10 shrink-0 ${
+                className={`relative flex items-center justify-center w-9 h-9 lg:w-11 lg:h-11 rounded-xl font-bold text-sm lg:text-base transition-all duration-500 z-10 shrink-0 ${
                   isActive
-                    ? "bg-primary text-white shadow-lg shadow-primary/50 ring-2 ring-primary/40"
+                    ? "text-white ring-2 ring-white/30"
                     : "bg-black border border-white/15 text-gray-400 group-hover:border-white/30"
                 }`}
+                style={
+                  isActive
+                    ? {
+                        backgroundColor: tab.color || "#0a84ff",
+                        borderColor: tab.color || "#0a84ff",
+                        boxShadow: tab.color
+                          ? `0 4px 22px ${tab.color}60`
+                          : "0 4px 20px rgba(10,132,255,0.5)",
+                      }
+                    : {}
+                }
                 animate={{
-                  scale: isActive ? 1.05 : 1,
+                  scale: isActive ? 1.06 : 1,
                 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                transition={{ type: "spring", stiffness: 350, damping: 25 }}
               >
                 {tab.id}
               </motion.div>
@@ -93,7 +99,7 @@ const VerticalTabs = ({
               <span
                 className={`${
                   showTitleOnMobile ? "block" : "hidden lg:block"
-                } font-barlow font-bold text-lg tracking-wider whitespace-nowrap uppercase`}
+                } font-barlow font-bold text-lg tracking-wider whitespace-nowrap uppercase transition-colors duration-500`}
               >
                 {tab.title}
               </span>

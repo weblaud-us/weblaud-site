@@ -1,12 +1,14 @@
 import HeroBanner from "../ui/hero-banner";
 import ourProjectsImg from "~/assets/our-projects.png";
+import { FiLayers } from "react-icons/fi";
 
 const BannerOurProjects = () => {
   return (
     <HeroBanner
       badge={{
-        text: "Our Projects",
-        showPulse: true,
+        icon: <FiLayers className="w-3.5 h-3.5" />,
+        text: "Client Work",
+        badgeLabel: "Case Studies",
       }}
       title={
         <>

@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { blurAnimation } from "~/lib/animations";
-import {
-  motion,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiUsers, FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import SectionBadge from "../ui/section-badge";
 import type { TeamMember } from "~/lib/types";
 
 interface TheTeamProps {
@@ -12,8 +11,7 @@ interface TheTeamProps {
 }
 
 const TheTeam = ({ teamMembers }: TheTeamProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [active, setActive] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   const [titleRef, isTitleVisible] = useBlurAnimation<HTMLDivElement>();
@@ -23,24 +21,24 @@ const TheTeam = ({ teamMembers }: TheTeamProps) => {
   });
 
   const handleNext = useCallback(() => {
-    setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % teamMembers.length);
+    setActive((prev) => (prev + 1) % teamMembers.length);
   }, [teamMembers.length]);
 
   const handlePrev = useCallback(() => {
-    setDirection(-1);
-    setCurrentIndex((prev) => (prev - 1 + teamMembers.length) % teamMembers.length);
+    setActive((prev) => (prev - 1 + teamMembers.length) % teamMembers.length);
   }, [teamMembers.length]);
 
-  // Auto-play carousel
+  const isActive = (index: number) => index === active;
+
+  // Auto-play
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || teamMembers.length <= 1) return;
     const interval = setInterval(() => {
       handleNext();
-    }, 2500);
+    }, 4500);
 
     return () => clearInterval(interval);
-  }, [isPaused, handleNext]);
+  }, [isPaused, handleNext, teamMembers.length]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -52,144 +50,157 @@ const TheTeam = ({ teamMembers }: TheTeamProps) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleNext, handlePrev]);
 
-  const handleDragEnd = (e: any, { offset, velocity }: any) => {
-    const swipe = Math.abs(offset.x) * velocity.x;
-
-    if (swipe < -10000) {
-      handleNext();
-    } else if (swipe > 10000) {
-      handlePrev();
-    }
-  };
-
-  const getCardStyle = (index: number) => {
-    const diff =
-      (index - currentIndex + teamMembers.length) % teamMembers.length;
-
-    // Only show top 3 cards
-    if (diff > 2) return { zIndex: 0, opacity: 0, scale: 0.8, x: 0 };
-
-    const zIndex = 3 - diff;
-    const scale = 1 - diff * 0.05;
-    const x = diff * 20; // Offset to the right
-    const opacity = 1 - diff * 0.2;
-    const filter = diff > 0 ? "blur(4px)" : "blur(0px)";
-
-    return { zIndex, scale, x, opacity, filter };
+  const randomRotateY = (index: number) => {
+    // Deterministic angle based on index
+    const angles = [-6, 7, -4, 5, -8, 6, -3, 8];
+    return angles[index % angles.length];
   };
 
   if (teamMembers.length === 0) return null;
 
+  const currentMember = teamMembers[active] || teamMembers[0];
+
   return (
-    <section className="relative bg-black text-white py-20 px-4 overflow-hidden">
-      <motion.div className="absolute top-10 left-10 w-50 h-50 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
-      <motion.div className="absolute bottom-10 right-10 w-50 h-50 rounded-full bg-primary/30 blur-3xl pointer-events-none" />
+    <section className="relative bg-black text-white py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Ambient background lighting */}
+      <div className="absolute top-10 left-10 w-72 h-72 rounded-full bg-primary/20 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-72 h-72 rounded-full bg-blue-600/20 blur-[120px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-40 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left Text & Controls */}
           <div
             ref={titleRef}
-            className={`lg:max-w-md space-y-4 ${titleAnimation.className}`}
+            className={`lg:col-span-6 space-y-6 ${titleAnimation.className}`}
             style={titleAnimation.style}
           >
-            <h3 className="text-blue-500 md:text-2xl font-semibold font-barlow tracking-wider uppercase text-sm">
-              Our Core Team
-            </h3>
-            <h2 className="text-3xl md:text-5xl font-bold font-barlow leading-tight">
+            <SectionBadge
+              icon={<FiUsers className="w-3.5 h-3.5" />}
+              text="Our Core Team"
+              badgeLabel="Engineering Leadership"
+              color="#0a84ff"
+              className="mb-2"
+            />
+
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-barlow text-white tracking-tight leading-[1.15]">
               Built by Experts. Driven by Results.
             </h2>
-            <p className="text-gray-400 font-barlow max-w-sm text-lg">
+
+            <p className="text-gray-300 font-barlow text-base sm:text-lg leading-relaxed max-w-lg">
               Partner with a dedicated, high-performance team. We build stable, scalable applications that handle your core business logic and deliver exceptional user experiences.
             </p>
 
-            {/* Desktop Navigation Controls */}
-            <div className="hidden lg:flex gap-4 pt-6">
-              <button 
+            {/* Active Team Member Name & Title */}
+            <div className="pt-2">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentMember._id}
+                  initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="space-y-1"
+                >
+                  <h4 className="text-2xl font-bold font-barlow text-white tracking-tight">
+                    {currentMember.name}
+                  </h4>
+                  <p className="text-primary font-mono text-sm sm:text-base font-medium">
+                    {currentMember.title}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Navigation Controls */}
+            <div className="flex items-center gap-3 pt-4">
+              <button
+                type="button"
                 onClick={handlePrev}
-                className="p-3 rounded-full border border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 hover:text-cyan-400 transition-all duration-300"
                 aria-label="Previous team member"
+                className="group flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.04] border border-white/[0.12] hover:border-primary/60 hover:bg-primary/10 transition-all duration-300 cursor-pointer shadow-lg active:scale-95"
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500 hover:text-cyan-400"><path d="m15 18-6-6 6-6"/></svg>
+                <FiArrowLeft className="h-4 w-4 text-gray-300 group-hover:text-primary transition-transform duration-300 group-hover:-translate-x-0.5" />
               </button>
-              <button 
+              <button
+                type="button"
                 onClick={handleNext}
-                className="p-3 rounded-full border border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-500 hover:text-cyan-400 transition-all duration-300"
                 aria-label="Next team member"
+                className="group flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.04] border border-white/[0.12] hover:border-primary/60 hover:bg-primary/10 transition-all duration-300 cursor-pointer shadow-lg active:scale-95"
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500 hover:text-cyan-400"><path d="m9 18 6-6-6-6"/></svg>
+                <FiArrowRight className="h-4 w-4 text-gray-300 group-hover:text-primary transition-transform duration-300 group-hover:translate-x-0.5" />
               </button>
+
+              <span className="text-xs font-mono text-gray-400 pl-3">
+                <span className="text-white font-bold">{active + 1}</span> / {teamMembers.length}
+              </span>
             </div>
           </div>
 
-          <div 
-            className="flex-1 relative w-full h-[380px] sm:h-[440px] lg:h-[500px] flex items-center justify-center lg:justify-start pl-0 lg:pl-24"
+          {/* Right 3D Rotating Stack Cards */}
+          <div
+            className="lg:col-span-6 relative w-full flex items-center justify-center py-6"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            <div className="relative w-full max-w-sm h-[340px] sm:h-[400px] lg:h-[450px]">
-              {teamMembers.map((member, index) => {
-                const style = getCardStyle(index);
-                const isCurrent = index === currentIndex;
+            <div className="relative h-[380px] sm:h-[440px] md:h-[480px] w-full max-w-[360px] sm:max-w-[400px]">
+              <AnimatePresence>
+                {teamMembers.map((member, index) => {
+                  const activeCard = isActive(index);
+                  const rot = randomRotateY(index);
 
-                return (
-                  <motion.div
-                    key={member._id}
-                    className="absolute inset-0 rounded-2xl overflow-hidden bg-gradient-to-br from-light-black to-black border border-blue-500/20 shadow-2xl group hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] transition-all duration-500"
-                    initial={false}
-                    animate={style}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    drag={isCurrent ? "x" : false}
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={1}
-                    onDragEnd={handleDragEnd}
-                    style={{
-                      cursor: isCurrent ? "grab" : "default",
-                      transformOrigin: "center left",
-                      touchAction: "pan-y",
-                    }}
-                    whileTap={{ cursor: "grabbing" }}
-                  >
-                    <div className="relative h-full w-full">
-                      {/* Animated gradient overlay */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 opacity-50"
-                        animate={{
-                          background: [
-                            "linear-gradient(135deg, rgba(59,130,246,0.1) 0%, transparent 50%, rgba(168,85,247,0.1) 100%)",
-                            "linear-gradient(135deg, rgba(168,85,247,0.1) 0%, transparent 50%, rgba(59,130,246,0.1) 100%)",
-                          ],
-                        }}
-                        transition={{
-                          duration: 5,
-                          repeat: Infinity,
-                          repeatType: "reverse",
-                        }}
-                      />
+                  return (
+                    <motion.div
+                      key={member._id}
+                      initial={{
+                        opacity: 0,
+                        scale: 0.9,
+                        rotate: rot,
+                      }}
+                      animate={{
+                        opacity: activeCard ? 1 : 0.65,
+                        scale: activeCard ? 1 : 0.94,
+                        rotate: activeCard ? 0 : rot,
+                        zIndex: activeCard ? 40 : teamMembers.length + 2 - index,
+                        y: activeCard ? [0, -35, 0] : 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        scale: 0.9,
+                        rotate: rot,
+                      }}
+                      transition={{
+                        duration: 0.45,
+                        ease: "easeInOut",
+                      }}
+                      className="absolute inset-0 origin-bottom rounded-3xl overflow-hidden bg-[#0e0e0e] border border-white/[0.12] shadow-2xl group hover:border-primary/50 transition-colors"
+                    >
+                      <div className="relative h-full w-full">
+                        <img
+                          src={member.avatar}
+                          alt={member.name}
+                          width={500}
+                          height={500}
+                          loading="lazy"
+                          className="w-full h-full object-cover grayscale contrast-105 group-hover:grayscale-0 group-hover:scale-102 transition-all duration-700"
+                          draggable={false}
+                        />
 
-                      <img
-                        src={member.avatar}
-                        alt={member.name}
-                        width={400}
-                        height={400}
-                        loading="lazy"
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                        draggable={false}
-                      />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-
-                      <div className="absolute bottom-0 left-0 right-0 p-6">
-                        <h4 className="text-2xl font-bold font-barlow mb-1 text-white group-hover:text-cyan-50 transition-colors">
-                          {member.name}
-                        </h4>
-                        <p className="text-cyan-400 font-mono text-sm tracking-wide">
-                          {member.title}
-                        </p>
+                        {/* Card bottom info tag */}
+                        <div className="absolute bottom-0 left-0 right-0 p-6 space-y-1">
+                          <h4 className="text-2xl font-bold font-barlow text-white tracking-tight">
+                            {member.name}
+                          </h4>
+                          <p className="text-primary font-mono text-sm tracking-wide font-medium">
+                            {member.title}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           </div>
         </div>

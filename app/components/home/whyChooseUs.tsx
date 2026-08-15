@@ -1,52 +1,49 @@
 import { motion } from "framer-motion";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
-import { BsLightningChargeFill, BsPeopleFill, BsShieldFillCheck, BsClockFill } from "react-icons/bs";
+import SectionBadge from "~/components/ui/section-badge";
+import { Target, Zap, Users, ShieldCheck, Clock } from "lucide-react";
 
 const reasons = [
   {
+    tag: "Next-Gen Tech",
     title: "Innovation",
     description:
-      "Pushing boundaries with AI, cloud infrastructure, and next-gen application solutions.",
-    icon: BsLightningChargeFill,
-    gradient: "from-blue-500/20 to-cyan-500/10",
-    iconColor: "text-blue-400",
-    glowColor: "bg-blue-500/20",
-    borderHover: "hover:border-blue-500/40",
+      "Pushing boundaries with modern AI workflows, resilient cloud infrastructure, and scalable system design.",
+    icon: Zap,
     number: "01",
+    highlightLabel: "Focus",
+    highlightValue: "Cloud & AI Stacks",
   },
   {
+    tag: "Direct Access",
     title: "Collaboration",
     description:
-      "Working closely with clients to deliver solutions that fit your unique needs.",
-    icon: BsPeopleFill,
-    gradient: "from-violet-500/20 to-purple-500/10",
-    iconColor: "text-violet-400",
-    glowColor: "bg-violet-500/20",
-    borderHover: "hover:border-violet-500/40",
+      "Direct engineer communication with dedicated Slack channels, weekly demos, and transparent roadmap visibility.",
+    icon: Users,
     number: "02",
+    highlightLabel: "Cadence",
+    highlightValue: "Weekly Demos",
   },
   {
+    tag: "Clean Architecture",
     title: "Excellence",
     description:
-      "Maintaining the highest standards in code quality, performance, and outcomes.",
-    icon: BsShieldFillCheck,
-    gradient: "from-emerald-500/20 to-teal-500/10",
-    iconColor: "text-emerald-400",
-    glowColor: "bg-emerald-500/20",
-    borderHover: "hover:border-emerald-500/40",
+      "Strict engineering benchmarks, automated CI/CD test suites, and maintainable type-safe production codebases.",
+    icon: ShieldCheck,
     number: "03",
+    highlightLabel: "Standard",
+    highlightValue: "Zero Tech Debt",
   },
   {
+    tag: "Fast Turnaround",
     title: "Reliable Delivery",
     description:
-      "We keep your project moving with dedicated Slack channels, weekly milestone reviews, and fast turnaround times.",
-    icon: BsClockFill,
-    gradient: "from-orange-500/20 to-amber-500/10",
-    iconColor: "text-orange-400",
-    glowColor: "bg-orange-500/20",
-    borderHover: "hover:border-orange-500/40",
+      "Fixed-scope milestone planning with predictable shipping sprints and guaranteed turnaround timelines.",
+    icon: Clock,
     number: "04",
+    highlightLabel: "Timeline",
+    highlightValue: "Fixed Milestones",
   },
 ];
 
@@ -56,91 +53,73 @@ const WhyChooseUs = () => {
 
   return (
     <section className="bg-black px-4 sm:px-6 md:px-8 lg:px-6 xl:px-10 py-16 sm:py-20 md:py-24 relative overflow-hidden">
-      {/* Background glows */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl" />
-      </div>
-
       <div className="max-w-7xl mx-auto relative z-10">
         <div
           ref={titleRef}
           className={`text-center mb-12 md:mb-16 ${getBlurAnimationClasses(isTitleVisible)}`}
         >
-          <p className="text-primary text-xs font-semibold tracking-[0.2em] uppercase font-barlow mb-3">
-            THE WEBLAUD ADVANTAGE
-          </p>
-          <h2 className="text-white font-barlow text-2xl md:text-3xl font-semibold">
+          <SectionBadge
+            icon={<Target className="w-3.5 h-3.5" />}
+            text="The Weblaud Advantage"
+            badgeLabel="Our Edge"
+            color="#0a84ff"
+            className="mb-4"
+          />
+          <h2 className="text-white font-barlow text-2xl md:text-4xl font-bold tracking-tight">
             Why Choose Us
           </h2>
         </div>
 
         <div
           ref={cardsRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
         >
           {reasons.map((reason, index) => {
             const Icon = reason.icon;
             return (
-              <motion.div
+              <div
                 key={reason.title}
-                initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{
-                  duration: 0.5,
-                  delay: index * 0.1,
-                  ease: "easeOut",
-                }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className={`group relative bg-card-bg border border-light-black rounded-2xl p-6 md:p-8 ${reason.borderHover} transition-all duration-300 hover:shadow-lg overflow-hidden cursor-pointer`}
+                style={{ transitionDelay: `${index * 90}ms` }}
+                className={`group relative rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-700 hover:-translate-y-1 flex flex-col justify-between cursor-default ${getBlurAnimationClasses(areCardsVisible)}`}
               >
-                {/* Default subtle background layer to prevent cards from looking flat on mobile */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent rounded-2xl pointer-events-none md:hidden" />
-                {/* Card gradient bg on hover */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${reason.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`}
-                />
+                <div>
+                  {/* Top Row: Icon Box + Step Index */}
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <div className="w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-white/[0.03] border border-white/[0.08] group-hover:border-primary/30 group-hover:bg-primary/10 flex items-center justify-center text-primary transition-all duration-300">
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </div>
 
-                {/* Shimmer sweep */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                </div>
-
-                <div className="relative z-10 flex flex-col h-full">
-                  {/* Number */}
-                  <span className="text-white/10 font-barlow font-bold text-5xl absolute top-4 right-5 select-none leading-none group-hover:text-white/15 transition-colors duration-300">
-                    {reason.number}
-                  </span>
-
-                  {/* Icon */}
-                  <div
-                    className={`relative w-12 h-12 rounded-xl ${reason.glowColor} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <div
-                      className={`absolute inset-0 rounded-xl ${reason.glowColor} blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-150`}
-                    />
-                    <Icon
-                      className={`relative z-10 w-5 h-5 ${reason.iconColor}`}
-                    />
+                    <span className="font-mono text-[10px] sm:text-xs font-bold tracking-widest text-white/20 group-hover:text-primary transition-colors duration-300">
+                      {reason.number}
+                    </span>
                   </div>
 
+                  {/* Category Tag */}
+                  <span className="text-[9px] sm:text-[10px] md:text-[11px] font-mono tracking-wider uppercase text-primary block mb-1 sm:mb-2 font-medium">
+                    {reason.tag}
+                  </span>
+
                   {/* Title */}
-                  <h3 className="text-white font-barlow font-bold text-lg mb-2 min-h-[3.5rem] flex items-start group-hover:text-white transition-colors duration-300">
+                  <h3 className="text-sm sm:text-base md:text-lg font-bold font-barlow text-white tracking-tight mb-2 group-hover:text-primary transition-colors duration-300">
                     {reason.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-dark-gray font-barlow text-sm leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                  <p className="text-gray-400 font-barlow text-xs sm:text-sm leading-relaxed mb-4">
                     {reason.description}
                   </p>
-
-                  {/* Bottom accent line */}
-                  <div
-                    className={`mt-6 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:via-white/20 transition-colors duration-300`}
-                  />
                 </div>
-              </motion.div>
+
+                {/* Structured Metadata Bottom Bar */}
+                <div className="pt-3 sm:pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
+                  <span className="text-white/35 uppercase tracking-wider text-[9px] sm:text-[11px]">
+                    {reason.highlightLabel}
+                  </span>
+                  <span className="text-primary font-medium tracking-wide text-[9px] sm:text-[11px]">
+                    {reason.highlightValue}
+                  </span>
+                </div>
+              </div>
             );
           })}
         </div>
@@ -150,3 +129,7 @@ const WhyChooseUs = () => {
 };
 
 export default WhyChooseUs;
+
+
+
+

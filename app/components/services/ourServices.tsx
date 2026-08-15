@@ -5,6 +5,8 @@ import {
 } from "~/hooks/useBlurAnimation";
 import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
 import { ServiceCard } from "../ui/service-card";
+import SectionBadge from "../ui/section-badge";
+import { FiLayers } from "react-icons/fi";
 
 interface OurServicesProps {
   services: AdminService[];
@@ -25,9 +27,16 @@ const OurServices = ({ services }: OurServicesProps) => {
     <div className="bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-6 md:py-6 lg:py-15">
       <div className="max-w-7xl mx-auto">
         <div className="text-center my-12 md:my-16">
+          <SectionBadge
+            icon={<FiLayers className="w-3.5 h-3.5" />}
+            text="Our Services"
+            badgeLabel="Engineering Solutions"
+            color="#0a84ff"
+            className="mb-4"
+          />
           <h2
             ref={titleRef}
-            className={`text-white font-barlow font-bold text-2xl md:text-3xl mb-4 ${getBlurAnimationClasses(isTitleVisible)}`}
+            className={`text-white font-barlow font-bold text-2xl md:text-3xl lg:text-4xl mb-4 tracking-tight ${getBlurAnimationClasses(isTitleVisible)}`}
           >
             Our Services
           </h2>

@@ -9,15 +9,14 @@ import LetsDiscuss from "~/components/home/letsDiscuss";
 import heroBanner from "~/assets/hero-icon.png";
 import { TIMELINE, COMPANY } from "~/lib/constants";
 import { fetchOptional } from "~/lib/api.server";
-import type { Testimonial, Faq, AboutInfo } from "~/lib/types";
+import type { Testimonial, Faq } from "~/lib/types";
 
 export async function loader() {
-  const [testimonials, faqs, aboutInfo] = await Promise.all([
+  const [testimonials, faqs] = await Promise.all([
     fetchOptional<Testimonial[]>("/testimonials", []),
     fetchOptional<Faq[]>("/faqs", []),
-    fetchOptional<AboutInfo | null>("/about", null),
   ]);
-  return { testimonials, faqs, trackRecord: aboutInfo?.trackRecord ?? [] };
+  return { testimonials, faqs };
 }
 
 export const links: Route.LinksFunction = () => {
@@ -139,7 +138,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <BannerHome />
-      <TrustedPartnerships trackRecord={loaderData.trackRecord} />
+      <TrustedPartnerships />
       <OurSpeciality />
       <WhyChooseUs />
       <OurSay testimonials={loaderData.testimonials} />

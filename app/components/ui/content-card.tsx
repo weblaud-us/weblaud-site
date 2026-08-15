@@ -3,7 +3,7 @@ interface ContentCardProps {
   title: string;
   paragraphs: string[];
   number: string;
-  variant: "blue" | "purple";
+  variant: "blue" | "purple" | "green";
   position: "left" | "right";
 }
 
@@ -41,6 +41,19 @@ export const ContentCard = ({
       hoverBorder: "hover:border-purple-400/30",
       hoverShadow: "hover:shadow-[0_0_50px_rgba(168,85,247,0.2)]",
       dotGradient: "from-purple-400",
+    },
+    green: {
+      line: "from-emerald-400",
+      dot: "bg-emerald-400",
+      gradient: "from-emerald-500/15 via-teal-500/5",
+      border: "border-emerald-400/40",
+      badge: "text-emerald-400 border-emerald-400/30 shadow-[0_0_20px_rgba(16,185,129,0.3)]",
+      numberGradient: "from-emerald-500/20",
+      titleGradient: "from-white via-emerald-200 to-teal-200",
+      paragraphBorder: "border-emerald-400/20 hover:border-emerald-400/50",
+      hoverBorder: "hover:border-emerald-400/30",
+      hoverShadow: "hover:shadow-[0_0_50px_rgba(16,185,129,0.2)]",
+      dotGradient: "from-emerald-400",
     },
   };
 

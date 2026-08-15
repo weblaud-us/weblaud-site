@@ -1,16 +1,18 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/career.$slug";
-import Discuss from "~/components/aboutUs/discuss";
-import { ApplyButton, ApplyDialog } from "~/components/career/applyDialog";
+import SectionBadge from "~/components/ui/section-badge";
 import {
-  FiArrowLeft,
+  FiChevronLeft,
+  FiArrowRight,
   FiBriefcase,
   FiCalendar,
   FiCheckCircle,
   FiClock,
   FiDollarSign,
   FiMapPin,
+  FiTarget,
   FiUsers,
+  FiZap,
 } from "react-icons/fi";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { RouteErrorBoundary } from "~/components/ui/error-page";
@@ -45,41 +47,6 @@ export function ErrorBoundary() {
       }}
     />
   );
-}
-
-export async function action({ request }: Route.ActionArgs) {
-  const formData = await request.formData();
-
-  // The apply endpoint keys off the job's ObjectId, not its slug, so the form
-  // carries the id in a hidden field.
-  const careerId = String(formData.get("careerId") ?? "");
-  if (!careerId) {
-    return { error: "Missing job reference. Please reload the page." };
-  }
-
-  const resume = formData.get("resume");
-  if (!(resume instanceof File) || resume.size === 0) {
-    return { error: "Please attach your resume." };
-  }
-
-  const body = new FormData();
-  body.set("name", String(formData.get("name") ?? ""));
-  body.set("email", String(formData.get("email") ?? ""));
-  body.set("phone", String(formData.get("phone") ?? ""));
-  body.set("interestReason", String(formData.get("interestReason") ?? ""));
-  body.set("coverLetter", String(formData.get("coverLetter") ?? ""));
-  body.set("resume", resume);
-
-  try {
-    await apiFetch(`/careers/${careerId}/apply`, { method: "POST", body });
-    return { ok: true };
-  } catch (err) {
-    const message =
-      err instanceof ApiError
-        ? err.message
-        : "Something went wrong. Please try again.";
-    return { error: message };
-  }
 }
 
 export function headers() {
@@ -186,74 +153,85 @@ export default function CareerDetail({ loaderData }: Route.ComponentProps) {
   const deadline = formatDeadline(job.deadline);
 
   const facts = [
-    { icon: <FiMapPin />, label: "Location", value: job.location },
-    { icon: <FiBriefcase />, label: "Job Type", value: job.jobType },
-    { icon: <FiClock />, label: "Experience", value: job.experience },
-    { icon: <FiUsers />, label: "Openings", value: job.position },
-    { icon: <FiDollarSign />, label: "Salary", value: job.salaryRange },
-    { icon: <FiCalendar />, label: "Apply By", value: deadline },
+    { icon: <FiMapPin className="w-4 h-4 text-primary" />, label: "Location", value: job.location },
+    { icon: <FiBriefcase className="w-4 h-4 text-primary" />, label: "Job Type", value: job.jobType },
+    { icon: <FiClock className="w-4 h-4 text-primary" />, label: "Experience", value: job.experience },
+    { icon: <FiUsers className="w-4 h-4 text-primary" />, label: "Openings", value: job.position ? `${job.position} Position` : null },
+    { icon: <FiDollarSign className="w-4 h-4 text-primary" />, label: "Compensation", value: job.salaryRange || "Competitive / On discussion" },
+    { icon: <FiCalendar className="w-4 h-4 text-primary" />, label: "Apply By", value: deadline || "Open until filled" },
   ].filter((fact) => Boolean(fact.value));
 
   return (
-    // Extra bottom padding on mobile so the sticky apply bar doesn't cover the
-    // end of the page.
-    <div className="bg-black text-white pt-24 md:pt-32 pb-32 md:pb-16 min-h-screen">
+    // Extra bottom padding on mobile so the sticky apply bar doesn't cover the end of the page.
+    <div className="bg-black text-white pt-28 sm:pt-32 md:pt-36 min-h-screen">
       {/* Background Gradients */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <Link
-          to="/career"
-          className="inline-flex items-center text-sm font-barlow text-gray-400 hover:text-primary transition-colors mb-8"
-        >
-          <FiArrowLeft className="mr-2" /> All Open Positions
-        </Link>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-8 sm:space-y-10">
+        {/* Top Bar with Badge on left and Back Link on right */}
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <SectionBadge
+            icon={<FiBriefcase className="w-3.5 h-3.5" />}
+            text={job.jobType || "Open Position"}
+            badgeLabel={job.department || undefined}
+            color="#0a84ff"
+          />
 
-        <div className="flex flex-wrap items-center gap-2 mb-4">
-          {job.jobType && (
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold uppercase tracking-wider font-barlow">
-              {job.jobType}
-            </span>
-          )}
-          {job.department && (
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300 text-xs font-semibold uppercase tracking-wider font-barlow">
-              {job.department}
-            </span>
-          )}
+          <Link
+            to="/career"
+            className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 text-gray-300 hover:text-white text-xs font-barlow font-medium transition-all duration-300 group shrink-0"
+          >
+            <FiChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-white shrink-0" />
+            <span className="sm:hidden">Back</span>
+            <span className="hidden sm:inline">Back to All Positions</span>
+          </Link>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-barlow mb-4">
-          {job.title}
-        </h1>
+        {/* Hero Section */}
+        <div className="space-y-4">
 
-        {job.summary && (
-          <p className="text-gray-400 font-barlow text-base sm:text-lg leading-relaxed mb-8">
-            {job.summary}
-          </p>
-        )}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-barlow text-white tracking-tight leading-tight">
+            {job.title}
+          </h1>
 
-        <div className="hidden md:block mb-10">
-          <ApplyDialog careerId={job._id} jobTitle={job.title}>
-            <ApplyButton />
-          </ApplyDialog>
+          {job.summary && (
+            <p className="text-gray-300 font-barlow text-sm sm:text-lg leading-relaxed max-w-3xl">
+              {job.summary}
+            </p>
+          )}
+
+          <div className="hidden md:flex items-center gap-4 pt-2">
+            <Link
+              to={`/career/${job.slug}/apply`}
+              className="group inline-flex items-center justify-center gap-2.5 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-sm px-7 py-3 rounded-full transition-all duration-300 shadow-lg shadow-blue-500/25 hover:scale-[1.02] cursor-pointer"
+            >
+              <span>Apply for this Role</span>
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
+                <FiArrowRight className="w-3.5 h-3.5 text-white -rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+              </span>
+            </Link>
+          </div>
         </div>
 
-        {/* Fact strip */}
+        {/* Fact Specs Bento Strip */}
         {facts.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-card-bg/80 border border-light-black rounded-3xl p-6 sm:p-8 mb-10 shadow-xl">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             {facts.map((fact) => (
-              <div key={fact.label} className="flex items-start gap-3">
-                <span className="text-primary text-lg mt-0.5 shrink-0">
+              <div
+                key={fact.label}
+                className="p-4 sm:p-5 rounded-2xl bg-[#0e0e0e] border border-[#1f1f1f] flex items-start gap-3 hover:border-white/20 transition-colors"
+              >
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
                   {fact.icon}
-                </span>
-                <div>
-                  <p className="text-[11px] uppercase tracking-wider text-gray-500 font-barlow">
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-[11px] uppercase font-mono tracking-wider text-gray-400">
                     {fact.label}
                   </p>
-                  <p className="text-sm text-white font-barlow font-medium">
+                  <p className="text-xs sm:text-sm text-white font-barlow font-semibold mt-0.5 truncate">
                     {fact.value}
                   </p>
                 </div>
@@ -262,74 +240,156 @@ export default function CareerDetail({ loaderData }: Route.ComponentProps) {
           </div>
         )}
 
-        {job.jobDetails && (
-          <section className="mb-10">
-            <h2 className="text-2xl font-bold font-barlow mb-4">
-              About the Role
-            </h2>
-            <p className="text-gray-400 font-barlow leading-relaxed whitespace-pre-line">
-              {job.jobDetails}
-            </p>
-          </section>
-        )}
+        {/* Role Content Card */}
+        <div className="space-y-8 sm:space-y-10">
+          {/* About the Role */}
+          {job.jobDetails && (
+            <section className="bg-gradient-to-r from-primary/15 via-blue-900/10 to-transparent border-l-4 border-primary p-6 sm:p-8 rounded-r-3xl shadow-xl">
+              <h2 className="text-xs uppercase font-barlow font-bold tracking-widest text-primary mb-2">
+                About the Role
+              </h2>
+              <div className="text-white font-barlow text-sm sm:text-base md:text-lg leading-relaxed font-medium whitespace-pre-line">
+                {job.jobDetails}
+              </div>
+            </section>
+          )}
 
-        {job.responsibilities.length > 0 && (
-          <section className="mb-10">
-            <h2 className="text-2xl font-bold font-barlow mb-4">
-              What You'll Do
-            </h2>
-            <ul className="space-y-3">
-              {job.responsibilities.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <FiCheckCircle className="text-primary mt-1 shrink-0" />
-                  <span className="text-gray-400 font-barlow leading-relaxed">
-                    {item}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+          {/* Responsibilities */}
+          {job.responsibilities.length > 0 && (
+            <section className="bg-[#0e0e0e] border border-[#1f1f1f] rounded-2xl sm:rounded-3xl p-6 sm:p-8 space-y-4">
+              <h2 className="text-xl sm:text-2xl font-bold font-barlow text-white tracking-tight flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                  <FiZap className="w-4 h-4 text-primary" />
+                </div>
+                <span>What You'll Do</span>
+              </h2>
+              <ul className="space-y-3">
+                {job.responsibilities.map((item, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-xl bg-[#050505] border border-[#222222] hover:border-white/20 transition-colors duration-200"
+                  >
+                    <div className="w-5 h-5 rounded-md bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0 mt-0.5">
+                      <FiCheckCircle className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <span className="text-gray-300 font-barlow text-xs sm:text-sm leading-relaxed">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-        {job.requirements.length > 0 && (
-          <section className="mb-10">
-            <h2 className="text-2xl font-bold font-barlow mb-4">
-              What We're Looking For
-            </h2>
-            <ul className="space-y-3">
-              {job.requirements.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <FiCheckCircle className="text-primary mt-1 shrink-0" />
-                  <span className="text-gray-400 font-barlow leading-relaxed">
-                    {item}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+          {/* Requirements */}
+          {job.requirements.length > 0 && (
+            <section className="bg-[#0e0e0e] border border-[#1f1f1f] rounded-2xl sm:rounded-3xl p-6 sm:p-8 space-y-4">
+              <h2 className="text-xl sm:text-2xl font-bold font-barlow text-white tracking-tight flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                  <FiTarget className="w-4 h-4 text-primary" />
+                </div>
+                <span>What We're Looking For</span>
+              </h2>
+              <ul className="space-y-3">
+                {job.requirements.map((item, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-start gap-3.5 p-3.5 sm:p-4 rounded-xl bg-[#050505] border border-[#222222] hover:border-white/20 transition-colors duration-200"
+                  >
+                    <div className="w-5 h-5 rounded-md bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0 mt-0.5">
+                      <FiCheckCircle className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <span className="text-gray-300 font-barlow text-xs sm:text-sm leading-relaxed">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+      </div>
 
-        <section className="bg-card-bg/80 border border-light-black rounded-3xl p-8 sm:p-10 text-center shadow-xl mb-16">
-          <h2 className="text-2xl font-bold font-barlow mb-2">
-            Interested in this role?
+      {/* Full-width Discuss-style Career CTA Section */}
+      <section className="relative bg-black text-white pt-12 mt-14 sm:pt-16 pb-12 sm:pb-16 px-4 overflow-hidden">
+        {/* Seamless ambient gradient glow fading softly into black on top and bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.08] to-transparent pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[380px] bg-primary/15 rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto flex flex-col items-center justify-center text-center relative z-10">
+          {/* Eyebrow badge */}
+          <SectionBadge
+            icon={<FiBriefcase className="w-3.5 h-3.5" />}
+            text="Careers at Weblaud"
+            badgeLabel="Join Our Team"
+            color="#0a84ff"
+            className="mb-6"
+          />
+
+          {/* Headline */}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-barlow text-white leading-tight max-w-4xl mb-5 tracking-tight">
+            Ready to build with <span className="text-primary">us?</span>
           </h2>
-          <p className="text-gray-400 font-barlow text-sm mb-6">
-            Send us your resume — it takes about two minutes.
+
+          {/* Sub-copy */}
+          <p className="text-sm sm:text-base md:text-lg font-barlow text-gray-300 max-w-2xl leading-relaxed mb-8">
+            Submit your resume and portfolio — our founders and senior engineering leads review every submission within 48 hours.
           </p>
-          <ApplyDialog careerId={job._id} jobTitle={job.title}>
-            <ApplyButton />
-          </ApplyDialog>
-        </section>
-      </div>
 
-      {/* Mobile: the apply action stays reachable without scrolling back up. */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-light-black bg-black/90 backdrop-blur-md px-4 py-3">
-        <ApplyDialog careerId={job._id} jobTitle={job.title}>
-          <ApplyButton className="w-full" />
-        </ApplyDialog>
-      </div>
+          {/* CTA button with pulse ring */}
+          <div className="relative">
+            {/* Pulse ring */}
+            <span
+              className="absolute inset-0 rounded-full bg-primary opacity-30 pointer-events-none"
+              style={{ animation: "career-cta-pulse 2.4s ease-out infinite" }}
+            />
+            <Link
+              to={`/career/${job.slug}/apply`}
+              className="group relative z-10 inline-flex items-center gap-2 sm:gap-2.5 bg-primary hover:bg-primary/90 text-white font-barlow font-semibold text-xs sm:text-sm px-5 py-2.5 sm:px-6 sm:py-3 rounded-full transition-all duration-300 shadow-md shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] cursor-pointer"
+            >
+              <span>Apply for this Role</span>
+              <span className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
+                <FiArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white -rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+              </span>
+            </Link>
+          </div>
 
-      <Discuss />
+          {/* Micro-copy trust signal */}
+          <p className="mt-5 font-barlow text-xs text-gray-400 tracking-wide">
+            Direct team review &nbsp;·&nbsp; No recruiters &nbsp;·&nbsp; Response within 48 h
+          </p>
+        </div>
+      </section>
+
+      {/* Keyframe styles */}
+      <style>{`
+        @keyframes career-cta-pulse {
+          0%   { transform: scale(1);   opacity: 0.3; }
+          70%  { transform: scale(1.6); opacity: 0; }
+          100% { transform: scale(1.6); opacity: 0; }
+        }
+      `}</style>
+
+      {/* Mobile sticky bottom apply action */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-white/[0.1] bg-black/90 backdrop-blur-xl px-4 py-3 flex items-center justify-between gap-3 shadow-2xl">
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] text-gray-400 font-barlow truncate font-medium">
+            {job.department || "Open Role"}
+          </p>
+          <p className="text-xs text-white font-barlow font-bold truncate">
+            {job.title}
+          </p>
+        </div>
+        <Link
+          to={`/career/${job.slug}/apply`}
+          className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-xs px-4.5 py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 shrink-0 cursor-pointer"
+        >
+          <span>Apply Now</span>
+          <span className="flex items-center justify-center w-4.5 h-4.5 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors">
+            <FiArrowRight className="w-2.5 h-2.5 text-white -rotate-45" />
+          </span>
+        </Link>
+      </div>
     </div>
   );
 }

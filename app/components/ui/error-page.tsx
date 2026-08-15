@@ -5,9 +5,9 @@ import {
   useRouteError,
 } from "react-router";
 import type { ReactNode } from "react";
-import { FiArrowLeft } from "react-icons/fi";
-import { HiArrowRight } from "react-icons/hi";
 import { Button } from "./button";
+import SectionBadge from "~/components/ui/section-badge";
+import { AlertCircle } from "lucide-react";
 import pattern from "~/assets/geometric-pattern.svg";
 
 interface ErrorAction {
@@ -84,15 +84,13 @@ const ErrorPage = ({
         )}
 
         {badge && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-white/7 border border-white/20 rounded-full">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
-            </span>
-            <span className="text-xs sm:text-sm font-medium text-white">
-              {badge}
-            </span>
-          </div>
+          <SectionBadge
+            icon={<AlertCircle className="w-3.5 h-3.5" />}
+            text="System Notice"
+            badgeLabel={badge}
+            color="#0a84ff"
+            className="mb-6"
+          />
         )}
 
         <h1
@@ -111,7 +109,6 @@ const ErrorPage = ({
           <Link to={primaryAction.to}>
             <Button className="text-xs font-bold px-9 py-4.5">
               {primaryAction.label}
-              <HiArrowRight className="ml-1" />
             </Button>
           </Link>
 
@@ -119,9 +116,8 @@ const ErrorPage = ({
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="group inline-flex items-center gap-2 px-7 py-3 rounded-lg text-xs font-barlow font-semibold text-white bg-white/3 backdrop-blur-md border border-white/15 hover:border-primary/50 transition-all duration-500"
+              className="group inline-flex items-center justify-center px-7 py-3 rounded-lg text-xs font-barlow font-semibold text-white bg-white/3 backdrop-blur-md border border-white/15 hover:border-primary/50 transition-all duration-500"
             >
-              <FiArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform duration-300" />
               Go Back
             </button>
           )}
