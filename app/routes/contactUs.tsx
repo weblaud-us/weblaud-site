@@ -3,8 +3,24 @@ import BannerContactUs from "~/components/contact/bannerContactUs";
 import ContactFormAndInfo from "~/components/contact/contactFormAndInfo";
 import { apiFetch, ApiError } from "~/lib/api.server";
 
+// Submissions faster than this are almost certainly bots, not humans.
+const MIN_FILL_MS = 3000;
+
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
+
+  // Honeypot: a bot filled a field no human can see. Report success so it has
+  // nothing to tune against, but store nothing.
+  if (String(formData.get("website") ?? "").trim()) {
+    return { ok: true };
+  }
+
+  // Time-trap: reject submissions filled out impossibly fast. Only enforce when
+  // we have a valid timestamp — a missing/garbled value isn't treated as spam.
+  const renderedAt = Number(formData.get("renderedAt"));
+  if (Number.isFinite(renderedAt) && Date.now() - renderedAt < MIN_FILL_MS) {
+    return { ok: true };
+  }
 
   try {
     await apiFetch("/contact/submit", {
