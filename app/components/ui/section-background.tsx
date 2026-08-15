@@ -4,7 +4,7 @@ interface SectionBackgroundProps {
 
 export const SectionBackground = ({ children }: SectionBackgroundProps) => {
   return (
-    <section className="relative bg-black text-white py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 overflow-hidden">
+    <section className="relative bg-black text-white pt-4 sm:pt-6 md:pt-8 pb-12 sm:pb-16 md:pb-20 lg:pb-24 px-4 sm:px-6 overflow-hidden">
       <div className="absolute inset-0 opacity-20">
         <div
           className="absolute inset-0"

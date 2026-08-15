@@ -37,7 +37,7 @@ const OurMissionAndStory = ({ story, mission }: OurMissionAndStoryProps) => {
       {story && (
         <div
           ref={storyRef}
-          className="relative max-w-7xl mx-auto mb-16 sm:mb-24 md:mb-32 lg:mb-40"
+          className="relative max-w-7xl mx-auto mb-10 sm:mb-12 md:mb-16 lg:mb-20"
         >
           <div
             className={`grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center ${getBlurAnimationClasses(isStoryVisible)}`}

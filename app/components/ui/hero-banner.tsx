@@ -49,10 +49,10 @@ const HeroBanner = ({
   return (
     <div
       ref={containerRef}
-      className={`bg-black px-4 sm:px-6 lg:px-8 xl:px-10 pt-22 sm:pt-22.5 md:pt-26 lg:pt-26 ${className}`}
+      className={`bg-black px-4 sm:px-6 lg:px-8 xl:px-10 pt-28 sm:pt-32 md:pt-36 lg:pt-36 pb-3 sm:pb-4 md:pb-5 ${className}`}
     >
       <div
-        className={`relative max-w-7xl mx-auto bg-card-bg border border-light-black px-4 sm:px-6 md:px-8 lg:px-8 xl:px-10 py-5 sm:py-6 md:py-8 lg:py-14 rounded-xl overflow-hidden group ${getBlurAnimationClasses(isVisible)}`}
+        className={`relative w-full mx-auto bg-card-bg border border-light-black px-4 sm:px-6 md:px-8 lg:px-8 xl:px-10 py-5 sm:py-6 md:py-8 lg:py-14 rounded-2xl md:rounded-3xl overflow-hidden group ${getBlurAnimationClasses(isVisible)}`}
         style={{
           backgroundImage: `url(${bg})`,
           backgroundRepeat: "repeat",
@@ -76,7 +76,7 @@ const HeroBanner = ({
         )}
 
         <div
-          className={`relative z-10 max-w-7xl mx-auto px-2 sm:px-4 md:px-6 flex flex-col ${image ? "lg:flex-row" : ""} items-center lg:items-center justify-between gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16`}
+          className={`relative z-10 w-full mx-auto px-2 sm:px-4 md:px-6 flex flex-col ${image ? "lg:flex-row" : ""} items-center lg:items-center justify-between gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16`}
         >
           <div
             className={`flex-1 w-full ${image ? "lg:w-auto" : ""} ${textAlign}`}
