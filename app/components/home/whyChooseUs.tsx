@@ -79,12 +79,12 @@ const WhyChooseUs = () => {
             return (
               <motion.div
                 key={reason.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
+                initial={{ opacity: 0, y: 24, filter: "blur(12px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                viewport={{ once: true, margin: "-60px" }}
                 transition={{
-                  duration: 0.45,
-                  delay: index * 0.08,
+                  duration: 0.55,
+                  delay: index * 0.1,
                   ease: "easeOut",
                 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}

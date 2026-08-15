@@ -106,10 +106,10 @@ const OurTrack = ({ trackRecord }: OurTrackProps) => {
             return (
               <motion.div
                 key={record.subtitle}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                initial={{ opacity: 0, y: 24, filter: "blur(12px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.55, delay: index * 0.1, ease: "easeOut" }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 className="rounded-xl sm:rounded-2xl p-3.5 sm:p-6 md:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-300 flex flex-col justify-between"
               >
