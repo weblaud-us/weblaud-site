@@ -32,15 +32,91 @@ import developmentImg from "~/assets/development.png";
 import maintainImg from "~/assets/maintain.png";
 import scaleImg from "~/assets/scale.png";
 
-interface FeatureItem { name: string; icon: LucideIcon; }
-interface TabContent { id: number; title: string; description: string; features: FeatureItem[]; image: string; color: string; }
+interface FeatureItem {
+  name: string;
+  icon: LucideIcon;
+}
+
+interface TabContent {
+  id: number;
+  title: string;
+  description: string;
+  features: FeatureItem[];
+  image: string;
+  color: string;
+}
 
 const tabsData: TabContent[] = [
-  { id: 1, title: "STRATEGY", description: "We map your operational workflows into production-ready technical roadmaps. We identify clear milestones, scope data schemas, and design software architecture that aligns directly with your business goals.", features: [{ name: "Product & system architecture", icon: Layers }, { name: "Operational workflow mapping", icon: GitBranch }, { name: "Technical feasibility & ROI", icon: TrendingUp }, { name: "Fixed-scope milestone planning", icon: CalendarCheck }], image: strategyImg, color: "#0a84ff" },
-  { id: 2, title: "DESIGN", description: "We design intuitive admin interfaces, user dashboards, and mobile experiences engineered for maximum operational efficiency. Every screen is prototyped for speed, clarity, and zero user friction.", features: [{ name: "Admin & Operations UI/UX", icon: LayoutDashboard }, { name: "High-fidelity prototyping", icon: Smartphone }, { name: "Design systems & component libraries", icon: Boxes }, { name: "Micro-animations & motion polish", icon: Sparkles }], image: designImg, color: "#9d4edd" },
-  { id: 3, title: "DEVELOPMENT", description: "We engineer custom operations platforms, scalable web applications, and mobile apps built on resilient cloud infrastructure. Shipped with clean code, automated tests, and zero engineering compromises.", features: [{ name: "Custom operations platforms & ERPs", icon: Server }, { name: "Scalable web apps & SaaS engineering", icon: Globe }, { name: "Cross-platform mobile apps (Flutter)", icon: Smartphone }, { name: "Production AI & LLM integrations", icon: Bot }], image: developmentImg, color: "#00f5d4" },
-  { id: 4, title: "MAINTAIN", description: "We ensure your production systems run with 99.9% uptime and zero friction. We provide continuous support, cloud infrastructure management, security updates, and real-time system monitoring.", features: [{ name: "Software support & SLA maintenance", icon: ShieldCheck }, { name: "Cloud infrastructure & DevOps", icon: CloudCog }, { name: "Real-time monitoring & security", icon: Activity }, { name: "Dedicated senior engineering pods", icon: Users }], image: maintainImg, color: "#3a86ff" },
-  { id: 5, title: "SCALE", description: "We architect systems built for high concurrency, large datasets, and enterprise scale. We refactor legacy codebases, implement automated CI/CD pipelines, and optimize database performance.", features: [{ name: "Automated CI/CD pipelines", icon: Workflow }, { name: "Legacy software modernization", icon: RefreshCw }, { name: "DevOps & cloud infrastructure", icon: Cpu }, { name: "Enterprise software architecture", icon: Boxes }], image: scaleImg, color: "#ff007f" },
+  {
+    id: 1,
+    title: "STRATEGY",
+    description:
+      "We map your operational workflows into production-ready technical roadmaps. We identify clear milestones, scope data schemas, and design software architecture that aligns directly with your business goals.",
+    features: [
+      { name: "Product & system architecture", icon: Layers },
+      { name: "Operational workflow mapping", icon: GitBranch },
+      { name: "Technical feasibility & ROI", icon: TrendingUp },
+      { name: "Fixed-scope milestone planning", icon: CalendarCheck },
+    ],
+    image: strategyImg,
+    color: "#0a84ff",
+  },
+  {
+    id: 2,
+    title: "DESIGN",
+    description:
+      "We design intuitive admin interfaces, user dashboards, and mobile experiences engineered for maximum operational efficiency. Every screen is prototyped for speed, clarity, and zero user friction.",
+    features: [
+      { name: "Admin & Operations UI/UX", icon: LayoutDashboard },
+      { name: "High-fidelity prototyping", icon: Smartphone },
+      { name: "Design systems & component libraries", icon: Boxes },
+      { name: "Micro-animations & motion polish", icon: Sparkles },
+    ],
+    image: designImg,
+    color: "#9d4edd",
+  },
+  {
+    id: 3,
+    title: "DEVELOPMENT",
+    description:
+      "We engineer custom operations platforms, scalable web applications, and mobile apps built on resilient cloud infrastructure. Shipped with clean code, automated tests, and zero engineering compromises.",
+    features: [
+      { name: "Custom operations platforms & ERPs", icon: Server },
+      { name: "Scalable web apps & SaaS engineering", icon: Globe },
+      { name: "Cross-platform mobile apps (Flutter)", icon: Smartphone },
+      { name: "Production AI & LLM integrations", icon: Bot },
+    ],
+    image: developmentImg,
+    color: "#00f5d4",
+  },
+  {
+    id: 4,
+    title: "MAINTAIN",
+    description:
+      "We ensure your production systems run with 99.9% uptime and zero friction. We provide continuous support, cloud infrastructure management, security updates, and real-time system monitoring.",
+    features: [
+      { name: "Software support & SLA maintenance", icon: ShieldCheck },
+      { name: "Cloud infrastructure & DevOps", icon: CloudCog },
+      { name: "Real-time monitoring & security", icon: Activity },
+      { name: "Dedicated senior engineering pods", icon: Users },
+    ],
+    image: maintainImg,
+    color: "#3a86ff",
+  },
+  {
+    id: 5,
+    title: "SCALE",
+    description:
+      "We architect systems built for high concurrency, large datasets, and enterprise scale. We refactor legacy codebases, implement automated CI/CD pipelines, and optimize database performance.",
+    features: [
+      { name: "Automated CI/CD pipelines", icon: Workflow },
+      { name: "Legacy software modernization", icon: RefreshCw },
+      { name: "DevOps & cloud infrastructure", icon: Cpu },
+      { name: "Enterprise software architecture", icon: Boxes },
+    ],
+    image: scaleImg,
+    color: "#ff007f",
+  },
 ];
 
 const OurSpeciality = () => {
@@ -51,14 +127,12 @@ const OurSpeciality = () => {
   const [titleRef, isTitleVisible] = useBlurAnimation<HTMLHeadingElement>();
   const [isMobile, setIsMobile] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
-  const isAnimatingRef = useRef(false);
-  const directionRef = useRef(1);
+  const animTlRef = useRef<gsap.core.Timeline | null>(null);
 
   const activeTabRef = useRef(activeTab);
   activeTabRef.current = activeTab;
 
-  const isClickScrollRef = useRef(false);
-  const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suppressScrollStepRef = useRef(false); // Prevents scroll-driven step changes during tab clicks
 
   const activeContent = tabsData.find((t) => t.id === displayTab) || tabsData[0];
 
@@ -69,156 +143,205 @@ const OurSpeciality = () => {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // GSAP: Lenis-style card deck animation (scale + 3D perspective + directional slide + blur)
-  useEffect(() => {
+  // ─── Stacked Card Peel Transition (Lenis-style) ───────────────────────────────
+  const runTabTransition = useCallback((nextTab: number, dir: number) => {
     const el = contentRef.current;
-    if (!el) return;
-    gsap.killTweensOf(el);
-    isAnimatingRef.current = true;
-    const dir = directionRef.current;
-    gsap.to(el, {
-      opacity: 0,
-      scale: 0.88,
-      y: dir * -45,
-      rotateX: dir * 6,
-      filter: "blur(8px)",
-      duration: 0.28,
-      ease: "power2.in",
-      onComplete: () => { setDisplayTab(activeTab); },
-    });
-  }, [activeTab]);
+    if (!el) {
+      setDisplayTab(nextTab);
+      return;
+    }
 
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-    gsap.killTweensOf(el);
-    const dir = directionRef.current;
-    gsap.fromTo(el,
-      { opacity: 0, scale: 0.88, y: dir * 45, rotateX: dir * -6, filter: "blur(8px)" },
+    if (animTlRef.current) {
+      animTlRef.current.kill();
+      animTlRef.current = null;
+    }
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        animTlRef.current = null;
+        gsap.set(el, { clearProps: "rotationZ,rotationX" });
+      },
+    });
+    animTlRef.current = tl;
+
+    // ── Card peels away (lifts off the stack with rotation) ──
+    tl.to(el, {
+      opacity: 0,
+      y: dir * -50,
+      x: dir * -12,
+      scale: 0.88,
+      rotationZ: dir * -3,
+      rotationX: dir * 4,
+      duration: 0.22,
+      ease: "power3.in",
+    });
+
+    // ── Swap content ──
+    tl.add(() => {
+      setDisplayTab(nextTab);
+    });
+
+    // ── New card emerges from behind the stack ──
+    tl.fromTo(
+      el,
+      {
+        opacity: 0,
+        y: dir * 40,
+        x: dir * 8,
+        scale: 0.92,
+        rotationZ: dir * 2,
+        rotationX: dir * -3,
+      },
       {
         opacity: 1,
-        scale: 1,
         y: 0,
-        rotateX: 0,
-        filter: "blur(0px)",
-        duration: 0.5,
-        ease: "power3.out",
-        onComplete: () => { isAnimatingRef.current = false; },
+        x: 0,
+        scale: 1,
+        rotationZ: 0,
+        rotationX: 0,
+        duration: 0.38,
+        ease: "back.out(1.4)",
       }
     );
-  }, [displayTab]);
+  }, []);
 
-  // Clean scroll progress tracking with CSS sticky (zero DOM mutation by external libraries)
+  // ─── Tab Click Handler (scrolls to matching position) ──────────────────────────
+  const handleTabChange = useCallback(
+    (id: number) => {
+      if (id === activeTabRef.current) return;
+      const dir = id > activeTabRef.current ? 1 : -1;
+      activeTabRef.current = id;
+      setActiveTab(id);
+      runTabTransition(id, dir);
+
+      // Scroll to the correct position in the 450vh section for this step
+      const section = sectionRef.current;
+      if (section && !isMobile) {
+        suppressScrollStepRef.current = true;
+        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+        const scrollableDistance = section.offsetHeight - window.innerHeight;
+        const progress = (id - 1) / tabsData.length;
+        const targetScroll = sectionTop - 64 + progress * scrollableDistance;
+
+        const lenis = (window as any).lenis;
+        if (lenis) {
+          lenis.scrollTo(targetScroll, {
+            duration: 0.6,
+            onComplete: () => { suppressScrollStepRef.current = false; },
+          });
+        } else {
+          window.scrollTo({ top: targetScroll, behavior: "smooth" });
+          setTimeout(() => { suppressScrollStepRef.current = false; }, 700);
+        }
+      }
+    },
+    [runTabTransition, isMobile]
+  );
+
+  // ─── Scroll-Driven Step Detection (scrollbar moves naturally) ────────────────
   useEffect(() => {
     if (isMobile) return;
 
-    const handleScroll = () => {
-      if (isClickScrollRef.current) return;
+    const NAVBAR_HEIGHT = 64;
+    let prevStep = activeTabRef.current;
+
+    const onScroll = () => {
+      if (suppressScrollStepRef.current) return;
+
       const section = sectionRef.current;
       if (!section) return;
 
       const rect = section.getBoundingClientRect();
       const sectionHeight = section.offsetHeight;
-      const viewportHeight = window.innerHeight;
-      const scrollableDistance = sectionHeight - viewportHeight;
+      const vh = window.innerHeight;
+      const scrollableDistance = sectionHeight - vh;
 
       if (scrollableDistance <= 0) return;
 
-      // When the section top reaches 64px (navbar offset), calculate 0.0 -> 1.0 progress
-      const scrolled = -rect.top + 64;
-      const progress = Math.max(0, Math.min(0.9999, scrolled / scrollableDistance));
-      const targetTab = Math.min(tabsData.length, Math.floor(progress * tabsData.length) + 1);
+      // Progress: 0 = section top at navbar, 1 = section bottom at viewport bottom
+      const scrolled = NAVBAR_HEIGHT - rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
 
-      if (targetTab !== activeTabRef.current) {
-        directionRef.current = targetTab > activeTabRef.current ? 1 : -1;
-        setActiveTab(targetTab);
+      // Map progress to step 1-5
+      const stepCount = tabsData.length;
+      let newStep: number;
+      if (progress >= 1) {
+        newStep = stepCount;
+      } else if (progress <= 0) {
+        newStep = 1;
+      } else {
+        newStep = Math.min(stepCount, Math.floor(progress * stepCount) + 1);
+      }
+
+      if (newStep !== prevStep) {
+        const dir = newStep > prevStep ? 1 : -1;
+        prevStep = newStep;
+        activeTabRef.current = newStep;
+        setActiveTab(newStep);
+        runTabTransition(newStep, dir);
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Listen via both Lenis and native scroll for maximum compatibility
     const lenis = (window as any).lenis;
     if (lenis) {
-      lenis.on("scroll", handleScroll);
+      lenis.on("scroll", onScroll);
     }
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       if (lenis) {
-        lenis.off("scroll", handleScroll);
+        lenis.off("scroll", onScroll);
       }
+      window.removeEventListener("scroll", onScroll);
     };
-  }, [isMobile]);
+  }, [isMobile, runTabTransition]);
 
-  // Tab click handler - jumps directly to that step and smooth scrolls track
-  const handleTabChange = useCallback(
-    (id: number) => {
-      if (id === activeTabRef.current) return;
-      directionRef.current = id > activeTabRef.current ? 1 : -1;
-      setActiveTab(id);
-
-      if (!isMobile && sectionRef.current) {
-        isClickScrollRef.current = true;
-        if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
-
-        const rect = sectionRef.current.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const sectionTop = rect.top + scrollTop - 64;
-        const scrollableDistance = sectionRef.current.offsetHeight - window.innerHeight;
-
-        if (scrollableDistance > 0) {
-          const progressFraction = (id - 0.5) / tabsData.length;
-          const targetY = sectionTop + progressFraction * scrollableDistance;
-
-          const lenis = (window as any).lenis;
-          if (lenis) {
-            lenis.scrollTo(targetY, { duration: 0.7 });
-          } else {
-            window.scrollTo({ top: targetY, behavior: "smooth" });
-          }
-        }
-
-        clickTimeoutRef.current = setTimeout(() => {
-          isClickScrollRef.current = false;
-        }, 800);
-      }
-    },
-    [isMobile]
-  );
-
-  // Mobile swipe
+  // ─── Mobile Touch Swipe ──────────────────────────────────────────────────────
   const touchStartXRef = useRef(0);
-  const handleTouchStart = (e: React.TouchEvent) => { touchStartXRef.current = e.touches[0].clientX; };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+  };
   const handleTouchEnd = (e: React.TouchEvent) => {
     const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
     if (Math.abs(deltaX) > 50) {
-      if (deltaX < 0 && activeTabRef.current < tabsData.length) handleTabChange(activeTabRef.current + 1);
-      else if (deltaX > 0 && activeTabRef.current > 1) handleTabChange(activeTabRef.current - 1);
+      if (deltaX < 0 && activeTabRef.current < tabsData.length) {
+        handleTabChange(activeTabRef.current + 1);
+      } else if (deltaX > 0 && activeTabRef.current > 1) {
+        handleTabChange(activeTabRef.current - 1);
+      }
     }
   };
 
   return (
     <section
       ref={sectionRef}
-      className="relative bg-black text-white px-4 md:px-6 lg:h-[350vh] h-auto overflow-visible"
+      className="relative bg-black text-white px-4 md:px-6 lg:h-[450vh] h-auto overflow-visible"
     >
       {/* Ambient section glow */}
       <div
-        className="pointer-events-none absolute inset-0 transition-colors duration-1000 ease-out"
-        style={{ background: `radial-gradient(ellipse 65% 45% at 65% 50%, ${activeContent.color}15 0%, transparent 70%)` }}
+        className="pointer-events-none absolute inset-0 transition-colors duration-700 ease-out"
+        style={{
+          background: `radial-gradient(ellipse 65% 45% at 65% 50%, ${activeContent.color}15 0%, transparent 70%)`,
+        }}
       />
 
-      {/* Sticky Locked Container: Perfectly positioned below navbar (top-16) and centered */}
-      <div
-        className="lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:flex lg:flex-col lg:items-center lg:justify-center py-12 lg:py-0 max-w-7xl mx-auto w-full relative z-10"
-      >
+      {/* Sticky container: stays pinned below navbar while tall section scrolls */}
+      <div className="lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:flex lg:flex-col lg:items-center lg:justify-center py-12 lg:py-0 max-w-7xl mx-auto w-full relative z-10">
         {/* Section Header */}
         <div className="text-center mb-5 lg:mb-7">
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono tracking-[0.2em] uppercase mb-3 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
             <span
-              className="w-2 h-2 rounded-full animate-pulse transition-colors duration-700"
-              style={{ backgroundColor: activeContent.color, boxShadow: `0 0 10px ${activeContent.color}` }}
+              className="w-2 h-2 rounded-full animate-pulse transition-colors duration-500"
+              style={{
+                backgroundColor: activeContent.color,
+                boxShadow: `0 0 10px ${activeContent.color}`,
+              }}
             />
-            <span className="transition-colors duration-700 font-semibold" style={{ color: activeContent.color }}>
+            <span
+              className="transition-colors duration-500 font-semibold"
+              style={{ color: activeContent.color }}
+            >
               Step 0{activeTab}
             </span>
             <span className="text-white/30">of 0{tabsData.length}</span>
@@ -226,24 +349,39 @@ const OurSpeciality = () => {
               {tabsData.map((tab) => (
                 <span
                   key={tab.id}
-                  className={`h-1.5 rounded-full transition-all duration-700 ${
-                    tab.id === activeTab ? "w-4" : tab.id < activeTab ? "w-1.5 bg-white/40" : "w-1.5 bg-white/15"
-                  }`}
-                  style={tab.id === activeTab ? { backgroundColor: tab.color, boxShadow: `0 0 8px ${tab.color}` } : {}}
+                  className={`h-1.5 rounded-full transition-all duration-500 ${tab.id === activeTab
+                      ? "w-4"
+                      : tab.id < activeTab
+                        ? "w-1.5 bg-white/40"
+                        : "w-1.5 bg-white/15"
+                    }`}
+                  style={
+                    tab.id === activeTab
+                      ? {
+                        backgroundColor: tab.color,
+                        boxShadow: `0 0 8px ${tab.color}`,
+                      }
+                      : {}
+                  }
                 />
               ))}
             </div>
           </div>
           <h2
             ref={titleRef}
-            className={`font-barlow text-2xl md:text-4xl font-bold tracking-tight ${getBlurAnimationClasses(isTitleVisible)}`}
+            className={`font-barlow text-2xl md:text-4xl font-bold tracking-tight ${getBlurAnimationClasses(
+              isTitleVisible
+            )}`}
           >
             Our Specialty
           </h2>
         </div>
 
         {/* Main Content Row */}
-        <div ref={containerRef} className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center w-full">
+        <div
+          ref={containerRef}
+          className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center w-full"
+        >
           {/* Left: Vertical Tabs */}
           <div className="w-full lg:w-auto lg:shrink-0">
             <VerticalTabs
@@ -261,19 +399,19 @@ const OurSpeciality = () => {
 
               {/* Ambient glows */}
               <div
-                className="absolute -top-24 -left-24 w-80 h-80 rounded-full blur-[110px] pointer-events-none transition-colors duration-1000 ease-out"
+                className="absolute -top-24 -left-24 w-80 h-80 rounded-full blur-[110px] pointer-events-none transition-colors duration-700 ease-out"
                 style={{ backgroundColor: `${activeContent.color}35` }}
               />
               <div
-                className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full blur-[90px] pointer-events-none transition-colors duration-1000 ease-out"
+                className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full blur-[90px] pointer-events-none transition-colors duration-700 ease-out"
                 style={{ backgroundColor: `${activeContent.color}25` }}
               />
 
               {/* GSAP-animated content wrapper */}
               <div
                 ref={contentRef}
-                className="relative z-10 p-6 md:p-8 lg:p-9 min-h-[420px] md:min-h-[400px] flex flex-col justify-center"
-                style={{ transformOrigin: "center center", willChange: "transform, opacity" }}
+                className="relative z-10 p-6 md:p-8 lg:p-9 min-h-[420px] md:min-h-[400px] flex flex-col justify-center transform-gpu"
+                style={{ willChange: "transform, opacity" }}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
@@ -318,7 +456,10 @@ const OurSpeciality = () => {
                           </div>
                           <div
                             className="w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shrink-0"
-                            style={{ backgroundColor: `${activeContent.color}20`, color: activeContent.color }}
+                            style={{
+                              backgroundColor: `${activeContent.color}20`,
+                              color: activeContent.color,
+                            }}
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" />
                           </div>
@@ -335,7 +476,7 @@ const OurSpeciality = () => {
                         className="relative z-10 w-full h-auto object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.6)]"
                       />
                       <div
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full blur-[70px] opacity-35 pointer-events-none transition-colors duration-700"
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full blur-[70px] opacity-35 pointer-events-none transition-colors duration-500"
                         style={{ backgroundColor: activeContent.color }}
                       />
                     </div>
@@ -350,10 +491,18 @@ const OurSpeciality = () => {
                     <button
                       key={tab.id}
                       onClick={() => handleTabChange(tab.id)}
-                      className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${
-                        activeTab === tab.id ? "w-7" : "bg-white/20 hover:bg-white/40 w-2.5"
-                      }`}
-                      style={activeTab === tab.id ? { backgroundColor: tab.color, boxShadow: `0 0 10px ${tab.color}` } : {}}
+                      className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${activeTab === tab.id
+                          ? "w-7"
+                          : "bg-white/20 hover:bg-white/40 w-2.5"
+                        }`}
+                      style={
+                        activeTab === tab.id
+                          ? {
+                            backgroundColor: tab.color,
+                            boxShadow: `0 0 10px ${tab.color}`,
+                          }
+                          : {}
+                      }
                       aria-label={`Go to ${tab.title}`}
                     />
                   ))}
