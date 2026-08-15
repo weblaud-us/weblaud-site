@@ -104,12 +104,14 @@ const ContactFormAndInfo = () => {
           {/* Left Form Card (7 cols) */}
           <div
             ref={formRef}
-            className={`lg:col-span-7 bg-[#0c0c0c] border border-white/[0.08] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 hover:border-primary/30 transition-all duration-500 shadow-2xl relative overflow-hidden ${getBlurAnimationClasses(
+            className={`lg:col-span-7 bg-[#0c0c0c] border border-white/[0.08] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 hover:border-primary/30 transition-all duration-500 shadow-2xl relative ${getBlurAnimationClasses(
               isFormVisible
             )}`}
           >
             {/* Ambient accent top light */}
-            <div className="absolute -top-16 -right-16 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute inset-0 overflow-hidden rounded-2xl sm:rounded-3xl pointer-events-none">
+              <div className="absolute -top-16 -right-16 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+            </div>
 
             <div className="flex items-center gap-3.5 mb-6 sm:mb-8">
               <div className="w-11 h-11 bg-primary/15 border border-primary/30 rounded-xl flex items-center justify-center text-primary shrink-0 shadow-lg">
