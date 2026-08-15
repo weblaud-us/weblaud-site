@@ -92,7 +92,7 @@ const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
   ];
 
   return (
-    <footer className="bg-black text-white pt-14 pb-10 relative overflow-hidden">
+    <footer className="bg-black text-white pt-0 pb-10 relative overflow-hidden">
       {/* Ambient Gradient Lights */}
       <motion.div className="absolute w-72 h-72 top-10 -left-20 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
       <motion.div className="absolute w-80 h-80 bottom-0 right-10 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />

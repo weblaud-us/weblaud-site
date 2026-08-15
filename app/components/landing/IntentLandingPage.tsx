@@ -1,7 +1,7 @@
 import { useState, useRef, useLayoutEffect, type ReactNode } from "react";
 import { Link } from "react-router";
 import { motion, useReducedMotion, type Transition } from "framer-motion";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiCheckCircle } from "react-icons/fi";
 import IconTile from "~/components/ui/icon-tile";
 import SectionBadge from "~/components/ui/section-badge";
 import Discuss from "~/components/aboutUs/discuss";
@@ -10,8 +10,6 @@ import { getBlurAnimationClasses } from "~/lib/animations";
 import type { LandingPageConfig } from "~/lib/types";
 import {
   Scale,
-  CheckCircle2,
-  Sparkles,
   HelpCircle,
   Layers,
   Zap,
@@ -170,13 +168,13 @@ export default function IntentLandingPage({
   const [faqRef, isFaqVisible] = useBlurAnimation<HTMLDivElement>();
 
   const getFeatureIcon = (idx: number) => {
-    const icons = [Zap, ShieldCheck, Clock, TrendingUp, Sparkles];
+    const icons = [Zap, ShieldCheck, Clock, TrendingUp, Layers];
     const IconComponent = icons[idx % icons.length];
     return <IconComponent className="w-4 h-4 text-primary" />;
   };
 
   return (
-    <div className="bg-black text-white pt-28 sm:pt-32 md:pt-36 pb-20 min-h-screen relative overflow-hidden">
+    <div className="bg-black text-white pt-28 sm:pt-32 md:pt-36 pb-4 min-h-screen relative overflow-hidden">
       {/* Ambient background glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
@@ -311,7 +309,7 @@ export default function IntentLandingPage({
                       </td>
                       <td className="py-4.5 px-6 font-medium text-white bg-primary/[0.03] border-x border-primary/15">
                         <div className="flex items-start gap-2.5">
-                          <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                          <FiCheckCircle className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                           <span className="leading-snug">{row.weblaud}</span>
                         </div>
                       </td>
@@ -347,7 +345,7 @@ export default function IntentLandingPage({
                       <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/20">OUR MODEL</span>
                     </div>
                     <div className="flex items-start gap-2 pt-1 text-xs sm:text-sm text-white font-medium font-barlow">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                      <FiCheckCircle className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
                       <span>{row.weblaud}</span>
                     </div>
                   </div>
@@ -376,7 +374,7 @@ export default function IntentLandingPage({
             {config.cardsTitle && (
               <div>
                 <SectionBadge
-                  icon={<Sparkles className="w-3.5 h-3.5" />}
+                  icon={<Layers className="w-3.5 h-3.5" />}
                   text="Key Advantages"
                   badgeLabel="Why Founders Choose Us"
                   color="#0a84ff"

@@ -1,11 +1,22 @@
+import { useEffect } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/insights.$slug";
 import Discuss from "~/components/aboutUs/discuss";
-import { useEffect } from "react";
-import { FiArrowLeft, FiCheckCircle, FiClock } from "react-icons/fi";
+import SectionBadge from "~/components/ui/section-badge";
+import { useBlurAnimation } from "~/hooks/useBlurAnimation";
+import { getBlurAnimationClasses } from "~/lib/animations";
 import { RouteErrorBoundary } from "~/components/ui/error-page";
 import { apiFetch, resolveMediaUrl, ApiError } from "~/lib/api.server";
 import type { Insight } from "~/lib/types";
+import { FiCheckCircle } from "react-icons/fi";
+import {
+  ChevronLeft,
+  Clock,
+  Calendar,
+  BookOpen,
+  Layers,
+  Share2,
+} from "lucide-react";
 
 export async function loader({ params }: Route.LoaderArgs) {
   try {
@@ -186,86 +197,185 @@ export function ErrorBoundary() {
 export default function ArticleDetail({ loaderData }: Route.ComponentProps) {
   const { article } = loaderData;
 
+  const [headerRef, isHeaderVisible] = useBlurAnimation<HTMLDivElement>();
+  const [takeawaysRef, areTakeawaysVisible] = useBlurAnimation<HTMLDivElement>();
+  const [contentRef, isContentVisible] = useBlurAnimation<HTMLDivElement>();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [article.slug]);
 
   return (
-    <div className="min-h-screen bg-black text-white pt-24 md:pt-32 pb-16 md:pb-24">
-      {/* Background Gradients */}
+    <div className="min-h-screen bg-black text-white pt-28 sm:pt-32 md:pt-36 relative overflow-hidden">
+      {/* Ambient Background Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-primary/10 rounded-full blur-[130px]" />
+        <div className="absolute bottom-0 left-0 w-[550px] h-[550px] bg-blue-600/10 rounded-full blur-[130px]" />
       </div>
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Back Link */}
-        <Link
-          to="/insights"
-          className="inline-flex items-center text-primary hover:text-white transition-colors duration-300 mb-8 font-barlow font-medium group"
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12 sm:space-y-14">
+        {/* Navigation & Header */}
+        <div
+          ref={headerRef}
+          className={`space-y-6 ${getBlurAnimationClasses(isHeaderVisible)}`}
         >
-          <FiArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back to Insights
-        </Link>
+          {/* Top Bar with Badge on left and Back Link on right */}
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <SectionBadge
+              icon={<BookOpen className="w-3.5 h-3.5" />}
+              text="Engineering Teardown"
+              badgeLabel={article.category}
+              color="#0a84ff"
+            />
 
-        {/* Article Header */}
-        <header className="mb-12">
-          <div className="flex items-center space-x-4 text-xs font-barlow text-gray-400 mb-4">
-            <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-semibold">
-              {article.category}
-            </span>
-            <span className="flex items-center">
-              <FiClock className="mr-1" />
-              {article.readTime}
-            </span>
-            <span>•</span>
-            <span>{formatPublishedDate(article.publishedAt)}</span>
+            <Link
+              to="/insights"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 text-gray-300 hover:text-white text-xs font-barlow font-medium transition-all duration-300 group"
+            >
+              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-white" />
+              <span>Back to Insights Hub</span>
+            </Link>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-bold font-barlow leading-tight mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-barlow text-white tracking-tight leading-[1.15]">
             {article.title}
           </h1>
 
-          <p className="text-lg text-gray-300 font-barlow leading-relaxed">
+          <p className="text-base sm:text-lg text-gray-300 font-barlow leading-relaxed">
             {article.summary}
           </p>
-        </header>
+
+          {/* Author & Publication Meta Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-5 border-t border-white/[0.08]">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-mono font-bold text-xs">
+                {article.author.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </div>
+              <div className="text-xs font-barlow">
+                <p className="font-semibold text-white text-sm">
+                  {article.author.name}
+                </p>
+                <p className="text-gray-400 text-xs">{article.author.role}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 text-xs font-mono text-gray-400">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-primary" />
+                <span>{formatPublishedDate(article.publishedAt)}</span>
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-primary" />
+                <span>{article.readTime}</span>
+              </span>
+            </div>
+          </div>
+        </div>
 
         {/* Executive Direct Answer / RAG Summary Box */}
-        <section className="bg-gradient-to-r from-primary/15 via-blue-900/10 to-transparent border-l-4 border-primary p-6 sm:p-8 rounded-r-3xl mb-12 shadow-xl">
-          <h2 className="text-xs uppercase font-barlow font-bold tracking-widest text-primary mb-2">
-            Direct Architecture Summary
-          </h2>
-          <p className="text-white font-barlow text-base leading-relaxed font-medium">
-            "{article.directAnswer}"
-          </p>
-        </section>
+        {article.directAnswer && (
+          <section className="bg-gradient-to-r from-primary/15 via-blue-900/10 to-transparent border-l-4 border-primary p-6 sm:p-8 rounded-r-3xl shadow-xl">
+            <h2 className="text-xs uppercase font-barlow font-bold tracking-widest text-primary mb-2">
+              Direct Architecture Summary
+            </h2>
+            <p className="text-white font-barlow text-base sm:text-lg leading-relaxed font-medium">
+              "{article.directAnswer}"
+            </p>
+          </section>
+        )}
 
-        {/* Key Takeaways */}
-        <section className="bg-card-bg/60 border border-light-black p-6 sm:p-8 rounded-3xl mb-12">
-          <h2 className="text-lg font-bold font-barlow mb-4 text-white">Key Takeaways</h2>
-          <ul className="space-y-3">
-            {article.keyTakeaways.map((takeaway, idx) => (
-              <li key={idx} className="flex items-start text-gray-300 font-barlow text-sm sm:text-base">
-                <FiCheckCircle className="text-primary mt-1 mr-3 shrink-0" />
-                <span>{takeaway}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {/* Key Takeaways Card */}
+        {article.keyTakeaways && article.keyTakeaways.length > 0 && (
+          <section
+            ref={takeawaysRef}
+            className={`rounded-2xl p-4 sm:p-6 md:p-8 bg-[#0e0e0e] border border-[#1f1f1f] shadow-2xl space-y-4 relative overflow-hidden ${getBlurAnimationClasses(
+              areTakeawaysVisible
+            )}`}
+          >
+            {/* Subtle top-right ambient light */}
+            <div className="absolute -top-16 -right-16 w-36 h-36 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
 
-        {/* Content Blocks */}
-        <div className="space-y-10 text-gray-300 font-barlow leading-relaxed text-base sm:text-lg">
+            <div className="flex items-center justify-between gap-2.5 pb-3.5 sm:pb-4 border-b border-white/[0.06] relative z-10">
+              <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                <Layers className="w-4 h-4 text-primary shrink-0" />
+                <h2 className="text-sm sm:text-lg md:text-xl font-bold font-barlow text-white tracking-tight leading-snug">
+                  Key Architectural Takeaways
+                </h2>
+              </div>
+              <span className="font-mono text-[10px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary shrink-0 whitespace-nowrap">
+                {article.keyTakeaways.length} Highlights
+              </span>
+            </div>
+
+            <ul className="grid gap-2.5 sm:gap-3 pt-1 relative z-10">
+              {article.keyTakeaways.map((takeaway, idx) => (
+                <li
+                  key={idx}
+                  className="flex items-start gap-3 sm:gap-3.5 p-3.5 sm:p-4 rounded-xl bg-black/60 border border-white/[0.12] hover:border-primary/50 hover:bg-black/80 transition-all duration-300 group"
+                >
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/20 transition-colors">
+                    <FiCheckCircle className="text-primary text-xs sm:text-sm" />
+                  </div>
+                  <span className="text-gray-200 font-barlow text-xs sm:text-sm md:text-base leading-relaxed">
+                    {takeaway}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* Content Sections */}
+        <div
+          ref={contentRef}
+          className={`space-y-12 ${getBlurAnimationClasses(isContentVisible)}`}
+        >
           {article.content.map((section, idx) => (
-            <section key={idx} className="space-y-3">
-              <h2 className="text-2xl font-bold text-white font-barlow border-b border-white/10 pb-3">
-                {section.heading}
-              </h2>
-              <p className="whitespace-pre-line text-gray-300 font-barlow leading-relaxed">
+            <section key={idx} className="space-y-4">
+              <div className="flex items-center gap-3.5 pb-4 border-b border-white/[0.08]">
+                <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/[0.03] border border-white/[0.08] text-primary font-mono text-xs font-bold shrink-0">
+                  0{idx + 1}
+                </span>
+                <h2 className="text-xl sm:text-2xl font-bold text-white font-barlow tracking-tight">
+                  {section.heading}
+                </h2>
+              </div>
+              <p className="whitespace-pre-line text-gray-300 font-barlow text-base sm:text-lg leading-relaxed pt-1">
                 {renderTextWithLinks(section.text)}
               </p>
             </section>
           ))}
+        </div>
+
+        {/* Author Bio Card & Return Link */}
+        <div className="rounded-2xl p-4 sm:p-5 bg-[#0e0e0e] border border-[#1f1f1f] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3.5 sm:gap-4 mt-10 sm:mt-12">
+          <div className="flex items-center gap-3 text-left">
+            <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary font-mono font-bold text-xs shrink-0">
+              {article.author.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </div>
+            <div className="min-w-0">
+              <h3 className="font-bold text-white font-barlow text-sm truncate">
+                Published by {article.author.name}
+              </h3>
+              <p className="text-[11px] text-gray-400 font-barlow truncate">
+                {article.author.role} at Weblaud LLC
+              </p>
+            </div>
+          </div>
+
+          <Link
+            to="/insights"
+            className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 rounded-xl bg-primary text-white font-barlow font-semibold text-xs hover:bg-blue-600 transition-all duration-300 shadow-md shadow-blue-500/20 shrink-0 hover:-translate-y-0.5"
+          >
+            <span>Explore More Blueprints</span>
+          </Link>
         </div>
       </article>
 
