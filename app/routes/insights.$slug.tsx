@@ -230,10 +230,11 @@ export default function ArticleDetail({ loaderData }: Route.ComponentProps) {
 
             <Link
               to="/insights"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 text-gray-300 hover:text-white text-xs font-barlow font-medium transition-all duration-300 group"
+              className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-white/20 text-gray-300 hover:text-white text-xs font-barlow font-medium transition-all duration-300 group shrink-0"
             >
-              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-white" />
-              <span>Back to Insights Hub</span>
+              <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform text-white shrink-0" />
+              <span className="sm:hidden">Back</span>
+              <span className="hidden sm:inline">Back to Insights Hub</span>
             </Link>
           </div>
 
@@ -335,16 +336,16 @@ export default function ArticleDetail({ loaderData }: Route.ComponentProps) {
           className={`space-y-12 ${getBlurAnimationClasses(isContentVisible)}`}
         >
           {article.content.map((section, idx) => (
-            <section key={idx} className="space-y-4">
-              <div className="flex items-center gap-3.5 pb-4 border-b border-white/[0.08]">
-                <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/[0.03] border border-white/[0.08] text-primary font-mono text-xs font-bold shrink-0">
+            <section key={idx} className="space-y-3.5 sm:space-y-4">
+              <div className="flex items-start gap-3 sm:gap-3.5 pb-3 sm:pb-4 border-b border-white/[0.08]">
+                <span className="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-white/[0.03] border border-white/[0.08] text-primary font-mono text-[11px] sm:text-xs font-bold shrink-0 mt-0.5">
                   0{idx + 1}
                 </span>
-                <h2 className="text-xl sm:text-2xl font-bold text-white font-barlow tracking-tight">
+                <h2 className="text-base sm:text-xl md:text-2xl font-bold text-white font-barlow tracking-tight leading-snug">
                   {section.heading}
                 </h2>
               </div>
-              <p className="whitespace-pre-line text-gray-300 font-barlow text-base sm:text-lg leading-relaxed pt-1">
+              <p className="whitespace-pre-line text-gray-300 font-barlow text-sm sm:text-base md:text-lg leading-relaxed pt-1">
                 {renderTextWithLinks(section.text)}
               </p>
             </section>
