@@ -160,7 +160,10 @@ const ContactFormAndInfo = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 md:gap-4">
-                <div className="group/input">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                    First Name <span className="text-primary">*</span>
+                  </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none z-10 text-gray-400">
                       <FiUser className="w-4 h-4" />
