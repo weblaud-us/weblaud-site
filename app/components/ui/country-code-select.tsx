@@ -60,6 +60,7 @@ export function CountryCodeSelect({
 
     updatePosition();
 
+    let ticking = false;
     const handleWindowScroll = (event: Event) => {
       // Ignore scroll events originating from inside the dropdown itself
       if (
@@ -68,13 +69,19 @@ export function CountryCodeSelect({
       ) {
         return;
       }
-      updatePosition();
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updatePosition();
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     const handleResize = () => updatePosition();
 
-    window.addEventListener("scroll", handleWindowScroll, true);
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleWindowScroll, { passive: true, capture: true });
+    window.addEventListener("resize", handleResize, { passive: true });
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;

@@ -35,11 +35,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <div
-      className={`group relative bg-card-bg border border-light-black rounded-3xl overflow-hidden hover:border-primary/50 hover:-transition-all duration-500 h-full ${className}`}
+      className={`group relative bg-card-bg border border-light-black rounded-3xl overflow-hidden hover:border-primary/50 transition-colors duration-500 h-full ${className}`}
       style={style}
     >
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 group-hover:scale-150 group-hover:rotate-90 transition-all duration-1000"></div>
-      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-blue-500/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 group-hover:scale-150 group-hover:-rotate-90 transition-all duration-1000"></div>
+      <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 group-hover:scale-150 group-hover:rotate-90 transition-all duration-1000 pointer-events-none"></div>
+      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-blue-500/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 group-hover:scale-150 group-hover:-rotate-90 transition-all duration-1000 pointer-events-none"></div>
 
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none">
         <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1500"></div>
@@ -62,7 +62,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
               width={400}
               height={192}
               loading="lazy"
-              className="w-full h-48 object-cover group-hover:scale-105 group-hover:brightness-105 transition-all duration-700 rounded-2xl"
+              decoding="async"
+              className="w-full h-48 object-cover group-hover:scale-105 group-hover:brightness-105 transition-transform duration-700 rounded-2xl transform-gpu"
             />
             <div className="absolute inset-0 bg-linear-to-t from-card-bg/40 to-transparent group-hover:from-card-bg/10 transition-colors duration-500 rounded-2xl"></div>
 
@@ -86,11 +87,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                     {word.split("").map((char, charIndex) => (
                       <span
                         key={charIndex}
-                        className="inline-block transition-all duration-400 ease-out group-hover:text-primary group-hover:-translate-y-1 group-hover:scale-110"
+                        className="inline-block transition-[color,transform] duration-300 ease-out transform-gpu group-hover:text-primary group-hover:-translate-y-1 group-hover:scale-110"
                         style={{
-                          transitionDelay: `${
-                            (wordOffsets[wordIndex] + charIndex) * 25
-                          }ms`,
+                          transitionDelay: `${(wordOffsets[wordIndex] + charIndex) * 25
+                            }ms`,
                         }}
                       >
                         {char}
@@ -103,7 +103,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             </Link>
           </h3>
 
-          <p className="text-white/70 group-hover:text-white/90 font-barlow text-sm leading-relaxed mb-4 transition-all duration-300 group-hover:tracking-wide">
+          <p className="text-white/70 group-hover:text-white/90 font-barlow text-sm leading-relaxed mb-4 transition-colors duration-300 group-hover:tracking-wide">
             {description}
           </p>
 
@@ -111,18 +111,18 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             {features.map((feature, index) => (
               <li
                 key={index}
-                className="flex items-start gap-2.5 text-white/70 group-hover:text-white/95 font-barlow text-sm transition-all duration-500 group-hover:translate-x-3 relative"
+                className="flex items-start gap-2.5 text-white/70 group-hover:text-white/95 font-barlow text-sm transition-transform duration-300 group-hover:translate-x-3 relative"
                 style={{
-                  transitionDelay: `${index * 100}ms`,
+                  transitionDelay: `${index * 80}ms`,
                 }}
               >
                 <BsCheckCircle
-                  className="relative w-4 h-4 text-primary shrink-0 mt-0.5 group-hover:scale-130 group-hover:rotate-360 transition-all duration-500 "
+                  className="relative w-4 h-4 text-primary shrink-0 mt-0.5 group-hover:scale-130 group-hover:rotate-360 transition-transform duration-500 "
                   style={{
-                    transitionDelay: `${index * 100}ms`,
+                    transitionDelay: `${index * 80}ms`,
                   }}
                 />
-                <span className="relative group-hover:font-semibold transition-all duration-500 group-hover:text-white">
+                <span className="relative group-hover:font-semibold transition-colors duration-300 group-hover:text-white">
                   {feature}
                 </span>
               </li>

@@ -16,10 +16,7 @@
   --breakpoint-2xl: 1536px;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
+/* Smooth scroll is managed by Lenis RAF engine */
 html,
 body {
   @apply bg-black;
@@ -297,6 +294,25 @@ html.lenis body {
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+@keyframes scroll-dot {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+.animate-scroll-dot {
+  animation: scroll-dot 1.6s ease-in-out infinite;
 }
 
 @keyframes spin-slow {
