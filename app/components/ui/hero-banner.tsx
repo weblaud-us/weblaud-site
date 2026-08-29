@@ -142,6 +142,17 @@ const HeroBanner = ({
           )}
         </div>
       </div>
+
+      {/* Scroll mouse indicator */}
+      <div
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity duration-300 cursor-pointer z-20"
+        onClick={() => window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })}
+      >
+        <div className="w-[22px] h-[34px] rounded-full border-2 border-white/50 flex justify-center pt-[5px]">
+          <div className="w-[3px] h-[6px] bg-white rounded-full animate-scroll-dot" />
+        </div>
+        <span className="text-[9px] uppercase tracking-[0.15em] text-white/50 font-barlow">Scroll</span>
+      </div>
     </div>
   );
 };
