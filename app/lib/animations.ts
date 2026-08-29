@@ -25,24 +25,24 @@ export function getBlurAnimationClasses(
 ): string {
     const { variant = "default", className = "", delay } = options;
 
-    const baseTransition = "transition-[opacity,filter,transform] duration-700 ease-out transform-gpu";
+    const baseTransition = "transition-[opacity,transform,filter] duration-700 ease-out will-change-[transform,opacity,filter] transform-gpu";
 
     const variantClasses: Record<BlurAnimationVariant, [string, string]> = {
         default: [
-            "opacity-100 blur-0 translate-y-0",
-            "opacity-0 blur-[10px] translate-y-5",
+            "opacity-100 translate-y-0 blur-none",
+            "opacity-0 translate-y-6 blur-md",
         ],
         heavy: [
-            "opacity-100 blur-0 translate-y-0 scale-100",
-            "opacity-0 blur-[15px] translate-y-16 scale-95",
+            "opacity-100 translate-y-0 scale-100 blur-none",
+            "opacity-0 translate-y-10 scale-95 blur-lg",
         ],
         light: [
-            "opacity-100 blur-0 translate-y-0",
-            "opacity-0 blur-sm translate-y-5",
+            "opacity-100 translate-y-0 blur-none",
+            "opacity-0 translate-y-4 blur-sm",
         ],
         scale: [
-            "opacity-100 blur-0 scale-100",
-            "opacity-0 blur-[10px] scale-95",
+            "opacity-100 scale-100 blur-none",
+            "opacity-0 scale-95 blur-md",
         ],
     };
 

@@ -12,7 +12,7 @@ export function useBlurAnimation<T extends HTMLElement = HTMLDivElement>(
   resetOnExit: boolean = false,
   resetKey?: string | number
 ) {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<T>(null);
 
   // Reset animation when resetKey changes (e.g., on route change)
@@ -23,19 +23,6 @@ export function useBlurAnimation<T extends HTMLElement = HTMLDivElement>(
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
-
-    // Immediately check if element is already in the viewport on mount.
-    const rect = element.getBoundingClientRect();
-    const alreadyInView =
-      rect.top < window.innerHeight &&
-      rect.bottom > 0 &&
-      rect.left < window.innerWidth &&
-      rect.right > 0;
-
-    if (alreadyInView) {
-      setIsVisible(true);
-      if (!resetOnExit) return;
-    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -48,15 +35,30 @@ export function useBlurAnimation<T extends HTMLElement = HTMLDivElement>(
           setIsVisible(false);
         }
       },
-      { threshold, rootMargin: "0px 0px -50px 0px" }
+      { threshold, rootMargin: "0px 0px -40px 0px" }
     );
 
     observer.observe(element);
 
+    const frameId = requestAnimationFrame(() => {
+      if (!element) return;
+      const rect = element.getBoundingClientRect();
+      const alreadyInView =
+        rect.top < window.innerHeight &&
+        rect.bottom > 0 &&
+        rect.left < window.innerWidth &&
+        rect.right > 0;
+
+      if (alreadyInView) {
+        setIsVisible(true);
+      }
+    });
+
     return () => {
+      cancelAnimationFrame(frameId);
       observer.disconnect();
     };
-  }, [threshold, resetOnExit]);
+  }, [threshold, resetOnExit, resetKey]);
 
   return [ref, isVisible] as const;
 }
@@ -78,13 +80,13 @@ export function useBlurAnimationList<TId extends string | number>(
 ) {
   const itemIdsKey = useMemo(() => itemIds.join(","), [itemIds]);
 
-  const [visibleItems, setVisibleItems] = useState<Set<TId>>(() => new Set(itemIds));
+  const [visibleItems, setVisibleItems] = useState<Set<TId>>(() => new Set());
   const itemRefs = useRef<Map<TId, HTMLElement>>(new Map());
 
-  // Reset animation when resetKey changes (e.g., on route change)
+  // Reset animation when resetKey or itemIds change
   useEffect(() => {
     setVisibleItems(new Set());
-  }, [resetKey]);
+  }, [resetKey, itemIdsKey]);
 
   useEffect(() => {
     const elToId = new Map<HTMLElement, TId>();
@@ -110,7 +112,7 @@ export function useBlurAnimationList<TId extends string | number>(
           }
         });
       },
-      { threshold, rootMargin: "0px 0px -50px 0px" }
+      { threshold, rootMargin: "0px 0px -40px 0px" }
     );
 
     itemIds.forEach((itemId) => {
@@ -118,25 +120,38 @@ export function useBlurAnimationList<TId extends string | number>(
       if (!element) return;
 
       elToId.set(element, itemId);
+      observer.observe(element);
+    });
 
-      const rect = element.getBoundingClientRect();
-      const alreadyInView =
-        rect.top < window.innerHeight &&
-        rect.bottom > 0 &&
-        rect.left < window.innerWidth &&
-        rect.right > 0;
+    const frameId = requestAnimationFrame(() => {
+      const toShow: TId[] = [];
+      itemIds.forEach((itemId) => {
+        const element = itemRefs.current.get(itemId);
+        if (!element) return;
 
-      if (alreadyInView) {
-        setVisibleItems((prev) => (prev.has(itemId) ? prev : new Set([...prev, itemId])));
-        if (resetOnExit) {
-          observer.observe(element);
+        const rect = element.getBoundingClientRect();
+        const alreadyInView =
+          rect.top < window.innerHeight &&
+          rect.bottom > 0 &&
+          rect.left < window.innerWidth &&
+          rect.right > 0;
+
+        if (alreadyInView) {
+          toShow.push(itemId);
         }
-      } else {
-        observer.observe(element);
+      });
+
+      if (toShow.length > 0) {
+        setVisibleItems((prev) => {
+          const next = new Set(prev);
+          toShow.forEach((id) => next.add(id));
+          return next;
+        });
       }
     });
 
     return () => {
+      cancelAnimationFrame(frameId);
       observer.disconnect();
     };
   }, [itemIdsKey, threshold, resetOnExit]);

@@ -219,11 +219,11 @@ export default function App({ loaderData }: Route.ComponentProps) {
     if (typeof window === "undefined") return;
 
     const lenis = new Lenis({
-      duration: 0.85,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 0.5,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.1,
+      touchMultiplier: 1.2,
     });
     lenisRef.current = lenis;
     (window as any).lenis = lenis;
