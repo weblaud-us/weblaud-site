@@ -25,7 +25,7 @@ export function getBlurAnimationClasses(
 ): string {
     const { variant = "default", className = "", delay } = options;
 
-    const baseTransition = "transition-all duration-700";
+    const baseTransition = "transition-[opacity,filter,transform] duration-700 ease-out transform-gpu";
 
     const variantClasses: Record<BlurAnimationVariant, [string, string]> = {
         default: [

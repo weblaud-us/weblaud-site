@@ -12,8 +12,6 @@ export function useBlurAnimation<T extends HTMLElement = HTMLDivElement>(
   resetOnExit: boolean = false,
   resetKey?: string | number
 ) {
-  // Start as true — content is visible by default.
-  // We only hide it temporarily on scroll-triggered re-animation (resetOnExit=true).
   const [isVisible, setIsVisible] = useState(true);
   const ref = useRef<T>(null);
 
@@ -43,6 +41,9 @@ export function useBlurAnimation<T extends HTMLElement = HTMLDivElement>(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          if (!resetOnExit) {
+            observer.unobserve(element);
+          }
         } else if (resetOnExit) {
           setIsVisible(false);
         }
@@ -53,7 +54,7 @@ export function useBlurAnimation<T extends HTMLElement = HTMLDivElement>(
     observer.observe(element);
 
     return () => {
-      observer.unobserve(element);
+      observer.disconnect();
     };
   }, [threshold, resetOnExit]);
 
@@ -75,11 +76,9 @@ export function useBlurAnimationList<TId extends string | number>(
   resetOnExit: boolean = false,
   resetKey?: string | number
 ) {
-  // Stabilize itemIds to prevent infinite loops when called with inline map/filter
-  const stableItemIds = useMemo(() => itemIds, [JSON.stringify(itemIds)]);
+  const itemIdsKey = useMemo(() => itemIds.join(","), [itemIds]);
 
-  // Start with all items visible — content renders immediately by default.
-  const [visibleItems, setVisibleItems] = useState<Set<TId>>(() => new Set(stableItemIds));
+  const [visibleItems, setVisibleItems] = useState<Set<TId>>(() => new Set(itemIds));
   const itemRefs = useRef<Map<TId, HTMLElement>>(new Map());
 
   // Reset animation when resetKey changes (e.g., on route change)
@@ -88,13 +87,38 @@ export function useBlurAnimationList<TId extends string | number>(
   }, [resetKey]);
 
   useEffect(() => {
-    const observers = new Map<TId, IntersectionObserver>();
+    const elToId = new Map<HTMLElement, TId>();
 
-    stableItemIds.forEach((itemId) => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = elToId.get(entry.target as HTMLElement);
+          if (id === undefined) return;
+
+          if (entry.isIntersecting) {
+            setVisibleItems((prev) => (prev.has(id) ? prev : new Set([...prev, id])));
+            if (!resetOnExit) {
+              observer.unobserve(entry.target);
+            }
+          } else if (resetOnExit) {
+            setVisibleItems((prev) => {
+              if (!prev.has(id)) return prev;
+              const next = new Set(prev);
+              next.delete(id);
+              return next;
+            });
+          }
+        });
+      },
+      { threshold, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    itemIds.forEach((itemId) => {
       const element = itemRefs.current.get(itemId);
       if (!element) return;
 
-      // Immediately check if element is already in the viewport on mount.
+      elToId.set(element, itemId);
+
       const rect = element.getBoundingClientRect();
       const alreadyInView =
         rect.top < window.innerHeight &&
@@ -103,34 +127,19 @@ export function useBlurAnimationList<TId extends string | number>(
         rect.right > 0;
 
       if (alreadyInView) {
-        setVisibleItems((prev) => new Set([...prev, itemId]));
-        if (!resetOnExit) return; // No need to observe if we won't reset
+        setVisibleItems((prev) => (prev.has(itemId) ? prev : new Set([...prev, itemId])));
+        if (resetOnExit) {
+          observer.observe(element);
+        }
+      } else {
+        observer.observe(element);
       }
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setVisibleItems((prev) => new Set([...prev, itemId]));
-          } else if (resetOnExit) {
-            // Reset animation when element leaves viewport
-            setVisibleItems((prev) => {
-              const newSet = new Set(prev);
-              newSet.delete(itemId);
-              return newSet;
-            });
-          }
-        },
-        { threshold, rootMargin: "0px 0px -50px 0px" }
-      );
-
-      observer.observe(element);
-      observers.set(itemId, observer);
     });
 
     return () => {
-      observers.forEach((observer) => observer.disconnect());
+      observer.disconnect();
     };
-  }, [stableItemIds, threshold, resetOnExit]);
+  }, [itemIdsKey, threshold, resetOnExit]);
 
   const isItemVisible = (itemId: TId) => visibleItems.has(itemId);
 
