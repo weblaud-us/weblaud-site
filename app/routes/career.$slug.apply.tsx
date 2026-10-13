@@ -23,9 +23,10 @@ import {
   FiAlertCircle,
   FiMessageSquare,
 } from "react-icons/fi";
-import { apiFetch, ApiError } from "~/lib/api.server";
+import { apiFetch, ApiError, captchaHeader, withClientContext } from "~/lib/api.server";
 import { RouteErrorBoundary } from "~/components/ui/error-page";
 import type { Career } from "~/lib/types";
+import { Turnstile, TurnstileStatus, useTurnstile } from "~/components/ui/turnstile";
 
 const MAX_RESUME_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_EXTENSIONS = [".pdf", ".doc", ".docx"];
@@ -87,7 +88,14 @@ export async function action({ request }: Route.ActionArgs) {
   body.set("resume", resume);
 
   try {
-    await apiFetch(`/careers/${careerId}/apply`, { method: "POST", body });
+    await withClientContext(request, () =>
+      apiFetch(`/careers/${careerId}/apply`, {
+        method: "POST",
+        // Verified by the backend before the résumé is uploaded — see turnstile.tsx.
+        headers: captchaHeader(formData),
+        body,
+      }),
+    );
     return { ok: true };
   } catch (err) {
     const message =
@@ -127,6 +135,7 @@ export default function CareerApplyPage({ loaderData }: Route.ComponentProps) {
   const deadline = formatDeadline(job.deadline);
   const fetcher = useFetcher<{ ok?: boolean; error?: string }>();
   const isSubmitting = fetcher.state !== "idle";
+  const captcha = useTurnstile();
 
   const [countryCode, setCountryCode] = useState("+1");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -273,6 +282,7 @@ export default function CareerApplyPage({ loaderData }: Route.ComponentProps) {
 
                 <fetcher.Form method="post" encType="multipart/form-data" className="space-y-5 relative z-10">
                   <input type="hidden" name="careerId" value={job._id} />
+                  <input type="hidden" name="captchaToken" value={captcha.token ?? ""} />
                   <input
                     type="hidden"
                     name="phone"
@@ -531,11 +541,19 @@ export default function CareerApplyPage({ loaderData }: Route.ComponentProps) {
                     </div>
                   </div>
 
+                  <Turnstile
+                    siteKey={captcha.siteKey}
+                    onToken={captcha.onToken}
+                    onError={captcha.onError}
+                    resetKey={fetcher.data}
+                    action="job-application"
+                  />
+
                   {/* Submit Button */}
                   <div className="pt-2">
                     <button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !captcha.ready}
                       className="group/btn relative w-full h-[46px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-[#0A84FF] shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-[#0070e0] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
                     >
                       <span>{isSubmitting ? "Submitting Application..." : "Submit Application"}</span>
@@ -543,6 +561,7 @@ export default function CareerApplyPage({ loaderData }: Route.ComponentProps) {
                         <FiSend className="w-4 h-4 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-0.5 transition-transform" />
                       )}
                     </button>
+                    <TurnstileStatus {...captcha} />
                   </div>
                 </fetcher.Form>
               </div>

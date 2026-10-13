@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams, useSubmit, useNavigation } from "react-router";
+import { Link, useSearchParams, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/contact-submissions";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
@@ -39,13 +39,15 @@ import {
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") ?? "1";
+  // The backend leaves spam out of the default list; the Spam tab asks for it.
+  const showSpam = url.searchParams.get("view") === "spam";
   const result = await callAdminApi(request, (accessToken) =>
     apiFetch<Paginated<ContactSubmission>>(
-      `/contact/admin?page=${page}&limit=20`,
+      `/contact/admin?page=${page}&limit=20${showSpam ? "&status=spam" : ""}`,
       { accessToken },
     ),
   );
-  return { result, page: Number(page) };
+  return { result, page: Number(page), showSpam };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -57,6 +59,15 @@ export async function action({ request }: Route.ActionArgs) {
     if (intent === "read") {
       await callAdminApi(request, (accessToken) =>
         apiFetch(`/contact/admin/${id}/read`, {
+          method: "PATCH",
+          accessToken,
+        }),
+      );
+    } else if (intent === "not-spam") {
+      // Moves it back to the inbox and sends the notification email that was
+      // withheld when it was filed as spam.
+      await callAdminApi(request, (accessToken) =>
+        apiFetch(`/contact/admin/${id}/not-spam`, {
           method: "PATCH",
           accessToken,
         }),
@@ -77,7 +88,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function AdminContactSubmissions({
   loaderData,
 }: Route.ComponentProps) {
-  const { result, page } = loaderData;
+  const { result, page, showSpam } = loaderData;
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
   const navigation = useNavigation();
@@ -99,6 +110,34 @@ export default function AdminContactSubmissions({
         description="Leads from the contact form."
       />
 
+      <div className="mb-4 inline-flex rounded-lg border border-white/10 p-1 gap-1">
+        {[
+          { label: "Inbox", to: "?", active: !showSpam },
+          { label: "Spam", to: "?view=spam", active: showSpam },
+        ].map((tab) => (
+          <Link
+            key={tab.label}
+            to={tab.to}
+            className={
+              "px-3 py-1.5 rounded-md text-sm transition-colors " +
+              (tab.active
+                ? "bg-white/10 text-white"
+                : "text-white/50 hover:text-white")
+            }
+          >
+            {tab.label}
+          </Link>
+        ))}
+      </div>
+
+      {showSpam && result.items.length > 0 && (
+        <p className="text-sm text-white/50 mb-4">
+          Filed automatically by the spam filter and never emailed to you. Use
+          "Not spam" to move a real lead back to the inbox — it will be emailed
+          then.
+        </p>
+      )}
+
       {result.items.length > 0 && (
         <ListSearch
           value={query}
@@ -112,8 +151,12 @@ export default function AdminContactSubmissions({
         {result.items.length === 0 ? (
           <EmptyState
             icon={Inbox}
-            title="No submissions yet"
-            description="Leads from the contact form will show up here."
+            title={showSpam ? "No spam" : "No submissions yet"}
+            description={
+              showSpam
+                ? "Messages the spam filter catches will show up here."
+                : "Leads from the contact form will show up here."
+            }
           />
         ) : (
         <Table>
@@ -162,8 +205,28 @@ export default function AdminContactSubmissions({
                   <Badge variant={lead.status === "new" ? "default" : "secondary"}>
                     {lead.status}
                   </Badge>
+                  {lead.spamReason && (
+                    <div className="text-xs text-white/40 mt-1">
+                      {lead.spamReason}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell className="text-right space-x-2">
+                  {lead.status === "spam" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={busyId === lead._id}
+                      onClick={() =>
+                        submit(
+                          { intent: "not-spam", id: lead._id },
+                          { method: "post" },
+                        )
+                      }
+                    >
+                      Not spam
+                    </Button>
+                  )}
                   {lead.status === "new" && (
                     <Button
                       variant="outline"

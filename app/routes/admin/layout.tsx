@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Form, Link, Outlet, redirect, useLocation } from "react-router";
 import type { Route } from "./+types/layout";
-import { destroyAdminSession, requireAdminEmail } from "~/lib/session.server";
+import { destroyAdminSession, requireAdminUser } from "~/lib/session.server";
 import { Button } from "~/components/ui/button";
 import {
   LayoutDashboard,
@@ -21,12 +21,29 @@ import {
   ExternalLink,
   Menu,
   X,
+  Building2,
+  Users2,
+  LayoutGrid,
+  Settings,
+  ChevronDown,
+  FileSignature,
+  Receipt,
+  ClipboardCheck,
+  Repeat,
+  History,
   type LucideIcon,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const email = await requireAdminEmail(request);
-  return { email };
+  const user = await requireAdminUser(request);
+  return { user };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -79,16 +96,29 @@ const NAV_GROUPS: NavGroup[] = [
       { to: "/cpadmin/applicants", label: "Applicants", icon: ClipboardList },
     ],
   },
+  {
+    label: "Client Portal",
+    items: [
+      { to: "/cpadmin/client-projects", label: "Client Projects", icon: LayoutGrid },
+      { to: "/cpadmin/organizations", label: "Organizations", icon: Building2 },
+      { to: "/cpadmin/people", label: "People", icon: Users2 },
+      { to: "/cpadmin/contracts", label: "Contracts", icon: FileSignature },
+      { to: "/cpadmin/invoices", label: "Invoices", icon: Receipt },
+      { to: "/cpadmin/approvals", label: "Approvals", icon: ClipboardCheck },
+      { to: "/cpadmin/change-requests", label: "Change Requests", icon: Repeat },
+      { to: "/cpadmin/audit-log", label: "Audit Log", icon: History },
+    ],
+  },
 ];
 
 const ALL_ITEMS = NAV_GROUPS.flatMap((g) => g.items);
 
-function getInitials(email: string) {
-  const name = email.split("@")[0] ?? "";
-  return name.slice(0, 2).toUpperCase();
+function getInitials(firstName: string, lastName: string) {
+  return `${firstName[0] ?? ""}${lastName[0] ?? ""}`.toUpperCase();
 }
 
 export default function AdminLayout({ loaderData }: Route.ComponentProps) {
+  const { user } = loaderData;
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -189,6 +219,15 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
             <ExternalLink className="size-4 shrink-0 text-white/40" />
             View live site
           </a>
+          <a
+            href="/portal"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-white/55 hover:bg-white/5 hover:text-white transition-colors"
+          >
+            <ExternalLink className="size-4 shrink-0 text-white/40" />
+            Open client portal
+          </a>
         </div>
       </aside>
 
@@ -205,19 +244,36 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
             <p className="text-sm font-medium text-white/80 truncate">{activeItem.label}</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div className="flex items-center gap-2">
-              <div className="flex size-7 items-center justify-center rounded-full bg-white/10 text-[11px] font-medium text-white/80">
-                {getInitials(loaderData.email)}
-              </div>
-              <span className="text-xs text-white/50 hidden sm:inline">
-                {loaderData.email}
-              </span>
-            </div>
-            <Form method="post">
-              <Button type="submit" variant="ghost" size="icon-sm" title="Log out">
-                <LogOut className="size-4" />
-              </Button>
-            </Form>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 rounded-md px-1.5 py-1 hover:bg-white/5 transition-colors">
+                  <div className="flex size-7 items-center justify-center rounded-full bg-white/10 text-[11px] font-medium text-white/80">
+                    {getInitials(user.firstName, user.lastName)}
+                  </div>
+                  <span className="text-xs text-white/50 hidden sm:inline">
+                    {user.firstName} {user.lastName}
+                  </span>
+                  <ChevronDown className="size-3.5 text-white/30 hidden sm:inline" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link to="/cpadmin/settings">
+                    <Settings className="size-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <Form method="post">
+                  <DropdownMenuItem asChild>
+                    <button type="submit" className="w-full">
+                      <LogOut className="size-4" />
+                      Log out
+                    </button>
+                  </DropdownMenuItem>
+                </Form>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 

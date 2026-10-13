@@ -1,7 +1,7 @@
 import type { Route } from "./+types/contactUs";
 import BannerContactUs from "~/components/contact/bannerContactUs";
 import ContactFormAndInfo from "~/components/contact/contactFormAndInfo";
-import { apiFetch, ApiError } from "~/lib/api.server";
+import { apiFetch, ApiError, captchaHeader, withClientContext } from "~/lib/api.server";
 
 // Submissions faster than this are almost certainly bots, not humans.
 const MIN_FILL_MS = 3000;
@@ -22,17 +22,23 @@ export async function action({ request }: Route.ActionArgs) {
     return { ok: true };
   }
 
+  // The honeypot and time-trap above only stop bots that use this page. The
+  // real barrier is the Turnstile token, verified by the backend — which is
+  // what also stops bots posting to the public API directly.
   try {
-    await apiFetch("/contact/submit", {
-      method: "POST",
-      body: {
-        firstName: String(formData.get("firstName") ?? "").trim(),
-        lastName: String(formData.get("lastName") ?? "").trim(),
-        email: String(formData.get("email") ?? "").trim(),
-        phone: String(formData.get("phone") ?? "").trim() || undefined,
-        message: String(formData.get("message") ?? "").trim(),
-      },
-    });
+    await withClientContext(request, () =>
+      apiFetch("/contact/submit", {
+        method: "POST",
+        headers: captchaHeader(formData),
+        body: {
+          firstName: String(formData.get("firstName") ?? "").trim(),
+          lastName: String(formData.get("lastName") ?? "").trim(),
+          email: String(formData.get("email") ?? "").trim(),
+          phone: String(formData.get("phone") ?? "").trim() || undefined,
+          message: String(formData.get("message") ?? "").trim(),
+        },
+      }),
+    );
   } catch (err) {
     if (err instanceof ApiError) return { error: err.message };
     return { error: "We couldn't send your message. Please try again." };

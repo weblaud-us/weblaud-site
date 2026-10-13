@@ -13,6 +13,7 @@ import { useFetcher, useRouteLoaderData } from "react-router";
 import { ContactInfo } from "../ui/contact-info";
 import { BookMeeting } from "../ui/book-meeting";
 import { CountryCodeSelect } from "../ui/country-code-select";
+import { Turnstile, TurnstileStatus, useTurnstile } from "../ui/turnstile";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import type { loader as rootLoader } from "~/root";
@@ -34,6 +35,7 @@ const ContactFormAndInfo = () => {
 
   const fetcher = useFetcher<{ ok?: boolean; error?: string }>();
   const isSending = fetcher.state !== "idle";
+  const captcha = useTurnstile();
 
   // Time-trap: bots submit near-instantly; the action drops submissions that
   // come in faster than a human could plausibly fill the form.
@@ -75,38 +77,15 @@ const ContactFormAndInfo = () => {
         message: data.message,
         website: data.website ?? "",
         renderedAt: String(mountedAt.current),
+        captchaToken: captcha.token ?? "",
       },
       { method: "post" },
     );
-
-    // Honeypot tripped: the action already silently drops this, so don't also
-    // fire a courtesy email for spam. Bail before the Web3Forms call.
-    if (data.website?.trim()) return;
-
-    // Weblaud uses Web3Forms for a courtesy email alongside the saved
-    // record above. Get a free key at https://web3forms.com/. Deliberately
-    // fire-and-forget: a failure here must never block or misreport the
-    // success toast, since the backend save already captured the lead.
-    const accessKey = import.meta.env.VITE_CONTACT_FORM_ACCESS_KEY;
-    if (!accessKey) return;
-
-    fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        access_key: accessKey,
-        subject: "New Project Inquiry - Weblaud Website",
-        from_name: `${data.firstName} ${data.lastName}`,
-        email: data.email,
-        phone: `${data.countryCode} ${data.phoneNumber}`,
-        message: data.message,
-      }),
-    }).catch((error) => {
-      console.error("Web3Forms notification failed:", error);
-    });
+    // No second, browser-side email here anymore. A Web3Forms call used to
+    // fire from this function with its access key shipped in the client
+    // bundle — anyone could lift the key and mail the inbox directly,
+    // bypassing every check. The backend already emails the admin for every
+    // lead that passes its spam checks (DashboardNotifierService).
   };
 
   return (
@@ -344,10 +323,18 @@ const ContactFormAndInfo = () => {
                 )}
               </div>
 
+              <Turnstile
+                siteKey={captcha.siteKey}
+                onToken={captcha.onToken}
+                onError={captcha.onError}
+                resetKey={fetcher.data}
+                action="contact"
+              />
+
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isSending}
+                disabled={isSending || !captcha.ready}
                 className="group/btn relative w-full h-[46px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-[#0A84FF] shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-[#0070e0] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
               >
                 <span>{isSending ? "Sending Message..." : "Send Message"}</span>
@@ -355,6 +342,7 @@ const ContactFormAndInfo = () => {
                   <FiSend className="w-4 h-4 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-0.5 transition-transform" />
                 )}
               </button>
+              <TurnstileStatus {...captcha} />
             </form>
           </div>
 

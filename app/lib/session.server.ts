@@ -1,9 +1,16 @@
 import { createCookieSessionStorage, redirect } from "react-router";
-import { apiFetch, ApiError } from "./api.server";
+import { apiFetch, ApiError, withClientContext } from "./api.server";
+import type { PortalUser } from "./types";
 
-const sessionSecret = process.env.SESSION_SECRET;
+// Falls back to SESSION_SECRET if ADMIN_SESSION_SECRET isn't set, so an
+// existing deployment doesn't break on upgrade — but that fallback also
+// means the admin and portal cookies are signed with the same secret unless
+// this is set. Set ADMIN_SESSION_SECRET (distinct from portal.server.ts's
+// PORTAL_SESSION_SECRET) so a leak of one signing key can't be replayed to
+// forge a session on the other surface.
+const sessionSecret = process.env.ADMIN_SESSION_SECRET ?? process.env.SESSION_SECRET;
 if (!sessionSecret) {
-  throw new Error("SESSION_SECRET environment variable must be set");
+  throw new Error("ADMIN_SESSION_SECRET (or SESSION_SECRET) environment variable must be set");
 }
 
 interface AdminSessionData {
@@ -52,7 +59,16 @@ export async function destroyAdminSession(request: Request) {
  * same URL carrying the refreshed session cookie, since a cookie can only be
  * set on a Response, not retroactively on the one already in flight.
  */
-export async function callAdminApi<T>(
+export function callAdminApi<T>(
+  request: Request,
+  fn: (accessToken: string) => Promise<T>,
+): Promise<T> {
+  // Every backend call made here (including the token refresh) carries the
+  // visitor's IP/user agent — see withClientContext.
+  return withClientContext(request, () => runAdminApi(request, fn));
+}
+
+async function runAdminApi<T>(
   request: Request,
   fn: (accessToken: string) => Promise<T>,
 ): Promise<T> {
@@ -92,14 +108,34 @@ export async function callAdminApi<T>(
   }
 }
 
-export async function requireAdminEmail(request: Request): Promise<string> {
+/**
+ * Loads the logged-in user from the backend and requires role === "admin".
+ * Previously this only checked that a token existed (requireAdminEmail),
+ * so any staff account (a PM, a developer — role "manager") could log into
+ * /cpadmin/login and browse the panel, then hit a 403 the moment a page
+ * called an admin-only endpoint (/users, /organizations, …) — the "error
+ * when I click People / add a project" bug. Non-admins now get redirected
+ * to their actual workspace instead of hitting that wall.
+ */
+export async function requireAdminUser(request: Request): Promise<PortalUser> {
   const session = await getSession(request);
-  const accessToken = session.get("accessToken");
-  const email = session.get("email");
-
-  if (!accessToken || !email) {
+  if (!session.get("accessToken")) {
     throw redirect("/cpadmin/login");
   }
 
-  return email;
+  const user = await callAdminApi(request, (accessToken) =>
+    apiFetch<PortalUser>("/users/me", { accessToken }),
+  );
+
+  if (user.role !== "admin") {
+    // Destroy the admin cookie on the way out — otherwise a manager who
+    // lands here keeps a live __weblaud_admin_session indefinitely, valid
+    // for every /cpadmin loader that doesn't itself re-check role (and
+    // usable to re-attempt this exact redirect loop forever).
+    throw redirect("/portal", {
+      headers: { "Set-Cookie": await sessionStorage.destroySession(session) },
+    });
+  }
+
+  return user;
 }

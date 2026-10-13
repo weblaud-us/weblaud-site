@@ -54,10 +54,74 @@ export default [
     route("contact-submissions", "routes/admin/contact-submissions.tsx"),
     route("estimate-submissions", "routes/admin/estimate-submissions.tsx"),
     route("applicants", "routes/admin/applicants.tsx"),
+
+    // Client portal / agency OS management.
+    route("organizations", "routes/admin/organizations.tsx"),
+    route("people", "routes/admin/people.tsx"),
+    route("client-projects", "routes/admin/client-projects/index.tsx"),
+    route("client-projects/new", "routes/admin/client-projects/new.tsx"),
+    route("client-projects/:id/edit", "routes/admin/client-projects/edit.tsx"),
+    route("contracts", "routes/admin/contracts/index.tsx"),
+    route("contracts/new", "routes/admin/contracts/new.tsx"),
+    route("contracts/:id/edit", "routes/admin/contracts/edit.tsx"),
+    route("invoices", "routes/admin/invoices/index.tsx"),
+    route("invoices/new", "routes/admin/invoices/new.tsx"),
+    route("invoices/:id", "routes/admin/invoices/$id.tsx"),
+    route("approvals", "routes/admin/approvals.tsx"),
+    route("change-requests", "routes/admin/change-requests.tsx"),
+    route("audit-log", "routes/admin/audit-log.tsx"),
+    route("settings", "routes/admin/settings.tsx"),
   ]),
-  // Outside the admin layout: a resource route with no component, so it must
+  // Outside the admin layout: resource routes with no component, so they must
   // not be matched as a leaf that the layout tries to render.
   route("cpadmin/applicants/export", "routes/admin/applicants.export.ts"),
+  route("cpadmin/applicants/:id/resume", "routes/admin/applicants.$id.resume.ts"),
+  route("cpadmin/invoices/:id/pdf", "routes/admin/invoices.$id.pdf.ts"),
+  route("cpadmin/contracts/:id/certificate", "routes/admin/contracts.$id.certificate.ts"),
+
+  // Client/staff portal — the project-management dashboard. Separate cookie
+  // session and layout from /cpadmin; see app/lib/portal.server.ts.
+  route("portal/login", "routes/portal/login.tsx"),
+  route("portal/accept-invite", "routes/portal/accept-invite.tsx"),
+  route("portal", "routes/portal/layout.tsx", [
+    index("routes/portal/dashboard.tsx"),
+    route("review-queue", "routes/portal/review-queue.tsx"),
+    route("billing", "routes/portal/billing.tsx"),
+    route("settings", "routes/portal/settings.tsx"),
+    // Child tabs read the parent's already-fetched project via
+    // useOutletContext() (see ProjectWorkspaceContext in projects.$id.tsx)
+    // instead of each re-fetching it — explicit id purely for clearer
+    // route-tree debugging, not required by that mechanism.
+    route("projects/:id", "routes/portal/projects.$id.tsx", { id: "portal-project" }, [
+      index("routes/portal/projects.$id._index.tsx"),
+      route("updates", "routes/portal/projects.$id.updates.tsx"),
+      route("requests", "routes/portal/projects.$id.requests.tsx"),
+      route("contract", "routes/portal/projects.$id.contract.tsx"),
+      route("change-requests", "routes/portal/projects.$id.change-requests.tsx"),
+      route("approvals", "routes/portal/projects.$id.approvals.tsx"),
+      route("invoices", "routes/portal/projects.$id.invoices.tsx"),
+      route("tasks", "routes/portal/projects.$id.tasks.tsx"),
+      route("files", "routes/portal/projects.$id.files.tsx"),
+      route("discussion", "routes/portal/projects.$id.discussion.tsx"),
+      route("time", "routes/portal/projects.$id.time.tsx"),
+      route("manage", "routes/portal/projects.$id.manage.tsx"),
+    ]),
+  ]),
+  // Outside the portal layout: resource routes with no component.
+  route("portal/invoices/:id/pdf", "routes/portal/invoices.$id.pdf.ts"),
+  route("portal/contracts/:id/certificate", "routes/portal/contracts.$id.certificate.ts"),
+  route("portal/contracts/:id/document", "routes/portal/contracts.$id.document.ts"),
+  route("portal/notifications/count", "routes/portal/notifications.count.ts"),
+  route("portal/files/:id/download", "routes/portal/files.$id.download.ts"),
+  // Redirect-only routes for links in notification emails. Invoices and
+  // contracts have no standalone portal page (they live on a project's tabs),
+  // and emails sent before the URL fix carry a doubled /portal/portal/ prefix
+  // — these keep every link already sitting in someone's inbox working.
+  route("portal/invoices/:id", "routes/portal/invoices.$id.ts"),
+  route("portal/contracts", "routes/portal/contracts.ts"),
+  route("portal/portal/*", "routes/portal/doubled-prefix.ts"),
+  // Public — no portal session required. See users.controller.ts#unsubscribe.
+  route("email-preferences/unsubscribe", "routes/portal/email-preferences.unsubscribe.tsx"),
 
   // Must stay last: catch-all 404 for anything none of the above matched.
   route("*", "routes/$.tsx"),

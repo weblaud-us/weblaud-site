@@ -12,7 +12,7 @@ import {
 } from "react-icons/fi";
 import type { Route } from "./+types/login";
 import SectionBadge from "~/components/ui/section-badge";
-import { apiFetch, ApiError } from "~/lib/api.server";
+import { apiFetch, ApiError, withClientContext } from "~/lib/api.server";
 import { createAdminSession, getSession } from "~/lib/session.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -29,13 +29,25 @@ export async function action({ request }: Route.ActionArgs) {
   const password = String(formData.get("password") ?? "");
 
   try {
-    const result = await apiFetch<{
+    // Visitor IP forwarded so the login rate limit is per visitor, not site-wide.
+    const result = await withClientContext(request, () => apiFetch<{
       accessToken: string;
       refreshToken: string;
+      user: { role: string };
     }>("/auth/login", {
       method: "POST",
       body: { email, password },
-    });
+    }));
+
+    // This login is for the agency admin panel specifically — a valid
+    // staff/client account that isn't role "admin" gets turned away here
+    // rather than being handed an admin-session cookie that requireAdminUser
+    // would just bounce right back out of /cpadmin. See lib/session.server.ts.
+    if (result.user.role !== "admin") {
+      return {
+        error: "This login is for agency admins only. Staff and clients sign in at /portal/login.",
+      };
+    }
 
     const cookie = await createAdminSession(result, email);
     throw redirect("/cpadmin", { headers: { "Set-Cookie": cookie } });

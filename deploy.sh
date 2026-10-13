@@ -10,10 +10,10 @@
 #
 # Two things here are load-bearing and easy to "clean up" into an outage:
 #
-#  1. .env is checked BEFORE the build, not after. VITE_* variables are inlined
-#     into the client bundle at build time, so building without .env produces a
-#     bundle that is permanently missing them — no runtime error, just a
-#     silently dead Web3Forms notification until someone rebuilds.
+#  1. .env is checked BEFORE the build, not after. Any VITE_* variable is
+#     inlined into the client bundle at build time, so building without .env
+#     produces a bundle that is permanently missing it — no runtime error, just
+#     a silently missing value until someone rebuilds.
 #
 #  2. .env is exported into this shell before `pm2 startOrReload`. Nothing loads
 #     .env at runtime: there is no dotenv dependency and react-router-serve does

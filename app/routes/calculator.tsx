@@ -1,7 +1,13 @@
 import type { Route } from "./+types/calculator";
 import ProjectCalculator from "~/components/calculator/projectCalculator";
 import Discuss from "~/components/aboutUs/discuss";
-import { apiFetch, fetchOptional, ApiError } from "~/lib/api.server";
+import {
+  apiFetch,
+  fetchOptional,
+  ApiError,
+  captchaHeader,
+  withClientContext,
+} from "~/lib/api.server";
 import {
   DEFAULT_CALCULATOR_CONFIG,
   isUsableConfig,
@@ -43,19 +49,23 @@ export async function action({ request }: Route.ActionArgs) {
   };
 
   try {
-    await apiFetch("/estimates/submit", {
-      method: "POST",
-      body: {
-        name: String(formData.get("name") ?? "").trim(),
-        email: String(formData.get("email") ?? "").trim(),
-        company: optional("company"),
-        phone: optional("phone"),
-        notes: optional("notes"),
-        projectTypeId: String(formData.get("projectTypeId") ?? ""),
-        featureIds,
-        speedId: String(formData.get("speedId") ?? ""),
-      },
-    });
+    await withClientContext(request, () =>
+      apiFetch("/estimates/submit", {
+        method: "POST",
+        // Verified by the backend (CaptchaGuard) — see turnstile.tsx.
+        headers: captchaHeader(formData),
+        body: {
+          name: String(formData.get("name") ?? "").trim(),
+          email: String(formData.get("email") ?? "").trim(),
+          company: optional("company"),
+          phone: optional("phone"),
+          notes: optional("notes"),
+          projectTypeId: String(formData.get("projectTypeId") ?? ""),
+          featureIds,
+          speedId: String(formData.get("speedId") ?? ""),
+        },
+      }),
+    );
   } catch (err) {
     if (err instanceof ApiError) return { error: err.message };
     return { error: "We couldn't send your estimate. Please try again." };

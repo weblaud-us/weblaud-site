@@ -23,9 +23,28 @@ import ErrorPage from "./components/ui/error-page";
 import { fetchOptional } from "./lib/api.server";
 import type { ContactInfo } from "./lib/types";
 
+const GA_MEASUREMENT_ID = "G-16QLSZ8K04";
+
+/**
+ * Pages Google Analytics must never see. Their URLs carry credentials
+ * (/portal/accept-invite?uid=&token= — a token that claims the account;
+ * unsubscribe links) or private client data (project ids, invoice pages), and
+ * GA records the full page URL including the query string.
+ */
+const PRIVATE_PATH_PREFIXES = ["/portal", "/cpadmin", "/email-preferences"];
+
+function isPrivatePath(pathname: string): boolean {
+  return PRIVATE_PATH_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
 export async function loader() {
   const contactInfo = await fetchOptional<ContactInfo | null>("/contact-info", null);
-  return { contactInfo };
+  // Public by design (it is embedded in every Turnstile widget). Read at
+  // runtime so a key change needs a restart, not a rebuild. See turnstile.tsx.
+  const turnstileSiteKey = process.env.TURNSTILE_SITE_KEY ?? "";
+  return { contactInfo, turnstileSiteKey };
 }
 
 const FONTS_URL =
@@ -73,6 +92,18 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+  const privatePage = isPrivatePath(pathname);
+
+  // GA isn't loaded on a private page's first load (see the <head> below), but
+  // a visitor who arrives on the marketing site and navigates client-side into
+  // /portal or /cpadmin already has gtag running — and GA4 tracks history
+  // changes on its own. Its documented opt-out flag stops that, and is cleared
+  // again on the way back to a public page.
+  useEffect(() => {
+    (window as unknown as Record<string, boolean>)[`ga-disable-${GA_MEASUREMENT_ID}`] = privatePage;
+  }, [privatePage]);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": ["Organization", "ProfessionalService"],
@@ -168,21 +199,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google Analytics (GA4) */}
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-16QLSZ8K04"
-        ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
+        {/* Google Analytics (GA4) — public marketing pages only. */}
+        {!privatePage && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+            ></script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-16QLSZ8K04');
+              gtag('config', '${GA_MEASUREMENT_ID}');
             `,
-          }}
-        />
+              }}
+            />
+          </>
+        )}
       </head>
       <body className="[overflow-x:clip] antialiased">
         {children}
@@ -199,7 +234,11 @@ export default function App({ loaderData }: Route.ComponentProps) {
   const [showLoader, setShowLoader] = useState(false);
   const [isLoaderComplete, setIsLoaderComplete] = useState(true);
   const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith("/cpadmin");
+  // Both /cpadmin and /portal have their own header/sidebar chrome (see
+  // routes/admin/layout.tsx and routes/portal/layout.tsx) and must never get
+  // the marketing NavBar/Footer stacked on top of it.
+  const hasOwnChrome =
+    location.pathname.startsWith("/cpadmin") || location.pathname.startsWith("/portal");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -258,7 +297,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
     setIsLoaderComplete(true);
   };
 
-  if (isAdminRoute) {
+  if (hasOwnChrome) {
     return <Outlet />;
   }
 
@@ -302,6 +341,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   const rootData = useRouteLoaderData<typeof loader>("root");
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/cpadmin");
+  const isPortalRoute = location.pathname.startsWith("/portal");
+  const hasOwnChrome = isAdminRoute || isPortalRoute;
 
   let code: string | undefined;
   let badge = "Something went wrong";
@@ -345,15 +386,18 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       primaryAction={
         isAdminRoute
           ? { label: "Back to Dashboard", to: "/cpadmin" }
-          : { label: "Back to Home", to: "/" }
+          : isPortalRoute
+            ? { label: "Back to Portal", to: "/portal" }
+            : { label: "Back to Home", to: "/" }
       }
-      suggestions={isAdminRoute ? [] : undefined}
+      suggestions={hasOwnChrome ? [] : undefined}
       detail={stack}
     />
   );
 
-  // The admin panel has its own chrome and never renders the marketing shell.
-  if (isAdminRoute) {
+  // The admin panel and client portal each have their own chrome and never
+  // render the marketing shell.
+  if (hasOwnChrome) {
     return errorPage;
   }
 

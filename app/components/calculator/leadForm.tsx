@@ -8,6 +8,7 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
 import type { EstimateSelection } from "~/lib/calculator";
+import { Turnstile, TurnstileStatus, useTurnstile } from "~/components/ui/turnstile";
 
 interface LeadFormFields {
   name: string;
@@ -39,6 +40,7 @@ function FieldError({ message }: { message?: string }) {
 export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
   const fetcher = useFetcher<{ ok?: boolean; error?: string }>();
   const isSending = fetcher.state !== "idle";
+  const captcha = useTurnstile();
 
   const {
     register,
@@ -64,6 +66,7 @@ export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
         projectTypeId: selection.projectTypeId,
         featureIds: selection.featureIds.join(","),
         speedId: selection.speedId,
+        captchaToken: captcha.token ?? "",
       },
       { method: "post" },
     );
@@ -181,10 +184,19 @@ export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
         </div>
       </div>
 
+      <Turnstile
+        siteKey={captcha.siteKey}
+        onToken={captcha.onToken}
+        onError={captcha.onError}
+        resetKey={fetcher.data}
+        action="estimate"
+        className="mt-4"
+      />
+
       <div className="flex justify-end mt-5">
         <button
           type="submit"
-          disabled={isSending}
+          disabled={isSending || !captcha.ready}
           className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-xs sm:text-sm px-4.5 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
         >
           <span>{isSending ? "Sending..." : "Send Me This Estimate"}</span>
@@ -194,6 +206,9 @@ export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
             </span>
           )}
         </button>
+      </div>
+      <div className="text-right">
+        <TurnstileStatus {...captcha} />
       </div>
     </form>
   );

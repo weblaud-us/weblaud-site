@@ -299,7 +299,8 @@ export interface LandingPageConfig {
   articleType?: "TechArticle" | "Article";
 }
 
-export type ContactSubmissionStatus = "new" | "read";
+/** "spam": caught by the backend content filter — kept for review, never emailed. */
+export type ContactSubmissionStatus = "new" | "read" | "spam";
 
 export interface ContactSubmission {
   _id: string;
@@ -309,5 +310,523 @@ export interface ContactSubmission {
   phone?: string;
   message: string;
   status: ContactSubmissionStatus;
+  /** Why the backend filed it as spam, e.g. "3 links in message". */
+  spamReason?: string;
   createdAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// Client portal / agency OS — the project-management dashboard clients and
+// staff log into. See backend/src/modules/{organization,client-project}.
+// ---------------------------------------------------------------------------
+
+export type PlatformRole = "admin" | "manager" | "editor" | "user";
+export type OrgRole = "client_admin" | "client_viewer";
+
+export interface Organization {
+  _id: string;
+  name: string;
+  logo?: string;
+  billingEmail: string;
+  address?: string;
+  taxId?: string;
+  defaultCurrency: string;
+  notes?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+/** Per-user opt-outs for the transactional emails NotificationService sends alongside in-app notifications. All default true. */
+export interface EmailPreferences {
+  contracts: boolean;
+  invoices: boolean;
+  approvals: boolean;
+  changeRequests: boolean;
+  updates: boolean;
+  mentions: boolean;
+}
+
+/** A user as returned by GET /users/me and populate() on PM/team fields. */
+export interface PortalUser {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: PlatformRole;
+  isActive: boolean;
+  organization?: string | Organization;
+  orgRole?: OrgRole;
+  avatar?: string;
+  title?: string;
+  phone?: string;
+  emailPreferences?: EmailPreferences;
+}
+
+export type ClientProjectStatus =
+  | "planning"
+  | "active"
+  | "on_hold"
+  | "completed"
+  | "cancelled";
+
+export type FeatureStatus = "planned" | "in_progress" | "done";
+export type MilestoneStatus = "pending" | "in_progress" | "done";
+
+export interface ProjectBudget {
+  amount: number;
+  currency: string;
+  spent: number;
+}
+
+/**
+ * Its own collection now (GET/PUT /portal/projects/:id/features), not a
+ * subdocument on ClientProject — see backend/src/modules/feature. `order`
+ * drives display order; the editor renders rows in array order and PUTs the
+ * whole list back, and the backend derives `order` from each row's index.
+ */
+export interface Feature {
+  _id: string;
+  project: string;
+  title: string;
+  description?: string;
+  status: FeatureStatus;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProjectMilestone {
+  _id: string;
+  title: string;
+  dueDate?: string;
+  status: MilestoneStatus;
+  completedAt?: string;
+}
+
+export interface ProjectTimeline {
+  startDate?: string;
+  endDate?: string;
+  milestones: ProjectMilestone[];
+}
+
+/** Staff summary as populated onto projectManager/team — a subset of PortalUser. */
+export interface ProjectStaffRef {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  avatar?: string;
+  title?: string;
+  role: PlatformRole;
+}
+
+export interface ClientProject {
+  _id: string;
+  name: string;
+  description?: string;
+  status: ClientProjectStatus;
+  organization: Organization | string;
+  projectManager: ProjectStaffRef | string;
+  team: ProjectStaffRef[] | string[];
+  budget: ProjectBudget;
+  timeline: ProjectTimeline;
+  /** Derived by TaskService from the task board (estimate-weighted done/total) — no longer hand-entered. See the backend schema comment on ClientProject.progress. */
+  progress: number;
+  coverImage?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// Task board (Phase 6). See backend/src/modules/task.
+// ---------------------------------------------------------------------------
+
+export type TaskStatus = "backlog" | "todo" | "in_progress" | "in_review" | "done";
+
+export interface Task {
+  _id: string;
+  project: string;
+  feature?: { _id: string; title: string } | string;
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  assignee?: ProjectStaffRef | string;
+  dueDate?: string;
+  estimateHours?: number;
+  order: number;
+  clientVisible: boolean;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReorderTaskPosition {
+  id: string;
+  status: TaskStatus;
+  order: number;
+}
+
+// ---------------------------------------------------------------------------
+// Time tracking (Phase 8) — never reaches a client account at all (the
+// backend rejects Role.USER at the controller). See backend/src/modules/time-entry.
+// ---------------------------------------------------------------------------
+
+export interface TimeEntry {
+  _id: string;
+  project: string;
+  task?: { _id: string; title: string } | string;
+  user: ProjectStaffRef | string;
+  date: string;
+  minutes: number;
+  note?: string;
+  billable: boolean;
+  invoiced: boolean;
+  invoiceId?: string;
+  createdAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// Files (Phase 7). See backend/src/modules/file.
+// ---------------------------------------------------------------------------
+
+export type FileVisibility = "internal" | "client";
+
+/** Never carries the raw storage key — see FileService.stripStorageKey. Download goes through GET /portal/files/:id/download. */
+export interface ProjectFile {
+  _id: string;
+  project: string;
+  name: string;
+  mimeType: string;
+  size: number;
+  uploadedBy: UpdateAuthorRef | string;
+  visibility: FileVisibility;
+  version: number;
+  supersedes?: string;
+  folder?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// Comments (Phase 7) — generic threaded discussion reused across the
+// project's general thread, individual tasks, and individual files. See
+// backend/src/modules/comment.
+// ---------------------------------------------------------------------------
+
+export type CommentSubjectType = "project" | "task" | "file";
+
+export interface Comment {
+  _id: string;
+  project: string;
+  subjectType: CommentSubjectType;
+  subjectId?: string;
+  author: UpdateAuthorRef | string;
+  body: string;
+  mentions: (UpdateAuthorRef | string)[];
+  internal: boolean;
+  parent?: string;
+  createdAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// Developer -> PM -> Client update flow. See
+// backend/src/modules/{project-update,update-request}.
+// ---------------------------------------------------------------------------
+
+export type ProjectUpdateType = "progress" | "milestone" | "general";
+export type ProjectUpdateStatus = "pending_review" | "published" | "rejected";
+
+/** Subset of PortalUser populated onto author/reviewedBy/requestedBy/answeredBy fields. */
+export interface UpdateAuthorRef {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  avatar?: string;
+  title?: string;
+  role?: PlatformRole;
+}
+
+export interface ProjectUpdateItem {
+  _id: string;
+  project: string | { _id: string; name: string };
+  author: UpdateAuthorRef | string;
+  authorRole: "pm" | "developer";
+  title: string;
+  body: string;
+  type: ProjectUpdateType;
+  progressValue?: number;
+  status: ProjectUpdateStatus;
+  reviewNote?: string;
+  reviewedBy?: UpdateAuthorRef | string;
+  reviewedAt?: string;
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type UpdateRequestStatus = "open" | "answered" | "closed";
+
+export interface UpdateRequestItem {
+  _id: string;
+  project: string;
+  requestedBy: UpdateAuthorRef | string;
+  message: string;
+  status: UpdateRequestStatus;
+  answeredBy?: UpdateAuthorRef | string;
+  answeredAt?: string;
+  /** The PM's reply — set only when a PM (not the requester) closes this. */
+  response?: string;
+  createdAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// In-app notifications. See backend/src/modules/notification.
+// ---------------------------------------------------------------------------
+
+export interface PortalNotification {
+  _id: string;
+  type: string;
+  title: string;
+  body?: string;
+  link?: string;
+  read: boolean;
+  createdAt: string;
+}
+
+// ---- Portal dashboard "needs your attention" rollup (GET /portal/dashboard/attention) ----
+
+export interface AttentionItem {
+  _id: string;
+  title: string;
+  meta: string;
+  link?: string;
+}
+
+export interface AttentionGroup {
+  count: number;
+  items: AttentionItem[];
+}
+
+export interface PortalAttentionSummary {
+  contractsAwaitingSignature: AttentionGroup;
+  pendingApprovals: AttentionGroup;
+  overdueInvoices: AttentionGroup;
+}
+
+// ---------------------------------------------------------------------------
+// Get paid & protect scope: contracts, change requests, approvals, invoices.
+// See backend/src/modules/{contract,change-request,approval,invoice,payment}.
+// ---------------------------------------------------------------------------
+
+export type ContractStatus = "draft" | "sent" | "accepted" | "void";
+
+export interface ContractAcceptance {
+  name: string;
+  signatureImage?: string;
+  acceptedAt: string;
+  ip: string;
+  userAgent: string;
+}
+
+export interface Contract {
+  _id: string;
+  organization: Organization | string;
+  project?: { _id: string; name: string } | string;
+  title: string;
+  // Present on admin (/contracts) responses only — the agency panel manages
+  // the file directly (upload/replace). Portal responses (/portal/contracts)
+  // never include the raw storage URL; they carry `hasDocument` instead and
+  // the file is fetched through the authenticated
+  // /portal/contracts/:id/document route. See ContractService.stripDocumentUrl.
+  documentUrl?: string;
+  hasDocument?: boolean;
+  version: number;
+  status: ContractStatus;
+  acceptance?: ContractAcceptance;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ChangeRequestStatus = "requested" | "quoted" | "client_approved" | "rejected" | "invoiced";
+
+/** Populated shape only on the admin cross-project list (GET /change-requests) — the portal's per-project endpoints already know the project from the URL and never populate it. */
+export interface ChangeRequestProjectRef {
+  _id: string;
+  name: string;
+  organization?: Organization | string;
+}
+
+export interface ChangeRequest {
+  _id: string;
+  project: ChangeRequestProjectRef | string;
+  title: string;
+  description?: string;
+  priceAmount: number;
+  currency: string;
+  status: ChangeRequestStatus;
+  requestedBy: UpdateAuthorRef | string;
+  approvedBy?: UpdateAuthorRef | string;
+  approvedAt?: string;
+  rejectionReason?: string;
+  /** Set once approved — ChangeRequestService.approve auto-generates a draft invoice for the priced scope. Absent on change requests approved before this existed. */
+  invoiceId?: string;
+  createdAt: string;
+}
+
+export type ApprovalSubjectType = "deliverable" | "milestone" | "change_request" | "invoice";
+export type ApprovalStatus = "pending" | "approved" | "rejected";
+
+export interface Approval {
+  _id: string;
+  project: ChangeRequestProjectRef | string;
+  subjectType: ApprovalSubjectType;
+  subjectId?: string;
+  title: string;
+  description?: string;
+  status: ApprovalStatus;
+  requestedBy: UpdateAuthorRef | string;
+  decidedBy?: UpdateAuthorRef | string;
+  decidedAt?: string;
+  comment?: string;
+  createdAt: string;
+}
+
+export type InvoiceType = "one_off" | "deposit" | "milestone" | "retainer";
+export type InvoiceStatus = "draft" | "sent" | "paid" | "partially_paid" | "overdue" | "void";
+
+export interface InvoiceLineItem {
+  description: string;
+  qty: number;
+  unitPrice: number;
+}
+
+export interface Invoice {
+  _id: string;
+  organization: Organization | string;
+  project: { _id: string; name: string } | string;
+  number: string;
+  type: InvoiceType;
+  lineItems: InvoiceLineItem[];
+  subtotal: number;
+  tax: number;
+  total: number;
+  currency: string;
+  status: InvoiceStatus;
+  issueDate: string;
+  dueDate: string;
+  paidAt?: string;
+  notes?: string;
+  recurring: boolean;
+  recurrenceIntervalDays?: number;
+  createdAt: string;
+  /** Only present on a `partially_paid` invoice — see InvoiceService.withAmountPaid. `total - amountPaid` is what's actually still owed. */
+  amountPaid?: number;
+}
+
+// ---- Owner analytics (GET /analytics/overview) — see backend AnalyticsService ----
+
+/**
+ * A currency-scoped sum — every money rollup is grouped by currency rather
+ * than collapsed into one number, since the system has no FX conversion.
+ * In the common single-currency case this is just a one-element array.
+ */
+export interface CurrencyAmount {
+  currency: string;
+  amount: number;
+}
+
+export type AgingBucketLabel = "current" | "0-30" | "31-60" | "61-90" | "90+";
+
+export interface AgingBucket {
+  bucket: AgingBucketLabel;
+  currency: string;
+  amount: number;
+  count: number;
+}
+
+/** "Over budget" means labor burn (hoursLogged × costRate) past budgetAmount, not budgetSpent (Σ paid invoices) — see the backend's doc comment. budgetSpent is kept here as extra context only. */
+export interface OverBudgetProject {
+  _id: string;
+  name: string;
+  organizationName: string;
+  budgetAmount: number;
+  budgetSpent: number;
+  currency: string;
+  hoursLogged: number;
+  laborCost: number;
+}
+
+/** `laborCost` has no currency of its own (User.costRate isn't currency-tagged) — see the backend's doc comment on why it's shown next to budgetAmount/currency rather than netted into one figure. */
+export interface ProjectProfitability {
+  _id: string;
+  name: string;
+  organizationName: string;
+  budgetAmount: number;
+  currency: string;
+  hoursLogged: number;
+  laborCost: number;
+}
+
+export type PaymentProvider = "stripe" | "manual";
+export type PaymentStatus = "pending" | "succeeded" | "failed";
+
+/** A ledger row — see InvoiceService.recordPayment / GET /invoices/:id/payments. */
+export interface Payment {
+  _id: string;
+  invoice: string;
+  amount: number;
+  currency: string;
+  provider: PaymentProvider;
+  status: PaymentStatus;
+  createdAt: string;
+}
+
+// ---- Audit log (GET /audit-log) ----
+
+export interface AuditLogActorRef {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: PlatformRole;
+}
+
+export interface AuditLogEntry {
+  _id: string;
+  actor: AuditLogActorRef | string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  meta?: Record<string, unknown>;
+  ip?: string;
+  at: string;
+}
+
+export interface AnalyticsOverview {
+  revenue: {
+    thisMonth: CurrencyAmount[];
+    thisQuarter: CurrencyAmount[];
+  };
+  mrr: CurrencyAmount[];
+  receivables: {
+    outstanding: CurrencyAmount[];
+    overdue: CurrencyAmount[];
+    aging: AgingBucket[];
+  };
+  projects: {
+    byStatus: Record<ClientProjectStatus, number>;
+    overBudget: OverBudgetProject[];
+    overBudgetCount: number;
+    profitability: ProjectProfitability[];
+  };
+  actionRequired: {
+    contractsAwaitingSignature: number;
+    invoicesOverdue: number;
+    pendingApprovals: number;
+    /** Client-requested scope with no PM pricing yet — distinct from changeRequestsAwaitingDecision (already quoted, waiting on the client). */
+    changeRequestsAwaitingQuote: number;
+    changeRequestsAwaitingDecision: number;
+    openUpdateRequests: number;
+  };
+  generatedAt: string;
 }

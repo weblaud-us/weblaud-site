@@ -119,10 +119,10 @@ const sections = [
         <div className="grid sm:grid-cols-2 gap-3.5">
           {[
             {
-              name: "Web3Forms",
-              badge: "Form Processing",
-              desc: "Transmits inquiry form submissions safely to our engineering team inbox.",
-              link: "https://web3forms.com",
+              name: "Cloudflare Turnstile",
+              badge: "Spam Protection",
+              desc: "Checks that contact, estimate, and job application forms are submitted by people, not bots, without tracking cookies.",
+              link: "https://www.cloudflare.com/privacypolicy/",
             },
             {
               name: "Zcal",

@@ -1,6 +1,6 @@
 import { useSearchParams, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/applicants";
-import { apiFetch, ApiError, resolveMediaUrl } from "~/lib/api.server";
+import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
 import {
   APPLICATION_STATUSES,
@@ -63,12 +63,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   return {
     result: {
       ...result,
-      // resumeUrl comes back as either an absolute S3 URL or a path relative to
-      // the API origin — normalize it here, on the server, where the origin is
-      // known.
-      items: result.items.map((item) => ({
+      // The raw storage URL never reaches the browser: CVs are opened through
+      // /cpadmin/applicants/:id/resume (admin-only, real filename and type —
+      // see applicants.$id.resume.ts). Only whether one exists is passed on.
+      items: result.items.map(({ resumeUrl, ...item }) => ({
         ...item,
-        resumeUrl: resolveMediaUrl(item.resumeUrl),
+        hasResume: !!resumeUrl,
       })),
     },
     jobs: jobs.items,
@@ -211,16 +211,27 @@ export default function AdminApplicants({ loaderData }: Route.ComponentProps) {
                     {new Date(applicant.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    {applicant.resumeUrl ? (
-                      <a
-                        href={applicant.resumeUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 text-[#0A84FF] hover:underline"
-                      >
-                        <FileText className="size-4" />
-                        Open
-                      </a>
+                    {applicant.hasResume ? (
+                      // Plain <a>, not <Link>: a resource route returning a
+                      // file, which client-side routing can't render.
+                      <div className="flex items-center gap-3">
+                        <a
+                          href={`/cpadmin/applicants/${applicant._id}/resume`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 text-[#0A84FF] hover:underline"
+                        >
+                          <FileText className="size-4" />
+                          View
+                        </a>
+                        <a
+                          href={`/cpadmin/applicants/${applicant._id}/resume?download=1`}
+                          className="inline-flex items-center gap-1.5 text-white/60 hover:text-white hover:underline"
+                        >
+                          <Download className="size-4" />
+                          Download
+                        </a>
+                      </div>
                     ) : (
                       <span className="text-white/40">—</span>
                     )}

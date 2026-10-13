@@ -1,5 +1,75 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+
 const API_BASE_URL = process.env.API_BASE_URL ?? "http://127.0.0.1:4000/api/v1";
 const API_ORIGIN = API_BASE_URL.replace(/\/api\/v1\/?$/, "");
+
+/**
+ * The visitor behind the request this server is currently handling.
+ *
+ * Every API call is made from this server, so without help the backend sees
+ * this server's IP for every visitor: its rate limits collapse into one
+ * site-wide bucket (5 logins a minute for everybody combined) and contract
+ * acceptances record our IP and Node's user agent instead of the signer's.
+ * Calls made inside withClientContext() forward the visitor's IP and user
+ * agent, plus INTERNAL_API_SECRET to prove they come from us — the backend
+ * ignores those headers without it (see backend client-context.util.ts).
+ *
+ * AsyncLocalStorage rather than an extra apiFetch parameter so every call
+ * inside callAdminApi/callPortalApi gets it without touching each loader.
+ */
+interface ClientContext {
+  ip?: string;
+  userAgent?: string;
+}
+
+const clientContext = new AsyncLocalStorage<ClientContext>();
+
+/**
+ * nginx (or Cloudflare) in front of this server must overwrite these headers
+ * with the real peer address — otherwise a visitor could set them and pick
+ * their own rate-limit bucket. See the rollout notes in .env.example.
+ */
+function clientIpFrom(request: Request): string | undefined {
+  const headers = request.headers;
+  return (
+    headers.get("cf-connecting-ip")?.trim() ||
+    headers.get("x-real-ip")?.trim() ||
+    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    undefined
+  );
+}
+
+export function withClientContext<T>(request: Request, fn: () => Promise<T>): Promise<T> {
+  return clientContext.run(
+    {
+      ip: clientIpFrom(request),
+      userAgent: request.headers.get("user-agent") ?? undefined,
+    },
+    fn,
+  );
+}
+
+/**
+ * Forwards a form's Turnstile token (field `captchaToken`, see
+ * components/ui/turnstile.tsx) to the backend, which verifies it. A header
+ * rather than a body field so the backend's strict DTOs don't need one.
+ */
+export function captchaHeader(formData: FormData): Record<string, string> {
+  const token = String(formData.get("captchaToken") ?? "").trim();
+  return token ? { "X-Captcha-Token": token } : {};
+}
+
+function clientContextHeaders(): Record<string, string> {
+  const context = clientContext.getStore();
+  const secret = process.env.INTERNAL_API_SECRET;
+  if (!context || !secret) return {};
+
+  return {
+    "X-Internal-Secret": secret,
+    ...(context.ip ? { "X-Client-IP": context.ip } : {}),
+    ...(context.userAgent ? { "X-Client-UA": context.userAgent.slice(0, 512) } : {}),
+  };
+}
 
 // Uploaded media comes back as either an absolute S3 URL or a local
 // filesystem-relative path served off the API origin — normalize both to
@@ -67,6 +137,7 @@ export async function apiFetchRaw(
     headers: {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...clientContextHeaders(),
       ...headers,
     },
     body:
