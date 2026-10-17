@@ -761,6 +761,15 @@ export interface ProjectAttention {
   summary: PortalAttentionSummary;
 }
 
+/** One row of a project's recent activity (GET /portal/projects/:id/activity). */
+export interface ProjectActivityItem {
+  _id: string;
+  type: "update_published" | "file_shared" | "approval_decided" | "invoice_paid";
+  title: string;
+  at: string;
+  link: string;
+}
+
 // ---------------------------------------------------------------------------
 // Get paid & protect scope: contracts, change requests, approvals, invoices.
 // See backend/src/modules/{contract,change-request,approval,invoice,payment}.

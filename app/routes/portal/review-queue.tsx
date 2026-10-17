@@ -152,7 +152,7 @@ export default function PortalReviewQueue({ loaderData }: Route.ComponentProps) 
 
                 <p className="text-sm text-white/70 whitespace-pre-wrap">{update.body}</p>
                 {update.progressValue !== undefined && (
-                  <p className="text-xs text-white/40 mt-2">Would set progress to {update.progressValue}%</p>
+                  <p className="text-xs text-white/40 mt-2">Progress estimate: {update.progressValue}%</p>
                 )}
 
                 <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/10">

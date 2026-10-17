@@ -150,9 +150,20 @@ function ComposeUpdateForm({ onDone }: { onDone: () => void }) {
         <Label htmlFor="body">Details</Label>
         <Textarea id="body" name="body" required className="h-24" placeholder="What happened, what's next..." />
       </div>
-      <div className="space-y-1.5 max-w-[180px]">
-        <Label htmlFor="progressValue">New progress % (optional)</Label>
-        <Input id="progressValue" name="progressValue" type="number" min={0} max={100} />
+      <div className="space-y-1.5">
+        <Label htmlFor="progressValue">Progress estimate % (optional)</Label>
+        <Input
+          id="progressValue"
+          name="progressValue"
+          type="number"
+          min={0}
+          max={100}
+          className="max-w-[180px]"
+          aria-describedby="progressValue-help"
+        />
+        <p id="progressValue-help" className="text-xs text-white/40">
+          Shown on this update only. Overall progress comes from the task board.
+        </p>
       </div>
       <Button type="submit" size="sm" disabled={isSaving}>
         {isSaving ? "Posting..." : "Post update"}
@@ -262,7 +273,9 @@ function UpdateCard({
       <p className="text-sm text-white/70 whitespace-pre-wrap">{update.body}</p>
 
       {update.progressValue !== undefined && (
-        <p className="text-xs text-white/40 mt-2">Progress set to {update.progressValue}%</p>
+        <p className="text-xs text-white/40 mt-2">
+          {update.authorRole === "pm" ? "PM estimate" : "Estimate"}: {update.progressValue}%
+        </p>
       )}
 
       {update.status === "rejected" && update.reviewNote && (

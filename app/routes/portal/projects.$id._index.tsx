@@ -1,36 +1,59 @@
-import { useOutletContext } from "react-router";
+import type { ReactNode } from "react";
+import { Link, useOutletContext } from "react-router";
 import type { Route } from "./+types/projects.$id._index";
-import { apiFetch } from "~/lib/api.server";
+import { ApiError, apiFetch } from "~/lib/api.server";
 import { callPortalApi, requirePortalUser } from "~/lib/portal.server";
-import type { Feature, ProjectStaffRef } from "~/lib/types";
+import type { Invoice, ProjectActivityItem, ProjectStaffRef, ProjectUpdateItem } from "~/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import { Progress } from "~/components/ui/progress";
-import { CalendarClock, Wallet, ListChecks, Users } from "lucide-react";
-import type { ProjectWorkspaceContext } from "./projects.$id";
-import { CheckCircle2, Circle, CircleDot } from "lucide-react";
+import { LocalTime } from "~/components/ui/local-time";
+import { ActionInbox } from "~/components/portal/action-inbox";
+import {
+  ArrowRight,
+  CheckCircle2,
+  ClipboardCheck,
+  Flag,
+  FolderOpen,
+  History,
+  Megaphone,
+  ReceiptText,
+  Users,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 import { formatDate } from "~/lib/dates";
+import { invoicedTotal, isMilestoneLate, nextMilestone } from "~/lib/portal-progress";
+import { projectPath } from "~/lib/portal-paths";
+import type { ProjectWorkspaceContext } from "./projects.$id";
 
-/** Features moved to their own collection (see feature.module.ts) — no longer embedded on the project the parent layout already fetched, so this tab fetches its own. */
 export async function loader({ request, params }: Route.LoaderArgs) {
   await requirePortalUser(request);
-  const features = await callPortalApi(request, (accessToken) =>
-    apiFetch<Feature[]>(`/portal/projects/${params.id}/features`, { accessToken }),
-  );
-  return { features };
+  const [activity, updates, invoices] = await Promise.all([
+    // The activity feed is supplementary — never fail the Overview over it.
+    callPortalApi(request, (accessToken) =>
+      apiFetch<ProjectActivityItem[]>(`/portal/projects/${params.id}/activity`, { accessToken }),
+    ).catch((err) => {
+      if (err instanceof ApiError) return [];
+      throw err;
+    }),
+    callPortalApi(request, (accessToken) =>
+      apiFetch<ProjectUpdateItem[]>(`/portal/projects/${params.id}/updates`, { accessToken }),
+    ),
+    callPortalApi(request, (accessToken) =>
+      apiFetch<Invoice[]>(`/portal/projects/${params.id}/invoices`, { accessToken }),
+    ),
+  ]);
+
+  // Staff get drafts and pending reviews in the same list — only a
+  // published update is "the latest update" a client would recognise.
+  const latestUpdate =
+    updates
+      .filter((u) => u.status === "published")
+      .sort((a, b) => (b.publishedAt ?? b.createdAt).localeCompare(a.publishedAt ?? a.createdAt))[0] ?? null;
+
+  return { activity, latestUpdate, invoiced: invoicedTotal(invoices) };
 }
-
-const FEATURE_STATUS_LABEL = {
-  planned: "Planned",
-  in_progress: "In progress",
-  done: "Done",
-} as const;
-
-const FEATURE_STATUS_VARIANT = {
-  planned: "outline",
-  in_progress: "secondary",
-  done: "default",
-} as const;
 
 function money(amount: number, currency: string) {
   try {
@@ -40,10 +63,36 @@ function money(amount: number, currency: string) {
   }
 }
 
-function MilestoneIcon({ status }: { status: string }) {
-  if (status === "done") return <CheckCircle2 className="size-4 text-emerald-400" />;
-  if (status === "in_progress") return <CircleDot className="size-4 text-[#0A84FF]" />;
-  return <Circle className="size-4 text-white/25" />;
+const ACTIVITY_ICON: Record<ProjectActivityItem["type"], LucideIcon> = {
+  update_published: Megaphone,
+  file_shared: FolderOpen,
+  approval_decided: ClipboardCheck,
+  invoice_paid: ReceiptText,
+};
+
+function Card({
+  icon: Icon,
+  title,
+  action,
+  children,
+}: {
+  icon: LucideIcon;
+  title: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <h2 className="flex items-center gap-2 text-sm font-medium text-white">
+          <Icon className="size-4 text-white/50" aria-hidden="true" />
+          {title}
+        </h2>
+        {action}
+      </div>
+      {children}
+    </section>
+  );
 }
 
 function StaffPill({ staff }: { staff: ProjectStaffRef }) {
@@ -64,144 +113,154 @@ function StaffPill({ staff }: { staff: ProjectStaffRef }) {
   );
 }
 
+function BudgetRow({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3 text-sm">
+      <dt className="text-white/50">{label}</dt>
+      <dd className={strong ? "font-semibold text-white" : "text-white/80"}>{value}</dd>
+    </div>
+  );
+}
+
+/**
+ * One screen that answers: what's waiting on me, what's next, what
+ * happened lately, and where the money stands.
+ */
 export default function PortalProjectOverview({ loaderData }: Route.ComponentProps) {
-  const { features } = loaderData;
-  const { project } = useOutletContext<ProjectWorkspaceContext>();
+  const { activity, latestUpdate, invoiced } = loaderData;
+  const { project, attention } = useOutletContext<ProjectWorkspaceContext>();
   const pm = project.projectManager as ProjectStaffRef;
   const team = project.team as ProjectStaffRef[];
+  const { budget } = project;
+  const next = nextMilestone(project.timeline.milestones);
+  const allDone =
+    project.timeline.milestones.length > 0 && project.timeline.milestones.every((m) => m.status === "done");
 
   return (
     <div>
-      {project.description && (
-        <p className="text-sm text-white/60 mb-6 max-w-3xl">{project.description}</p>
-      )}
+      {project.description && <p className="text-sm text-white/60 mb-6 max-w-3xl">{project.description}</p>}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          {/* Features */}
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <ListChecks className="size-4 text-white/50" />
-              <p className="text-sm font-medium text-white">Features</p>
-            </div>
-            {features.length === 0 ? (
-              <p className="text-sm text-white/40">No features have been scoped yet.</p>
-            ) : (
-              <div className="space-y-2">
-                {features.map((feature) => (
-                  <div
-                    key={feature._id}
-                    className="flex items-start justify-between gap-3 rounded-lg border border-white/10 bg-black/20 px-3.5 py-2.5"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm text-white">{feature.title}</p>
-                      {feature.description && (
-                        <p className="text-xs text-white/40 mt-0.5">{feature.description}</p>
-                      )}
-                    </div>
-                    <Badge variant={FEATURE_STATUS_VARIANT[feature.status]} className="shrink-0">
-                      {FEATURE_STATUS_LABEL[feature.status]}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+        <div className="lg:col-span-2 space-y-6 min-w-0">
+          {attention && <ActionInbox summary={attention.summary} compact />}
 
-          {/* Timeline */}
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <CalendarClock className="size-4 text-white/50" />
-              <p className="text-sm font-medium text-white">Timeline</p>
-            </div>
-            {(project.timeline.startDate || project.timeline.endDate) && (
-              <p className="text-xs text-white/50 mb-4">
-                {project.timeline.startDate
-                  ? formatDate(project.timeline.startDate)
-                  : "TBD"}
-                {" → "}
-                {project.timeline.endDate
-                  ? formatDate(project.timeline.endDate)
-                  : "TBD"}
-              </p>
-            )}
-            {project.timeline.milestones.length === 0 ? (
-              <p className="text-sm text-white/40">No milestones have been added yet.</p>
-            ) : (
-              <div className="space-y-3">
-                {project.timeline.milestones.map((milestone) => (
-                  <div key={milestone._id} className="flex items-start gap-3">
-                    <div className="mt-0.5">
-                      <MilestoneIcon status={milestone.status} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm text-white">{milestone.title}</p>
-                      {milestone.dueDate && (
-                        <p className="text-xs text-white/40 mt-0.5">
-                          Due {formatDate(milestone.dueDate)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
+          <Card
+            icon={Megaphone}
+            title="Latest update"
+            action={
+              <Link
+                to={projectPath(project._id, "updates")}
+                className="inline-flex items-center gap-1 text-xs text-[#0A84FF] hover:underline"
+              >
+                All updates <ArrowRight className="size-3" aria-hidden="true" />
+              </Link>
+            }
+          >
+            {latestUpdate ? (
+              <div>
+                <p className="text-sm font-medium text-white">{latestUpdate.title}</p>
+                <p className="text-xs text-white/40 mt-0.5">
+                  <LocalTime value={latestUpdate.publishedAt ?? latestUpdate.createdAt} />
+                  {latestUpdate.progressValue !== undefined && <> · PM estimate {latestUpdate.progressValue}%</>}
+                </p>
+                <p className="text-sm text-white/65 mt-2 whitespace-pre-wrap line-clamp-4">{latestUpdate.body}</p>
               </div>
+            ) : (
+              <p className="text-sm text-white/40">No updates have been posted yet.</p>
             )}
-          </div>
+          </Card>
+
+          <Card icon={History} title="Recent activity">
+            {activity.length === 0 ? (
+              <p className="text-sm text-white/40">Nothing has happened on this project yet.</p>
+            ) : (
+              <ul className="space-y-1">
+                {activity.map((item) => {
+                  const Icon = ACTIVITY_ICON[item.type] ?? History;
+                  return (
+                    <li key={`${item.type}-${item._id}`}>
+                      <Link
+                        to={item.link}
+                        className="flex items-start gap-3 rounded-md px-2 py-1.5 -mx-2 hover:bg-white/5 transition-colors"
+                      >
+                        <Icon className="size-4 mt-0.5 shrink-0 text-white/40" aria-hidden="true" />
+                        <span className="min-w-0 flex-1 text-sm text-white/80 truncate">{item.title}</span>
+                        <span className="shrink-0 text-xs text-white/35">
+                          <LocalTime value={item.at} />
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </Card>
         </div>
 
-        <div className="space-y-6">
-          {/* Budget */}
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Wallet className="size-4 text-white/50" />
-              <p className="text-sm font-medium text-white">Budget</p>
-            </div>
-            <p className="text-2xl font-semibold text-white">
-              {money(project.budget.amount, project.budget.currency)}
-            </p>
-            {/* budget.spent is the sum of *paid* invoices (see the backend
-                ProjectBudget schema) — it used to be labelled "invoiced". */}
-            {project.budget.amount > 0 && (
+        <div className="space-y-6 min-w-0">
+          <Card
+            icon={Flag}
+            title="Next milestone"
+            action={
+              <Link
+                to={projectPath(project._id, "timeline")}
+                className="inline-flex items-center gap-1 text-xs text-[#0A84FF] hover:underline"
+              >
+                Timeline <ArrowRight className="size-3" aria-hidden="true" />
+              </Link>
+            }
+          >
+            {next ? (
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-sm font-medium text-white">{next.title}</p>
+                  {isMilestoneLate(next) && <Badge variant="destructive">Late</Badge>}
+                </div>
+                <p className="text-xs text-white/45 mt-1">
+                  {next.dueDate ? `Due ${formatDate(next.dueDate)}` : "No date yet"}
+                </p>
+              </div>
+            ) : allDone ? (
+              <p className="flex items-center gap-2 text-sm text-white/60">
+                <CheckCircle2 className="size-4 text-emerald-400" aria-hidden="true" />
+                Every milestone is done.
+              </p>
+            ) : (
+              <p className="text-sm text-white/40">No milestones have been added yet.</p>
+            )}
+          </Card>
+
+          <Card icon={Wallet} title="Budget">
+            {budget.amount > 0 && (
               <Progress
-                value={Math.min(100, (project.budget.spent / project.budget.amount) * 100)}
-                className="h-1.5 mt-3"
-                aria-label="Share of the budget paid so far"
+                value={Math.min(100, (budget.spent / budget.amount) * 100)}
+                className="h-1.5 mb-3"
+                aria-label="Share of the contract value paid so far"
               />
             )}
-            <div className="flex items-center justify-between gap-2 text-xs mt-2">
-              <span className="text-white/60">
-                {money(project.budget.spent, project.budget.currency)} paid
-              </span>
-              <span className="text-white/40">
-                {money(
-                  Math.max(0, project.budget.amount - project.budget.spent),
-                  project.budget.currency,
-                )}{" "}
-                remaining
-              </span>
-            </div>
-          </div>
+            {/* budget.spent is the sum of *paid* invoices (see the backend ProjectBudget schema). */}
+            <dl className="space-y-1.5">
+              <BudgetRow label="Contract value" value={money(budget.amount, budget.currency)} strong />
+              <BudgetRow label="Invoiced" value={money(invoiced, budget.currency)} />
+              <BudgetRow label="Paid" value={money(budget.spent, budget.currency)} />
+              <BudgetRow
+                label="Remaining"
+                value={money(Math.max(0, budget.amount - budget.spent), budget.currency)}
+              />
+            </dl>
+          </Card>
 
-          {/* Team */}
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Users className="size-4 text-white/50" />
-              <p className="text-sm font-medium text-white">Team</p>
-            </div>
+          <Card icon={Users} title="Team">
             <div className="space-y-2">
               {pm && (
                 <div>
-                  <p className="text-[11px] uppercase tracking-wide text-white/30 mb-1.5">
-                    Project manager
-                  </p>
+                  <p className="text-[11px] uppercase tracking-wide text-white/30 mb-1.5">Project manager</p>
                   <StaffPill staff={pm} />
                 </div>
               )}
               {team.length > 0 && (
                 <div className="pt-2">
-                  <p className="text-[11px] uppercase tracking-wide text-white/30 mb-1.5">
-                    Team
-                  </p>
+                  <p className="text-[11px] uppercase tracking-wide text-white/30 mb-1.5">Team</p>
                   <div className="space-y-2">
                     {team.map((member) => (
                       <StaffPill key={member._id} staff={member} />
@@ -209,11 +268,9 @@ export default function PortalProjectOverview({ loaderData }: Route.ComponentPro
                   </div>
                 </div>
               )}
-              {!pm && team.length === 0 && (
-                <p className="text-sm text-white/40">No one has been assigned yet.</p>
-              )}
+              {!pm && team.length === 0 && <p className="text-sm text-white/40">No one has been assigned yet.</p>}
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </div>
