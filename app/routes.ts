@@ -76,6 +76,8 @@ export default [
     route("change-requests", "routes/admin/change-requests.tsx"),
     route("audit-log", "routes/admin/audit-log.tsx"),
     route("settings", "routes/admin/settings.tsx"),
+    // Not in the nav: a deliberate-error button to confirm Sentry works. See LOCAL_TESTING.md.
+    route("sentry-test", "routes/admin/sentry-test.tsx"),
   ]),
   // Outside the admin layout: resource routes with no component, so they must
   // not be matched as a leaf that the layout tries to render.

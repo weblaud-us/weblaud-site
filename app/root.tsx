@@ -66,7 +66,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   const sentryDsn = process.env.SENTRY_DSN?.trim() ?? "";
   const sentryEnvironment = process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || "production";
   // EEA/UK/CH visitors get Consent Mode defaults and the banner (lib/consent.ts).
-  const needsConsent = needsConsentFor(request.headers.get("CF-IPCountry"));
+  // Locally there's no Cloudflare, so DEV_COUNTRY=DE (dev server only, never
+  // in production) stands in for the header to show the banner.
+  const country =
+    request.headers.get("CF-IPCountry") ??
+    (process.env.NODE_ENV === "production" ? null : (process.env.DEV_COUNTRY ?? null));
+  const needsConsent = needsConsentFor(country);
   const consent = needsConsent ? readConsent(request.headers.get("Cookie")) : null;
   return { contactInfo, turnstileSiteKey, sentryDsn, sentryEnvironment, needsConsent, consent };
 }
