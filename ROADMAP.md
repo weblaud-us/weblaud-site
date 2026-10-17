@@ -29,7 +29,7 @@ This file is the single plan for the work that came out of the October 2026 audi
 These apply to every phase.
 
 - **Deploy the backend before the site.** The API's `ValidationPipe` uses `forbidNonWhitelisted`, so a newer site sending new fields to an older API gets a 400 on every request.
-- **Never boot the local backend for testing.** Its `.env` points at the production Atlas cluster and real Gmail, and `SeedModule` writes on boot. Use unit tests with mocked models. Test the site against the read-only production API using the recipe below.
+- **Never boot the backend on its normal `.env` for testing.** That file points at the production Atlas cluster and real Gmail, and `SeedModule` writes on boot. Use the safe local setup instead: `pnpm local:up / seed:local / start:local` (Docker MongoDB + Mailpit, `backend/.env.local`, guarded by `scripts/local.js`). Full walkthrough: [LOCAL_TESTING.md](LOCAL_TESTING.md).
 - **Ask before submitting any live form** (contact, estimate, audit, password reset). Each one sends real email. Use your own address.
 - **One source of truth for facts.** Call length, reply times, timeline, pricing, savings and the booking link live in `app/lib/constants.ts`. Never type them as literals.
 - **Hydration-safe dates.** Use `formatDate` / `formatShortDate` from `app/lib/dates.ts` for calendar dates and `<LocalTime>` (`app/components/ui/local-time.tsx`) for timestamps. Never use a bare `toLocaleDateString()`.
