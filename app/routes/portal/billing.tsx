@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import type { Route } from "./+types/billing";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callPortalApi, requirePortalUser } from "~/lib/portal.server";
+import { projectPath } from "~/lib/portal-paths";
 import type { Contract, Invoice } from "~/lib/types";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
@@ -193,7 +194,7 @@ export default function PortalBilling({ loaderData }: Route.ComponentProps) {
                     )}
                     {project && (
                       <Link
-                        to={`/portal/projects/${project._id}/invoices`}
+                        to={projectPath(project._id, "invoices")}
                         className="text-xs text-white/40 hover:text-white transition-colors ml-auto"
                       >
                         View in project
@@ -238,7 +239,7 @@ export default function PortalBilling({ loaderData }: Route.ComponentProps) {
                     </Badge>
                     {project ? (
                       <Link
-                        to={`/portal/projects/${project._id}/contract`}
+                        to={projectPath(project._id, "contract")}
                         className="inline-flex items-center gap-1 text-xs text-[#0A84FF] hover:underline"
                       >
                         <ExternalLink className="size-3" />

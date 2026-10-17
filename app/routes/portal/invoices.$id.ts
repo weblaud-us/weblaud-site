@@ -2,6 +2,7 @@ import { redirect } from "react-router";
 import type { Route } from "./+types/invoices.$id";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callPortalApi } from "~/lib/portal.server";
+import { projectPath } from "~/lib/portal-paths";
 
 /**
  * /portal/invoices/:id is where every invoice notification (sent, overdue,
@@ -19,7 +20,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     );
     const projectId = typeof invoice.project === "string" ? invoice.project : invoice.project._id;
     const { search } = new URL(request.url);
-    return redirect(`/portal/projects/${projectId}/invoices${search}`);
+    return redirect(`${projectPath(projectId, "invoices")}${search}`);
   } catch (err) {
     if (err instanceof Response) throw err;
     if (err instanceof ApiError && (err.status === 403 || err.status === 404)) {

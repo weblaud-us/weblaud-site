@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import type { Route } from "./+types/projects.$id.change-requests";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callPortalApi, requirePortalUser } from "~/lib/portal.server";
+import { projectPath } from "~/lib/portal-paths";
 import type { ChangeRequest, UpdateAuthorRef } from "~/lib/types";
 import type { ProjectWorkspaceContext } from "./projects.$id";
 import { Button } from "~/components/ui/button";
@@ -351,7 +352,7 @@ export default function PortalProjectChangeRequests({ loaderData }: Route.Compon
               )}
               {cr.invoiceId && isPm && (
                 <Link
-                  to={`/portal/projects/${typeof cr.project === "object" ? cr.project._id : cr.project}/invoices`}
+                  to={projectPath(typeof cr.project === "object" ? cr.project._id : cr.project, "invoices")}
                   className="mt-2 inline-block text-xs text-[#0A84FF] hover:underline"
                 >
                   View draft invoice

@@ -95,25 +95,44 @@ export default [
     route("review-queue", "routes/portal/review-queue.tsx"),
     route("billing", "routes/portal/billing.tsx"),
     route("settings", "routes/portal/settings.tsx"),
-    // Child tabs read the parent's already-fetched project via
-    // useOutletContext() (see ProjectWorkspaceContext in projects.$id.tsx)
-    // instead of each re-fetching it — explicit id purely for clearer
-    // route-tree debugging, not required by that mechanism.
+    // Six top-level tabs (Overview, Work, Updates, Files, Decisions,
+    // Billing) plus Time and Manage for staff; tabs with sub-pages are
+    // layout routes. Every page reads the parent's already-fetched project
+    // via useOutletContext() (see ProjectWorkspaceContext in projects.$id.tsx)
+    // and the section layouts forward that context unchanged. URLs mirror the
+    // backend's portal-links.util.ts — see app/lib/portal-paths.ts.
     route("projects/:id", "routes/portal/projects.$id.tsx", { id: "portal-project" }, [
       index("routes/portal/projects.$id._index.tsx"),
-      route("updates", "routes/portal/projects.$id.updates.tsx"),
-      route("requests", "routes/portal/projects.$id.requests.tsx"),
-      route("contract", "routes/portal/projects.$id.contract.tsx"),
-      route("change-requests", "routes/portal/projects.$id.change-requests.tsx"),
-      route("approvals", "routes/portal/projects.$id.approvals.tsx"),
-      route("invoices", "routes/portal/projects.$id.invoices.tsx"),
-      route("tasks", "routes/portal/projects.$id.tasks.tsx"),
+      route("work", "routes/portal/projects.$id.work.tsx", [
+        index("routes/portal/projects.$id.section-index.ts", { id: "portal-work-index" }),
+        route("tasks", "routes/portal/projects.$id.tasks.tsx"),
+        route("timeline", "routes/portal/projects.$id.work.timeline.tsx"),
+      ]),
+      route("updates", "routes/portal/projects.$id.updates-section.tsx", [
+        index("routes/portal/projects.$id.updates.tsx"),
+        route("discussion", "routes/portal/projects.$id.discussion.tsx"),
+      ]),
       route("files", "routes/portal/projects.$id.files.tsx"),
-      route("discussion", "routes/portal/projects.$id.discussion.tsx"),
+      route("decisions", "routes/portal/projects.$id.decisions.tsx", [
+        index("routes/portal/projects.$id.section-index.ts", { id: "portal-decisions-index" }),
+        route("approvals", "routes/portal/projects.$id.approvals.tsx"),
+        route("changes", "routes/portal/projects.$id.change-requests.tsx"),
+        route("questions", "routes/portal/projects.$id.requests.tsx"),
+      ]),
+      route("billing", "routes/portal/projects.$id.billing.tsx", [
+        index("routes/portal/projects.$id.section-index.ts", { id: "portal-billing-index" }),
+        route("invoices", "routes/portal/projects.$id.invoices.tsx"),
+        route("contract", "routes/portal/projects.$id.contract.tsx"),
+      ]),
       route("time", "routes/portal/projects.$id.time.tsx"),
       route("manage", "routes/portal/projects.$id.manage.tsx"),
     ]),
   ]),
+  // PERMANENT: the pre-2026-10 flat project tabs. Notification links stored
+  // in the database and in emails already sent point here — never remove.
+  ...(["tasks", "discussion", "approvals", "change-requests", "requests", "invoices", "contract"] as const).map(
+    (old) => route(`portal/projects/:id/${old}`, "routes/portal/projects.$id.legacy.ts", { id: `portal-legacy-${old}` }),
+  ),
   // Outside the portal layout: resource routes with no component.
   route("portal/invoices/:id/pdf", "routes/portal/invoices.$id.pdf.ts"),
   route("portal/contracts/:id/certificate", "routes/portal/contracts.$id.certificate.ts"),

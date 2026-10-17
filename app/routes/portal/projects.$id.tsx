@@ -1,16 +1,36 @@
 import { Link, NavLink, Outlet } from "react-router";
 import type { Route } from "./+types/projects.$id";
-import { apiFetch, resolveMediaUrl } from "~/lib/api.server";
+import { ApiError, apiFetch, resolveMediaUrl } from "~/lib/api.server";
 import { callPortalApi, requirePortalUser } from "~/lib/portal.server";
-import type { ClientProject, Organization, PortalUser, ProjectStaffRef } from "~/lib/types";
+import type {
+  ClientProject,
+  Organization,
+  PortalUser,
+  ProjectAttention,
+  ProjectAttentionCounts,
+  ProjectStaffRef,
+} from "~/lib/types";
 import { Badge } from "~/components/ui/badge";
 import { Progress } from "~/components/ui/progress";
-import { ArrowLeft } from "lucide-react";
+import {
+  ArrowLeft,
+  Clock,
+  FolderOpen,
+  LayoutGrid,
+  ListTodo,
+  MessagesSquare,
+  Scale,
+  Settings2,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
+import { projectPath } from "~/lib/portal-paths";
 import { cn } from "~/lib/utils";
 
 /**
  * Passed to every tab via <Outlet context={...}> — see useOutletContext() in
- * projects.$id._index.tsx / .updates.tsx / .requests.tsx / .manage.tsx.
+ * projects.$id._index.tsx / .updates.tsx / .requests.tsx / .manage.tsx. The
+ * section layouts (work, updates, decisions, billing) forward it unchanged.
  * Explicit interface because a typed Route.ComponentProps["loaderData"]
  * import doesn't cross the Outlet-context boundary automatically.
  */
@@ -21,6 +41,8 @@ export interface ProjectWorkspaceContext {
   isPm: boolean;
   /** PM, admin, or a team member — anyone who can author updates for this project. */
   isStaffOnProject: boolean;
+  /** What's waiting on this user in this project: tab badges and the Overview inbox. Null when it couldn't be loaded. */
+  attention: ProjectAttention | null;
 }
 
 /** Resolves projectManager/team avatar paths server-side, mirroring admin/team.tsx's loader. */
@@ -30,9 +52,18 @@ function withResolvedAvatars(staff: ProjectStaffRef): ProjectStaffRef {
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await requirePortalUser(request);
-  const project = await callPortalApi(request, (accessToken) =>
-    apiFetch<ClientProject>(`/portal/projects/${params.id}`, { accessToken }),
-  );
+  const [project, attention] = await Promise.all([
+    callPortalApi(request, (accessToken) =>
+      apiFetch<ClientProject>(`/portal/projects/${params.id}`, { accessToken }),
+    ),
+    // Badges are a nicety — a failure here must never take the project down.
+    callPortalApi(request, (accessToken) =>
+      apiFetch<ProjectAttention>(`/portal/projects/${params.id}/attention`, { accessToken }),
+    ).catch((err) => {
+      if (err instanceof ApiError) return null;
+      throw err;
+    }),
+  ]);
 
   const pmId = typeof project.projectManager === "object" ? project.projectManager._id : project.projectManager;
   const teamIds = (project.team as ProjectStaffRef[]).map((m) => (typeof m === "object" ? m._id : m));
@@ -49,6 +80,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     user,
     isPm,
     isStaffOnProject,
+    attention,
     project: {
       ...project,
       projectManager:
@@ -81,24 +113,96 @@ const STATUS_VARIANT: Record<
   cancelled: "destructive",
 };
 
-export default function PortalProjectLayout({ loaderData, params }: Route.ComponentProps) {
-  const { project, isPm, isStaffOnProject } = loaderData;
-  const org = project.organization as Organization;
+interface ProjectTab {
+  /** Top-level path — a tab with sub-pages stays active on all of them. */
+  to: string;
+  label: string;
+  icon: LucideIcon;
+  end?: boolean;
+  count: number;
+}
 
-  const tabs = [
-    { to: `/portal/projects/${params.id}`, label: "Overview", end: true },
-    { to: `/portal/projects/${params.id}/updates`, label: "Updates" },
-    { to: `/portal/projects/${params.id}/tasks`, label: "Tasks" },
-    { to: `/portal/projects/${params.id}/files`, label: "Files" },
-    { to: `/portal/projects/${params.id}/discussion`, label: "Discussion" },
-    ...(isStaffOnProject ? [{ to: `/portal/projects/${params.id}/time`, label: "Time" }] : []),
-    { to: `/portal/projects/${params.id}/requests`, label: "Requests" },
-    { to: `/portal/projects/${params.id}/contract`, label: "Contract" },
-    { to: `/portal/projects/${params.id}/change-requests`, label: "Change requests" },
-    { to: `/portal/projects/${params.id}/approvals`, label: "Approvals" },
-    { to: `/portal/projects/${params.id}/invoices`, label: "Invoices" },
-    ...(isPm ? [{ to: `/portal/projects/${params.id}/manage`, label: "Manage" }] : []),
-  ];
+const TAB_DEFS: {
+  path: string;
+  label: string;
+  icon: LucideIcon;
+  badge?: Exclude<keyof ProjectAttentionCounts, "total">;
+  show?: "staff" | "pm";
+}[] = [
+  { path: "", label: "Overview", icon: LayoutGrid },
+  { path: "/work", label: "Work", icon: ListTodo, badge: "work" },
+  { path: "/updates", label: "Updates", icon: MessagesSquare, badge: "updates" },
+  { path: "/files", label: "Files", icon: FolderOpen, badge: "files" },
+  { path: "/decisions", label: "Decisions", icon: Scale, badge: "decisions" },
+  { path: "/billing", label: "Billing", icon: Wallet, badge: "billing" },
+  { path: "/time", label: "Time", icon: Clock, show: "staff" },
+  { path: "/manage", label: "Manage", icon: Settings2, show: "pm" },
+];
+
+function projectTabs(
+  projectId: string,
+  { isPm, isStaffOnProject }: { isPm: boolean; isStaffOnProject: boolean },
+  counts: ProjectAttentionCounts | undefined,
+): ProjectTab[] {
+  const base = projectPath(projectId);
+  return TAB_DEFS.filter((t) => (t.show === "pm" ? isPm : t.show === "staff" ? isStaffOnProject : true)).map(
+    (t) => ({
+      to: base + t.path,
+      label: t.label,
+      icon: t.icon,
+      end: t.path === "",
+      count: t.badge ? (counts?.[t.badge] ?? 0) : 0,
+    }),
+  );
+}
+
+/**
+ * Six tabs for clients, up to eight for staff. Below the sm breakpoint they
+ * wrap into a 3- or 4-column grid (two rows), so nothing scrolls sideways at
+ * 360 px; from sm up they're a single underlined row.
+ */
+function ProjectTabs({ tabs }: { tabs: ProjectTab[] }) {
+  return (
+    <nav
+      aria-label="Project sections"
+      className={cn(
+        "mb-6 grid gap-1 sm:flex sm:gap-1 sm:border-b sm:border-white/10",
+        tabs.length > 6 ? "grid-cols-4" : "grid-cols-3",
+      )}
+    >
+      {tabs.map((tab) => (
+        <NavLink
+          key={tab.to}
+          to={tab.to}
+          end={tab.end}
+          className={({ isActive }) =>
+            cn(
+              "flex min-w-0 items-center justify-center gap-1.5 rounded-md px-1.5 py-2 text-xs font-medium transition-colors",
+              "sm:justify-start sm:rounded-none sm:border-b-2 sm:-mb-px sm:px-3.5 sm:py-2.5 sm:text-sm sm:whitespace-nowrap",
+              isActive
+                ? "bg-[#0A84FF]/15 text-white sm:bg-transparent sm:border-[#0A84FF]"
+                : "bg-white/[0.03] text-white/55 hover:text-white/80 sm:bg-transparent sm:border-transparent",
+            )
+          }
+        >
+          <tab.icon className="hidden sm:block size-4 shrink-0 opacity-70" aria-hidden="true" />
+          <span className="truncate">{tab.label}</span>
+          {tab.count > 0 && (
+            <span className="shrink-0 rounded-full bg-[#0A84FF] px-1.5 text-[10px] font-semibold leading-4 text-white">
+              <span aria-hidden="true">{tab.count > 9 ? "9+" : tab.count}</span>
+              <span className="sr-only"> ({tab.count} waiting on you)</span>
+            </span>
+          )}
+        </NavLink>
+      ))}
+    </nav>
+  );
+}
+
+export default function PortalProjectLayout({ loaderData, params }: Route.ComponentProps) {
+  const { project, isPm, isStaffOnProject, attention } = loaderData;
+  const org = project.organization as Organization;
+  const tabs = projectTabs(params.id, { isPm, isStaffOnProject }, attention?.counts);
 
   return (
     <div>
@@ -111,7 +215,7 @@ export default function PortalProjectLayout({ loaderData, params }: Route.Compon
       </Link>
 
       <div className="flex items-start justify-between gap-4 mb-4">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold text-white tracking-tight">{project.name}</h1>
           {org?.name && <p className="text-sm text-white/50 mt-1">{org.name}</p>}
         </div>
@@ -123,30 +227,12 @@ export default function PortalProjectLayout({ loaderData, params }: Route.Compon
           <span>Overall progress</span>
           <span>{project.progress}%</span>
         </div>
-        <Progress value={project.progress} className="h-2" />
+        <Progress value={project.progress} className="h-2" aria-label="Overall progress" />
       </div>
 
-      <div className="border-b border-white/10 mb-6 flex gap-1 overflow-x-auto">
-        {tabs.map((tab) => (
-          <NavLink
-            key={tab.to}
-            to={tab.to}
-            end={tab.end}
-            className={({ isActive }) =>
-              cn(
-                "px-3.5 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap transition-colors",
-                isActive
-                  ? "border-[#0A84FF] text-white"
-                  : "border-transparent text-white/50 hover:text-white/80",
-              )
-            }
-          >
-            {tab.label}
-          </NavLink>
-        ))}
-      </div>
+      <ProjectTabs tabs={tabs} />
 
-      <Outlet context={loaderData} />
+      <Outlet context={loaderData satisfies ProjectWorkspaceContext} />
     </div>
   );
 }
