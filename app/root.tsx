@@ -59,7 +59,11 @@ export async function loader() {
   // Public by design (it is embedded in every Turnstile widget). Read at
   // runtime so a key change needs a restart, not a rebuild. See turnstile.tsx.
   const turnstileSiteKey = process.env.TURNSTILE_SITE_KEY ?? "";
-  return { contactInfo, turnstileSiteKey };
+  // Error monitoring (see entry.client.tsx / lib/sentry.server.ts). A DSN is
+  // public by design — it only allows sending events. Unset = no SDK at all.
+  const sentryDsn = process.env.SENTRY_DSN?.trim() ?? "";
+  const sentryEnvironment = process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || "production";
+  return { contactInfo, turnstileSiteKey, sentryDsn, sentryEnvironment };
 }
 
 export const links: Route.LinksFunction = () => [
@@ -99,6 +103,8 @@ export const meta: Route.MetaFunction = () => {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
+  // Undefined while an error boundary renders after the root loader failed.
+  const rootData = useRouteLoaderData<typeof loader>("root");
   const privatePage = isPrivatePath(pathname);
 
   // GA isn't loaded on a private page's first load (see the <head> below), but
@@ -207,6 +213,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        {rootData?.sentryDsn && (
+          <>
+            <meta name="sentry-dsn" content={rootData.sentryDsn} />
+            <meta name="sentry-environment" content={rootData.sentryEnvironment} />
+          </>
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -391,8 +403,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let code: string | undefined;
   let badge = "Something went wrong";
   let title = "Something went wrong on our end.";
-  let description: string =
-    "An unexpected error occurred while loading this page. Try again in a moment — if it keeps happening, get in touch and we'll sort it out.";
+  // Only claim someone was told when error monitoring is actually on.
+  const notified = !!rootData?.sentryDsn;
+  let description: string = notified
+    ? "An unexpected error occurred while loading this page. Our team has been notified. Try again in a moment."
+    : "An unexpected error occurred while loading this page. Try again in a moment — if it keeps happening, get in touch and we'll sort it out.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
@@ -411,9 +426,9 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     } else if (error.status >= 500) {
       badge = "Server error";
       title = "Our server hit a snag.";
-      description =
-        // No error monitoring is wired up yet, so don't claim anyone was notified.
-        `Something failed while we were putting this page together. Please try again shortly — if it keeps happening, email ${COMPANY.email}.`;
+      description = notified
+        ? `Something failed while we were putting this page together. Our team has been notified — please try again shortly, or email ${COMPANY.email} if it's urgent.`
+        : `Something failed while we were putting this page together. Please try again shortly — if it keeps happening, email ${COMPANY.email}.`;
     } else {
       title = error.statusText || title;
     }
