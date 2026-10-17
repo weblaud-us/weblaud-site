@@ -18,7 +18,7 @@ This file is the single plan for the work that came out of the October 2026 audi
 |---|---|---|---|
 | [0](#phase-0--secure-and-ship-what-is-built) | Commit, merge, deploy everything already built | 1–2 days | ☐ Not started |
 | [1](#phase-1--conversion-and-trust-quick-wins) | Conversion leaks, trust fixes, portal quick wins | — | ✅ Built 2026-10-17, ships with Phase 0 |
-| [2](#phase-2--client-portal-usability--monitoring) | Portal that tells clients what to do; error monitoring | ~12 days | ☐ Not started |
+| [2](#phase-2--client-portal-usability--monitoring) | Portal that tells clients what to do; error monitoring | ~12 days | 🟡 Built 2026-10-17 (local commits, not deployed) — ships after Phase 0 |
 | [3](#phase-3--win-clients-online-proposals) | Backend hardening, then online proposals → deposit | ~17 days | ☐ Not started |
 | [4](#phase-4--grow-and-retain) | Reviews, referrals, nurture, billing automation, support | ongoing | ☐ Not started |
 
@@ -139,12 +139,24 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 
 **Order:** 2.1 → 2.2 → 2.3 (they build on each other), then 2.4–2.7 in any order.
 
+**Build status (2026-10-17):** 2.1–2.7 are built and committed locally in both repos, on top of a "checkpoint Phase 0.1" commit in each. Nothing is pushed or deployed. Phase 0 (merge `origin/main`, push, deploy backend first) still comes first.
+
+- Verification at build time: backend 333 unit tests pass and `pnpm build` is OK; site typecheck is clean, 76 vitest tests pass and the build is OK. Old project URLs return 301 to the new tabs (checked with curl against the local production build). Consent was checked in headless Chrome: DE gets no `wl_ft` until Accept, US is unchanged. Lighthouse accessibility is 100 on `/` (with and without the banner) and on `/privacy-policy`.
+- **Not verified yet:** the portal pages in a real browser. Production has no portal API yet, and the local backend must not be booted. Do the phone walkthrough below after deploy.
+- Deviations from the plan text:
+  - 2.1: the per-project counts have a fifth key, `files`, for @mentions on files.
+  - 2.1: a security fix shipped with it. Contract and invoice portal lists returned **every org's rows** to any role other than USER, MANAGER or ADMIN (e.g. EDITOR). They are now project-scoped.
+  - 2.2: all notification links come from `portalProjectLink()` (`backend/src/common/utils/portal-links.util.ts`), mirrored on the site by `app/lib/portal-paths.ts`. Project-update notifications now open the Updates tab, and update-request ones open Decisions → Questions.
+  - 2.5: client admins can also resend or cancel a pending invite and restore a deactivated colleague. A client admin can't deactivate themselves.
+  - 2.6: server-side Sentry on the site is initialised from `entry.server.tsx` (`app/lib/sentry.server.ts`), not an `--import` preload, so PM2 and `npm start` are unchanged. That is enough for error capture because tracing is off. The browser SDK is a lazy ~32 kB gzip chunk that loads only when a DSN is set. SDK v11's `dataCollection` turns off user info, cookies, bodies and query strings, and a scrubber runs again before sending. The 500 page says "our team has been notified" while `SENTRY_DSN` is set.
+  - 2.7: the per-country HTML assumes Cloudflare doesn't cache HTML, which is the default today. If HTML caching is ever turned on, the banner has to move client-side.
+
 ### 2.1 "Needs your input" inbox — ~3 days
 
 **Why:** the dashboard's attention card covers only contracts, approvals and overdue invoices, and the project tabs show no counts. Clients miss quoted change requests, unpaid invoices that aren't overdue yet, and @mentions.
 
 **Backend** (`src/modules/dashboard/portal-dashboard.service.ts`):
-- [ ] Add groups to `PortalAttentionSummary`. Clients see the first three plus mentions.
+- [x] Add groups to `PortalAttentionSummary`. Clients see the first three plus mentions.
   - `changeRequestsAwaitingDecision`: change requests with status `QUOTED`, from `ChangeRequestService.findForPortalUser`.
   - `unpaidInvoices`: status `SENT` or `PARTIALLY_PAID` (keep `overdueInvoices` separate). Meta shows the amount still owed (`total - amountPaid`) and the due date.
   - `unreadMentions`: unread notifications of type `comment_mention` for this user, from `NotificationService`.
@@ -152,14 +164,14 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
     - `changeRequestsAwaitingQuote` (status `REQUESTED`)
     - `openUpdateRequests` (status `OPEN`)
     - `updatesPendingReview` (from the project-update review queue)
-- [ ] New `GET /portal/projects/:id/attention`. It returns counts keyed by the **Phase 2.2 tab names**: `{ decisions, billing, updates, work }`, checked with the existing project-access helper (`common/utils/project-access.util.ts`).
-- [ ] Unit spec: each group filters by status and stays inside the user's access scope (mock the sibling services, as the existing specs do).
+- [x] New `GET /portal/projects/:id/attention`. It returns counts keyed by the **Phase 2.2 tab names**: `{ decisions, billing, updates, work }`, checked with the existing project-access helper (`common/utils/project-access.util.ts`).
+- [x] Unit spec: each group filters by status and stays inside the user's access scope (mock the sibling services, as the existing specs do).
 
 **Site:**
-- [ ] `components/portal/action-inbox.tsx` replaces `AttentionCard` in `routes/portal/dashboard.tsx`. Every item links straight to the thing to act on.
-- [ ] Sidebar: a total badge on "Projects" (`routes/portal/layout.tsx`, from the layout loader).
-- [ ] Project tabs: count badges, loaded in `routes/portal/projects.$id.tsx` from the new endpoint.
-- [ ] Empty state: "You're all caught up."
+- [x] `components/portal/action-inbox.tsx` replaces `AttentionCard` in `routes/portal/dashboard.tsx`. Every item links straight to the thing to act on.
+- [x] Sidebar: a total badge on "Projects" (`routes/portal/layout.tsx`, from the layout loader).
+- [x] Project tabs: count badges, loaded in `routes/portal/projects.$id.tsx` from the new endpoint.
+- [x] Empty state: "You're all caught up."
 
 **Done when:** a client with one quoted change request and one unpaid invoice sees both on the dashboard and as badges on the right tabs, and clearing them removes the badges.
 
@@ -179,11 +191,11 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 | Billing | Invoices → `/billing/invoices`; Contract → `/billing/contract` |
 | *(staff)* Time, Manage | unchanged |
 
-- [ ] `app/routes.ts`: add the layout routes `work`, `decisions`, `billing` (and `updates` children) with a small sub-nav (segmented control).
-- [ ] **Redirect old URLs** with redirect-only route files, like `routes/portal/invoices.$id.ts`. Notification `link` values stored in the database point at `/tasks`, `/approvals`, `/change-requests`, `/invoices` (see `backend/src/modules/*/…service.ts`), so these redirects must stay **permanently**.
-- [ ] Backend: update the `link:` strings in the notification calls to the new paths, for new notifications.
-- [ ] Badges from 2.1 attach to the new top-level tabs.
-- [ ] Mobile: the six tabs fit at 360 px without sideways scrolling.
+- [x] `app/routes.ts`: add the layout routes `work`, `decisions`, `billing` (and `updates` children) with a small sub-nav (segmented control).
+- [x] **Redirect old URLs** with redirect-only route files, like `routes/portal/invoices.$id.ts`. Notification `link` values stored in the database point at `/tasks`, `/approvals`, `/change-requests`, `/invoices` (see `backend/src/modules/*/…service.ts`), so these redirects must stay **permanently**.
+- [x] Backend: update the `link:` strings in the notification calls to the new paths, for new notifications.
+- [x] Badges from 2.1 attach to the new top-level tabs.
+- [x] Mobile: the six tabs fit at 360 px without sideways scrolling.
 
 **Done when:**
 - Every old link (from an email or a notification) lands on the right sub-page.
@@ -194,14 +206,14 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 
 **Why:** the Overview doesn't answer "where are we?". Progress has two writers — the task-board recompute (`TaskService.recomputeProgress`) and a PM update's `progressValue` (`ProjectUpdateService`, `applyProgress`) — so a client can see progress go **down**.
 
-- [ ] **Decision: progress comes from the task board only.** In `backend/src/modules/project-update/project-update.service.ts`, stop calling `applyProgress` with `progressValue`. Keep the field on the update as narrative and show it in the update card only. Update the schema comment in `client-project.schema.ts`.
-- [ ] Overview sections (`routes/portal/projects.$id._index.tsx`):
-  - [ ] **Needs your input:** this project's items from 2.1.
-  - [ ] **Next milestone:** title, due date, "Late" flag when `dueDate < today` and status isn't `done` (compare in UTC).
-  - [ ] **Latest update:** the most recent published update, with a link to the Updates tab.
-  - [ ] **Budget:** contract value / invoiced (non-draft, non-void invoices) / paid (`budget.spent`) / remaining. "Invoiced" needs the project's invoices, which the Billing loader already fetches.
-  - [ ] **Recent activity:** the last 10 events (published updates, files shared with the client, approvals decided, invoices paid). Source: a new `GET /portal/projects/:id/activity` that merges the most recent rows from those collections. Don't read the notifications table; it's per-user.
-- [ ] Spec: the activity endpoint respects `clientVisible` / file `visibility: client` for client users.
+- [x] **Decision: progress comes from the task board only.** In `backend/src/modules/project-update/project-update.service.ts`, stop calling `applyProgress` with `progressValue`. Keep the field on the update as narrative and show it in the update card only. Update the schema comment in `client-project.schema.ts`.
+- [x] Overview sections (`routes/portal/projects.$id._index.tsx`):
+  - [x] **Needs your input:** this project's items from 2.1.
+  - [x] **Next milestone:** title, due date, "Late" flag when `dueDate < today` and status isn't `done` (compare in UTC).
+  - [x] **Latest update:** the most recent published update, with a link to the Updates tab.
+  - [x] **Budget:** contract value / invoiced (non-draft, non-void invoices) / paid (`budget.spent`) / remaining. "Invoiced" needs the project's invoices, which the Billing loader already fetches.
+  - [x] **Recent activity:** the last 10 events (published updates, files shared with the client, approvals decided, invoices paid). Source: a new `GET /portal/projects/:id/activity` that merges the most recent rows from those collections. Don't read the notifications table; it's per-user.
+- [x] Spec: the activity endpoint respects `clientVisible` / file `visibility: client` for client users.
 
 **Done when:** a client can tell from one screen what happened this week, what's next, what they owe, and what they must do. Progress never moves backwards when a PM posts an update.
 
@@ -210,8 +222,8 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 **Why:** most clients don't log in, and there is no summary email. Today the only scheduled jobs are the two invoice jobs and the lead digest.
 
 **Backend:**
-- [ ] `task.schema.ts`: add `completedAt?: Date`. `TaskService` sets it when status changes to `done` and clears it when the status leaves `done`.
-- [ ] New `src/modules/digest/project-digest.service.ts` with `@Cron('0 8 * * 1', { timeZone: 'UTC' })` (Mondays 08:00 UTC).
+- [x] `task.schema.ts`: add `completedAt?: Date`. `TaskService` sets it when status changes to `done` and clears it when the status leaves `done`.
+- [x] New `src/modules/digest/project-digest.service.ts` with `@Cron('0 8 * * 1', { timeZone: 'UTC' })` (Mondays 08:00 UTC).
   - For each `active` project, collect the last 7 days:
     - tasks completed (`clientVisible` only)
     - published updates
@@ -219,11 +231,11 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
     - files shared with the client
   - Add what's waiting on the client (reuse 2.1) and invoices due in the next 14 days.
   - **Skip the project if every section is empty.**
-- [ ] Recipients: active client users in the project's organization whose `emailPreferences.digest !== false`.
-- [ ] Add `digest` to `EmailPreferences` in three places: `user.schema.ts`, `EMAIL_CATEGORIES` in `users.service.ts`, and the update-preferences DTO. On the site, add it to the `EmailPreferences` type and `components/account/email-preferences-form.tsx`.
-- [ ] Template `mail/templates/weekly-digest.hbs` with an unsubscribe link (existing `email-preference-token` util).
-- [ ] Store `lastDigestAt` on the project so a restart can't send twice in one week.
-- [ ] Spec: the empty week is skipped, opted-out users are skipped, and a second run in the same week sends nothing.
+- [x] Recipients: active client users in the project's organization whose `emailPreferences.digest !== false`.
+- [x] Add `digest` to `EmailPreferences` in three places: `user.schema.ts`, `EMAIL_CATEGORIES` in `users.service.ts`, and the update-preferences DTO. On the site, add it to the `EmailPreferences` type and `components/account/email-preferences-form.tsx`.
+- [x] Template `mail/templates/weekly-digest.hbs` with an unsubscribe link (existing `email-preference-token` util).
+- [x] Store `lastDigestAt` on the project so a restart can't send twice in one week.
+- [x] Spec: the empty week is skipped, opted-out users are skipped, and a second run in the same week sends nothing.
 
 **Done when:** a test project with activity produces one correct email per client user, and a project with no activity sends nothing.
 
@@ -232,17 +244,17 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 **Why:** only the agency admin can invite (`users.controller.ts` → `@Roles(Role.ADMIN)`), so clients email you to add colleagues.
 
 **Backend** (new `PortalTeamController` in `src/modules/users/`):
-- [ ] `GET /portal/team`: active and invited users in the caller's organization.
-- [ ] `POST /portal/team/invite`: **client_admin only.**
+- [x] `GET /portal/team`: active and invited users in the caller's organization.
+- [x] `POST /portal/team/invite`: **client_admin only.**
   - `organization` is forced to the caller's own and `role` is forced to `USER`.
   - `orgRole` must be `client_viewer` or `client_admin`.
   - Reuses `UsersService.invite`.
   - Throttled to 10 per hour.
-- [ ] `PATCH /portal/team/:id`: change `orgRole` or deactivate. It refuses to act on users outside the organization, and refuses to remove or demote the **last** client admin.
-- [ ] Audit-log every change. Spec covers the organization scoping and the last-admin guard.
+- [x] `PATCH /portal/team/:id`: change `orgRole` or deactivate. It refuses to act on users outside the organization, and refuses to remove or demote the **last** client admin.
+- [x] Audit-log every change. Spec covers the organization scoping and the last-admin guard.
 
 **Site:**
-- [ ] `routes/portal/team.tsx`: list, invite dialog and role select. "Team" appears in the sidebar for client admins only.
+- [x] `routes/portal/team.tsx`: list, invite dialog and role select. "Team" appears in the sidebar for client admins only.
 
 **Done when:** a client admin can invite a viewer, the viewer can accept and sign in, and nobody can touch another organization's users.
 
@@ -250,10 +262,10 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 
 **Needs from the owner:** a Sentry account and two DSNs (site, backend).
 
-- [ ] Backend: `@sentry/nestjs`, initialized only when `SENTRY_DSN` is set. Strip request bodies, cookies and `Authorization` headers before sending.
-- [ ] Site: the official Sentry SDK for React Router v7 framework mode, client and server, only when `SENTRY_DSN` is set. Same scrubbing, and skip `/portal/accept-invite` query strings, because they carry tokens.
-- [ ] Once events are arriving, restore "Our team has been notified" on the 500 page (`app/root.tsx`).
-- [ ] Uptime monitor (UptimeRobot, Better Stack or similar) on `https://weblaud.com/` and `https://api.weblaud.com/api/v1/faqs`, alerting by email.
+- [x] Backend: `@sentry/nestjs`, initialized only when `SENTRY_DSN` is set. Strip request bodies, cookies and `Authorization` headers before sending.
+- [x] Site: the official Sentry SDK for React Router v7 framework mode, client and server, only when `SENTRY_DSN` is set. Same scrubbing, and skip `/portal/accept-invite` query strings, because they carry tokens.
+- [x] Once events are arriving, restore "Our team has been notified" on the 500 page (`app/root.tsx`). It now shows automatically whenever `SENTRY_DSN` is set. **Owner:** create the two Sentry projects, put each DSN in that repo's `.env` as `SENTRY_DSN`, then throw a test error and confirm it arrives with no personal data.
+- [ ] **(owner)** Uptime monitor (UptimeRobot, Better Stack or similar) on `https://weblaud.com/` and `https://api.weblaud.com/api/v1/faqs`, alerting by email.
 
 **Done when:** a deliberately thrown test error shows up in Sentry with no personal data, and the uptime monitor reports both URLs as up.
 
@@ -263,12 +275,12 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 
 **Decision needed:** a banner for EU/UK/CH visitors only (recommended), or for everyone.
 
-- [ ] Root loader reads Cloudflare's `CF-IPCountry` header and returns `needsConsent` for EEA, UK and CH.
-- [ ] Google Consent Mode v2: when `needsConsent`, the inline GA snippet sends `gtag('consent','default', { analytics_storage:'denied', ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied' })` **before** `config`.
-- [ ] Small banner (Accept / Decline) storing a first-party `wl_consent` cookie for 180 days, then calling `gtag('consent','update', …)`.
-- [ ] `captureFirstTouch()` (`lib/attribution.ts`) runs only after consent when `needsConsent`.
-- [ ] Update the privacy policy cookies section.
-- [ ] Accessibility: the banner is keyboard reachable, doesn't trap focus, and keeps Lighthouse accessibility at 100.
+- [x] Root loader reads Cloudflare's `CF-IPCountry` header and returns `needsConsent` for EEA, UK and CH.
+- [x] Google Consent Mode v2: when `needsConsent`, the inline GA snippet sends `gtag('consent','default', { analytics_storage:'denied', ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied' })` **before** `config`.
+- [x] Small banner (Accept / Decline) storing a first-party `wl_consent` cookie for 180 days, then calling `gtag('consent','update', …)`.
+- [x] `captureFirstTouch()` (`lib/attribution.ts`) runs only after consent when `needsConsent`.
+- [x] Update the privacy policy cookies section.
+- [x] Accessibility: the banner is keyboard reachable, doesn't trap focus, and keeps Lighthouse accessibility at 100.
 
 **Done when:** with `CF-IPCountry: DE`, there are no GA cookies and no `wl_ft` until Accept. A US visitor's experience is unchanged.
 
@@ -445,7 +457,7 @@ Pick items in this order unless there's a business reason to change it. Each sti
 | Needed for | Decision |
 |---|---|
 | 2.6 | Create a Sentry account and share the two DSNs. |
-| 2.7 | Consent banner for EU/UK/CH only (recommended) or everyone. |
+| 2.7 | ~~Consent banner for EU/UK/CH only or everyone.~~ **Decided 2026-10-17: EU/UK/CH only.** |
 | 3.1 | Default deposit percentage, proposal terms template, how long proposals stay valid. |
 | 3.3 | Keep Zcal (if it has webhooks) or move schedulers. |
 | 4.1 | Discovery Sprint price and what it includes. |
