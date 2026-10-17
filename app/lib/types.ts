@@ -733,7 +733,32 @@ export interface AttentionGroup {
 export interface PortalAttentionSummary {
   contractsAwaitingSignature: AttentionGroup;
   pendingApprovals: AttentionGroup;
+  changeRequestsAwaitingDecision: AttentionGroup;
+  unpaidInvoices: AttentionGroup;
   overdueInvoices: AttentionGroup;
+  /** Item `_id` is the notification's — clicking one marks it read. */
+  unreadMentions: AttentionGroup;
+  /** Staff only (admin, or the project's PM). */
+  changeRequestsAwaitingQuote?: AttentionGroup;
+  openUpdateRequests?: AttentionGroup;
+  updatesPendingReview?: AttentionGroup;
+  /** Sum of every group's count. */
+  total: number;
+}
+
+/** Badge counts per top-level project tab (GET /portal/projects/:id/attention). */
+export interface ProjectAttentionCounts {
+  decisions: number;
+  billing: number;
+  updates: number;
+  work: number;
+  files: number;
+  total: number;
+}
+
+export interface ProjectAttention {
+  counts: ProjectAttentionCounts;
+  summary: PortalAttentionSummary;
 }
 
 // ---------------------------------------------------------------------------

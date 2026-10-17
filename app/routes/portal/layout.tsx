@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Form, Link, Outlet, redirect, useFetcher, useLocation, useRevalidator } from "react-router";
 import type { Route } from "./+types/layout";
 import { destroyPortalSession, requirePortalUser, callPortalApi } from "~/lib/portal.server";
-import { apiFetch } from "~/lib/api.server";
-import type { PortalNotification, ProjectUpdateItem } from "~/lib/types";
+import { ApiError, apiFetch } from "~/lib/api.server";
+import type { PortalAttentionSummary, PortalNotification } from "~/lib/types";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -28,20 +28,27 @@ import weblaudLogo from "~/assets/weblaud-logo.svg";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requirePortalUser(request);
-  const isStaff = user.role === "admin" || user.role === "manager";
 
-  const [notifications, reviewQueue] = await Promise.all([
+  const [notifications, attention] = await Promise.all([
     callPortalApi(request, (accessToken) =>
       apiFetch<PortalNotification[]>("/portal/notifications", { accessToken }),
     ),
-    isStaff
-      ? callPortalApi(request, (accessToken) =>
-          apiFetch<ProjectUpdateItem[]>("/portal/updates/review-queue", { accessToken }),
-        )
-      : Promise.resolve([]),
+    // Badge counts only — a failure here must never take down every portal page.
+    callPortalApi(request, (accessToken) =>
+      apiFetch<PortalAttentionSummary>("/portal/dashboard/attention", { accessToken }),
+    ).catch((err) => {
+      if (err instanceof ApiError) return null;
+      throw err;
+    }),
   ]);
 
-  return { user, notifications, reviewQueueCount: reviewQueue.length };
+  return {
+    user,
+    notifications,
+    // The review queue is one of the staff groups in the same summary.
+    reviewQueueCount: attention?.updatesPendingReview?.count ?? 0,
+    attentionTotal: attention?.total ?? 0,
+  };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -69,6 +76,15 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   return { error: "Unknown action." };
+}
+
+function CountPill({ count, label }: { count: number; label: string }) {
+  return (
+    <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#0A84FF]/20 text-[#0A84FF] text-[10px] font-semibold">
+      <span aria-hidden="true">{count > 99 ? "99+" : count}</span>
+      <span className="sr-only">, {label}</span>
+    </span>
+  );
 }
 
 function getInitials(firstName: string, lastName: string) {
@@ -208,7 +224,7 @@ function useNotificationPolling(currentUnread: number) {
 }
 
 export default function PortalLayout({ loaderData }: Route.ComponentProps) {
-  const { user, notifications, reviewQueueCount } = loaderData;
+  const { user, notifications, reviewQueueCount, attentionTotal } = loaderData;
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isStaff = user.role === "admin" || user.role === "manager";
@@ -265,16 +281,21 @@ export default function PortalLayout({ loaderData }: Route.ComponentProps) {
           <Link
             to="/portal"
             className={
-              "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors " +
+              "flex items-center justify-between gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors " +
               (isDashboardActive
                 ? "bg-[#0A84FF]/15 text-white font-medium"
                 : "text-white/55 hover:bg-white/5 hover:text-white")
             }
           >
-            <LayoutDashboard
-              className={"size-4 shrink-0 " + (isDashboardActive ? "text-[#0A84FF]" : "text-white/40")}
-            />
-            Projects
+            <span className="flex items-center gap-2.5">
+              <LayoutDashboard
+                className={"size-4 shrink-0 " + (isDashboardActive ? "text-[#0A84FF]" : "text-white/40")}
+              />
+              Projects
+            </span>
+            {attentionTotal > 0 && (
+              <CountPill count={attentionTotal} label={`${attentionTotal} item${attentionTotal === 1 ? "" : "s"} need your input`} />
+            )}
           </Link>
 
           <Link
@@ -307,9 +328,7 @@ export default function PortalLayout({ loaderData }: Route.ComponentProps) {
                 Review queue
               </span>
               {reviewQueueCount > 0 && (
-                <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#0A84FF]/20 text-[#0A84FF] text-[10px] font-semibold">
-                  {reviewQueueCount}
-                </span>
+                <CountPill count={reviewQueueCount} label={`${reviewQueueCount} waiting for review`} />
               )}
             </Link>
           )}
