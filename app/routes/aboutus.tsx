@@ -5,6 +5,7 @@ import OurMissionAndStory from "~/components/aboutUs/ourMissionAndStory";
 import OurTrack from "~/components/aboutUs/ourTrack";
 import TheTeam from "~/components/aboutUs/theTeam";
 import { fetchOptional, resolveMediaUrl } from "~/lib/api.server";
+import { optimizeMediaUrl } from "~/lib/media";
 import type { AboutInfo, TeamMember } from "~/lib/types";
 
 export async function loader() {
@@ -15,7 +16,8 @@ export async function loader() {
 
   const resolvedTeam = team.map((member) => ({
     ...member,
-    avatar: resolveMediaUrl(member.avatar),
+    // Avatars render at most ~300 px; uploads are ~2 MB PNGs.
+    avatar: optimizeMediaUrl(resolveMediaUrl(member.avatar), 640),
   }));
 
   return { aboutInfo, team: resolvedTeam };

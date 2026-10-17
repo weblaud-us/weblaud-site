@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { useState } from "react";
-import heroBanner from "~/assets/hero-icon.png";
+import heroBanner640 from "~/assets/hero-icon-640.webp";
+import heroBanner1054 from "~/assets/hero-icon-1054.webp";
 import dashedArrow from "~/assets/dashed-arrow.svg";
 import { TIMELINE } from "~/lib/constants";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
@@ -56,7 +57,7 @@ const BannerHome = () => {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(true)}
-                    className="relative group h-[38px] w-auto inline-flex items-center justify-center px-4.5 sm:px-5 rounded-[10px] text-[13px] font-semibold text-white bg-[#0A84FF] overflow-hidden shadow-[0_2px_10px_rgba(10,132,255,0.35)] hover:shadow-[0_6px_20px_rgba(10,132,255,0.3)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer shrink-0"
+                    className="relative group h-[38px] w-auto inline-flex items-center justify-center px-4.5 sm:px-5 rounded-[10px] text-[13px] font-semibold text-white bg-primary-solid overflow-hidden shadow-[0_2px_10px_rgba(10,132,255,0.35)] hover:shadow-[0_6px_20px_rgba(10,132,255,0.3)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer shrink-0"
                   >
                     <span className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                     <span className="absolute inset-0 bg-gradient-to-b from-white/15 to-transparent opacity-100 mix-blend-overlay"></span>
@@ -85,11 +86,16 @@ const BannerHome = () => {
           <div className={`md:block relative mt-8 sm:mt-10 lg:mt-0`}>
             <div className="relative z-10 animate-float">
               <img
-                src={heroBanner}
+                src={heroBanner1054}
+                // Phones get the 640w file (~22 KB) instead of a 328 KB PNG.
+                // React turns this high-priority <img> into the page's only
+                // hero preload, srcset included.
+                srcSet={`${heroBanner640} 640w, ${heroBanner1054} 1054w`}
+                sizes="(min-width: 1280px) 576px, (min-width: 1024px) 512px, (min-width: 768px) 448px, (min-width: 640px) 384px, 340px"
                 alt="Weblaud hero illustration"
                 className="w-full h-auto max-w-[340px] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto drop-shadow-2xl"
-                width="576"
-                height="576"
+                width="1054"
+                height="574"
                 fetchPriority="high"
                 loading="eager"
               />

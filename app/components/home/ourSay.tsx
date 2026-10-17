@@ -76,7 +76,7 @@ export default function OurSay({ testimonials }: OurSayProps) {
                 768: { slidesPerView: 2, spaceBetween: 20 },
                 1024: { slidesPerView: 3, spaceBetween: 24 },
               }}
-              className="[&_.swiper-slide]:h-auto [&_.swiper-slide]:transition-all [&_.swiper-slide]:duration-500 [&_.swiper-slide:not(.swiper-slide-active)]:scale-95 [&_.swiper-slide:not(.swiper-slide-active)]:opacity-60 [&_.swiper-slide-active]:opacity-100 [&_.swiper-slide-active]:scale-100 [&_.swiper-slide-active]:z-10"
+              className="[&_.swiper-slide]:h-auto [&_.swiper-slide]:transition-all [&_.swiper-slide]:duration-500 [&_.swiper-slide:not(.swiper-slide-active)]:scale-95 [&_.swiper-slide:not(.swiper-slide-active)]:opacity-75 [&_.swiper-slide-active]:opacity-100 [&_.swiper-slide-active]:scale-100 [&_.swiper-slide-active]:z-10"
             >
               {items.map((item, index) => {
                 const isActive = index === activeIndex;
@@ -152,9 +152,9 @@ export default function OurSay({ testimonials }: OurSayProps) {
                           ease: [0.22, 1, 0.36, 1],
                         }}
                       >
-                        <h4 className="text-primary font-medium font-barlow text-base m-0">
+                        <h3 className="text-[#5ab0ff] font-medium font-barlow text-base m-0">
                           {item.authorName}
-                        </h4>
+                        </h3>
                         {item.authorTitle && (
                           <motion.p
                             className="text-xs text-[#8a8a8a] truncate block"

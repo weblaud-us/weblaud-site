@@ -1,14 +1,17 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router";
 import SectionBadge from "~/components/ui/section-badge";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import { FiArrowRight } from "react-icons/fi";
 import { PhoneCall } from "lucide-react";
+import { DISCOVERY_CALL, RESPONSE_TIME } from "~/lib/constants";
 
 const Discuss = () => {
   const [containerRef, isVisible] = useBlurAnimation<HTMLDivElement>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { pathname } = useLocation();
 
   return (
     <>
@@ -25,7 +28,7 @@ const Discuss = () => {
           <SectionBadge
             icon={<PhoneCall className="w-3.5 h-3.5" />}
             text="Free Discovery Call"
-            badgeLabel="15-min session"
+            badgeLabel={`${DISCOVERY_CALL.short} session`}
             color="#0a84ff"
             className="mb-6"
           />
@@ -37,7 +40,7 @@ const Discuss = () => {
 
           {/* Sub-copy */}
           <p className="text-sm sm:text-base md:text-lg font-barlow text-gray-300 max-w-2xl leading-relaxed mb-8">
-            We'll come back within a day with a clear plan — no jargon, no lock-in, no pitch deck.
+            We'll come back {RESPONSE_TIME.reply} with a clear plan — no jargon, no lock-in, no pitch deck.
           </p>
 
           {/* CTA button with pulse ring */}
@@ -50,7 +53,7 @@ const Discuss = () => {
             <button
               id="discuss-book-call-cta"
               onClick={() => setIsModalOpen(true)}
-              className="group relative z-10 inline-flex items-center gap-2 sm:gap-2.5 bg-primary hover:bg-primary/90 text-white font-barlow font-semibold text-xs sm:text-sm px-5 py-2.5 sm:px-6 sm:py-3 rounded-full transition-all duration-300 shadow-md shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] cursor-pointer"
+              className="group relative z-10 inline-flex items-center gap-2 sm:gap-2.5 bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-semibold text-xs sm:text-sm px-5 py-2.5 sm:px-6 sm:py-3 rounded-full transition-all duration-300 shadow-md shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] cursor-pointer"
             >
               <span>Book a free call</span>
               <span className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
@@ -59,9 +62,22 @@ const Discuss = () => {
             </button>
           </div>
 
+          {pathname !== "/audit" && (
+            <p className="mt-4 font-barlow text-sm text-gray-400">
+              Not ready to talk?{" "}
+              <Link
+                to="/audit"
+                className="text-primary hover:text-blue-400 underline-offset-4 hover:underline"
+              >
+                Get a free website audit
+              </Link>{" "}
+              in under a minute.
+            </p>
+          )}
+
           {/* Micro-copy trust signal */}
           <p className="mt-5 font-barlow text-xs text-gray-400 tracking-wide">
-            15-min session &nbsp;·&nbsp; No commitment &nbsp;·&nbsp; Response within 24 h
+            {DISCOVERY_CALL.short} session &nbsp;·&nbsp; No commitment &nbsp;·&nbsp; Response within {RESPONSE_TIME.replyShort}
           </p>
         </div>
       </section>

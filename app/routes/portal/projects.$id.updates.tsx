@@ -15,6 +15,7 @@ import { Badge } from "~/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { EmptyState } from "~/components/admin/empty-state";
 import { MessageSquarePlus, Check, X, RotateCcw, MessagesSquare } from "lucide-react";
+import { LocalTime } from "~/components/ui/local-time";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   await requirePortalUser(request);
@@ -247,7 +248,7 @@ function UpdateCard({
             <p className="text-sm text-white font-medium">{update.title}</p>
             <p className="text-xs text-white/40">
               {authorName(update.author)} · {update.authorRole === "pm" ? "PM" : "Developer"} ·{" "}
-              {new Date(update.createdAt).toLocaleDateString()}
+              <LocalTime value={update.createdAt} />
             </p>
           </div>
         </div>

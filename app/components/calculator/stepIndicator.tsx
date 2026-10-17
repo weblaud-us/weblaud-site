@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { FiCheckCircle } from "react-icons/fi";
 
 export const CALCULATOR_STEPS = [
@@ -22,22 +23,26 @@ export function StepIndicator({ step, onStepChange }: StepIndicatorProps) {
           const isSegmentActive = step > item.num;
 
           return (
-            <div key={item.num} className="contents">
+            // Fragment, not <div className="contents">: an <ol> may only
+            // contain <li> children, or screen readers lose the list.
+            <Fragment key={item.num}>
               {/* Step Node */}
               <li className="relative z-10 flex flex-col items-center shrink-0">
                 <button
                   type="button"
                   disabled={!isReachable}
                   aria-current={isCurrent ? "step" : undefined}
-                  aria-label={`Step ${item.num}: ${item.label}${
+                  // Starts with the visible "01" so voice-control users can
+                  // say what they see (WCAG 2.5.3 label in name).
+                  aria-label={`0${item.num} ${item.label}${
                     isComplete ? " (completed)" : ""
                   }`}
                   onClick={() => isReachable && onStepChange(item.num)}
                   className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full font-mono text-[11px] sm:text-sm font-bold flex items-center justify-center transition-all duration-300 outline-none ${
                     isCurrent
-                      ? "bg-primary text-white shadow-lg shadow-blue-500/40 ring-2 sm:ring-4 ring-primary/20 scale-105 sm:scale-110 cursor-pointer"
+                      ? "bg-primary-solid text-white shadow-lg shadow-blue-500/40 ring-2 sm:ring-4 ring-primary/20 scale-105 sm:scale-110 cursor-pointer"
                       : isComplete
-                        ? "bg-primary text-white cursor-pointer hover:bg-blue-600"
+                        ? "bg-primary-solid text-white cursor-pointer hover:bg-primary-solid-hover"
                         : "bg-[#0e0e0e] text-gray-500 border border-white/[0.12] cursor-not-allowed"
                   }`}
                 >
@@ -53,7 +58,7 @@ export function StepIndicator({ step, onStepChange }: StepIndicatorProps) {
                       ? "text-white font-semibold"
                       : isComplete
                         ? "text-gray-300"
-                        : "text-gray-500"
+                        : "text-gray-400"
                   }`}
                 >
                   {item.label}
@@ -62,7 +67,7 @@ export function StepIndicator({ step, onStepChange }: StepIndicatorProps) {
 
               {/* Segmented Line with Endpoint Rings */}
               {idx < CALCULATOR_STEPS.length - 1 && (
-                <div
+                <li
                   className="flex-1 min-w-[20px] sm:min-w-[40px] flex items-center mx-1.5 sm:mx-3 mb-4 sm:mb-6"
                   aria-hidden="true"
                 >
@@ -88,9 +93,9 @@ export function StepIndicator({ step, onStepChange }: StepIndicatorProps) {
                         : "border-white/20 bg-[#0e0e0e]"
                     }`}
                   />
-                </div>
+                </li>
               )}
-            </div>
+            </Fragment>
           );
         })}
       </ol>

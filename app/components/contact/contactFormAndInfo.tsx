@@ -5,8 +5,10 @@ import {
   FiUser,
   FiMessageSquare,
   FiMail,
+  FiCheckCircle,
+  FiCalendar,
 } from "react-icons/fi";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useFetcher, useRouteLoaderData } from "react-router";
@@ -17,6 +19,15 @@ import { Turnstile, TurnstileStatus, useTurnstile } from "../ui/turnstile";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import type { loader as rootLoader } from "~/root";
+import {
+  BUDGET_OPTIONS,
+  HEARD_ABOUT_OPTIONS,
+  PERSON_NAME_PATTERN,
+  TIMELINE_OPTIONS,
+} from "~/lib/leads";
+import { track } from "~/lib/analytics";
+import { RESPONSE_TIME } from "~/lib/constants";
+import { LazyBookingModal as BookingModal } from "../ui/lazy-booking-modal";
 
 type FormData = {
   firstName: string;
@@ -25,6 +36,11 @@ type FormData = {
   countryCode: string;
   phoneNumber: string;
   message: string;
+  /** Optional "How did you hear about us?" — see HEARD_ABOUT_OPTIONS. */
+  heardAbout: string;
+  /** Optional qualifiers — see BUDGET_OPTIONS / TIMELINE_OPTIONS. */
+  budget: string;
+  timeline: string;
   /** Honeypot — hidden from humans, irresistible to bots. */
   website: string;
 };
@@ -36,10 +52,16 @@ const ContactFormAndInfo = () => {
   const fetcher = useFetcher<{ ok?: boolean; error?: string }>();
   const isSending = fetcher.state !== "idle";
   const captcha = useTurnstile();
+  // After a successful send the form is swapped for a "what happens next"
+  // panel — the visitor is warmest right now, so offer the call here.
+  const [sent, setSent] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   // Time-trap: bots submit near-instantly; the action drops submissions that
   // come in faster than a human could plausibly fill the form.
   const mountedAt = useRef(Date.now());
+  // The success effect below runs after reset(), so remember the answer here.
+  const submittedHeardAbout = useRef("");
 
   const {
     register,
@@ -60,7 +82,11 @@ const ContactFormAndInfo = () => {
     if (fetcher.state !== "idle" || !fetcher.data) return;
 
     if (fetcher.data.ok) {
-      toast.success("Message sent successfully!");
+      setSent(true);
+      track("generate_lead", {
+        form: "contact",
+        heard_about: submittedHeardAbout.current || undefined,
+      });
       reset();
     } else if (fetcher.data.error) {
       toast.error(fetcher.data.error);
@@ -68,6 +94,7 @@ const ContactFormAndInfo = () => {
   }, [fetcher.state, fetcher.data, reset]);
 
   const onSubmit = (data: FormData) => {
+    submittedHeardAbout.current = data.heardAbout ?? "";
     fetcher.submit(
       {
         firstName: data.firstName,
@@ -75,6 +102,9 @@ const ContactFormAndInfo = () => {
         email: data.email,
         phone: data.phoneNumber ? `${data.countryCode} ${data.phoneNumber}` : "",
         message: data.message,
+        heardAbout: data.heardAbout ?? "",
+        budget: data.budget ?? "",
+        timeline: data.timeline ?? "",
         website: data.website ?? "",
         renderedAt: String(mountedAt.current),
         captchaToken: captcha.token ?? "",
@@ -117,11 +147,44 @@ const ContactFormAndInfo = () => {
                   Send Us a Message
                 </h2>
                 <p className="text-gray-400 font-barlow text-xs sm:text-sm mt-0.5">
-                  Tell us about your project or inquiry. We typically reply within 24 hours.
+                  Tell us about your project or inquiry. We typically reply {RESPONSE_TIME.reply}.
                 </p>
               </div>
             </div>
 
+            {sent ? (
+              <div
+                role="status"
+                className="rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.06] p-5 sm:p-6 space-y-4"
+              >
+                <p className="flex items-center gap-2 text-white font-barlow font-semibold text-lg">
+                  <FiCheckCircle className="w-5 h-5 text-emerald-400 shrink-0" aria-hidden="true" />
+                  Message sent — thank you!
+                </p>
+                <p className="text-sm text-gray-300 font-barlow leading-relaxed">
+                  A confirmation is on its way to your inbox, and we'll reply{" "}
+                  {RESPONSE_TIME.reply}. Want to skip the back-and-forth? Pick a time
+                  and talk to an engineer directly.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsBookingOpen(true)}
+                    className="inline-flex items-center justify-center gap-2 h-[44px] px-5 rounded-[10px] text-sm font-semibold font-barlow text-white bg-primary-solid hover:bg-primary-solid-hover transition-colors cursor-pointer"
+                  >
+                    <FiCalendar className="w-4 h-4" aria-hidden="true" />
+                    Book a call now
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSent(false)}
+                    className="inline-flex items-center justify-center h-[44px] px-5 rounded-[10px] text-sm font-semibold font-barlow text-gray-300 hover:text-white bg-white/[0.04] border border-white/[0.08] hover:border-white/20 transition-colors cursor-pointer"
+                  >
+                    Send another message
+                  </button>
+                </div>
+              </div>
+            ) : (
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="space-y-4 sm:space-y-5"
@@ -140,7 +203,7 @@ const ContactFormAndInfo = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 md:gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                  <label htmlFor="contact-first-name" className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
                     First Name <span className="text-primary">*</span>
                   </label>
                   <div className="relative">
@@ -148,17 +211,16 @@ const ContactFormAndInfo = () => {
                       <FiUser className="w-4 h-4" />
                     </div>
                     <input
+                      id="contact-first-name"
                       type="text"
+                      autoComplete="given-name"
                       placeholder="John"
                       {...register("firstName", {
                         required: "First name is required",
-                        minLength: {
-                          value: 2,
-                          message: "First name must be at least 2 characters",
-                        },
+                        maxLength: { value: 100, message: "First name is too long" },
                         pattern: {
-                          value: /^[A-Za-z\s]+$/,
-                          message: "First name can only contain letters",
+                          value: PERSON_NAME_PATTERN,
+                          message: "Please use letters only (apostrophes and hyphens are fine)",
                         },
                       })}
                       className={`w-full bg-black/60 border ${
@@ -177,7 +239,7 @@ const ContactFormAndInfo = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                  <label htmlFor="contact-last-name" className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
                     Last Name <span className="text-primary">*</span>
                   </label>
                   <div className="relative">
@@ -185,17 +247,16 @@ const ContactFormAndInfo = () => {
                       <FiUser className="w-4 h-4" />
                     </div>
                     <input
+                      id="contact-last-name"
                       type="text"
+                      autoComplete="family-name"
                       placeholder="Doe"
                       {...register("lastName", {
                         required: "Last name is required",
-                        minLength: {
-                          value: 2,
-                          message: "Last name must be at least 2 characters",
-                        },
+                        maxLength: { value: 100, message: "Last name is too long" },
                         pattern: {
-                          value: /^[A-Za-z\s]+$/,
-                          message: "Last name can only contain letters",
+                          value: PERSON_NAME_PATTERN,
+                          message: "Please use letters only (apostrophes and hyphens are fine)",
                         },
                       })}
                       className={`w-full bg-black/60 border ${
@@ -216,7 +277,7 @@ const ContactFormAndInfo = () => {
 
               {/* Email */}
               <div className="space-y-1.5">
-                <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                <label htmlFor="contact-email" className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
                   Work Email <span className="text-primary">*</span>
                 </label>
                 <div className="relative">
@@ -224,7 +285,9 @@ const ContactFormAndInfo = () => {
                     <FiMail className="w-4 h-4" />
                   </div>
                   <input
+                    id="contact-email"
                     type="email"
+                    autoComplete="email"
                     placeholder="john@company.com"
                     {...register("email", {
                       required: "Email is required",
@@ -250,7 +313,7 @@ const ContactFormAndInfo = () => {
 
               {/* Phone with Country Code */}
               <div className="space-y-1.5">
-                <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                <label htmlFor="contact-phone" className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
                   Phone Number
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-2.5">
@@ -261,7 +324,9 @@ const ContactFormAndInfo = () => {
 
                   <div className="relative">
                     <input
+                      id="contact-phone"
                       type="tel"
+                      autoComplete="tel-national"
                       placeholder="123 456 7890"
                       {...register("phoneNumber", {
                         pattern: {
@@ -287,7 +352,7 @@ const ContactFormAndInfo = () => {
 
               {/* Message */}
               <div className="space-y-1.5">
-                <label className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
+                <label htmlFor="contact-message" className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium">
                   Your Message <span className="text-primary">*</span>
                 </label>
                 <div className="relative">
@@ -295,6 +360,7 @@ const ContactFormAndInfo = () => {
                     <FiMessageSquare className="w-4 h-4" />
                   </div>
                   <textarea
+                    id="contact-message"
                     placeholder="Tell us about your project scope, requirements, or timeline..."
                     {...register("message", {
                       required: "Message is required",
@@ -302,9 +368,10 @@ const ContactFormAndInfo = () => {
                         value: 10,
                         message: "Message must be at least 10 characters",
                       },
+                      // Matches CreateContactDto's cap — project briefs run long.
                       maxLength: {
-                        value: 1000,
-                        message: "Message must not exceed 1000 characters",
+                        value: 5000,
+                        message: "Message must not exceed 5,000 characters",
                       },
                     })}
                     rows={4}
@@ -323,6 +390,78 @@ const ContactFormAndInfo = () => {
                 )}
               </div>
 
+              {/* Optional qualifiers — so the reply is a plan for this project, not a generic pitch. */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 md:gap-4">
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="contact-budget"
+                    className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium"
+                  >
+                    Budget{" "}
+                    <span className="normal-case tracking-normal text-gray-400">(optional)</span>
+                  </label>
+                  <select
+                    id="contact-budget"
+                    {...register("budget")}
+                    defaultValue=""
+                    className="w-full h-[46px] bg-black/60 border border-white/[0.08] focus:border-primary/60 focus:bg-black/90 rounded-xl px-3.5 text-white font-barlow text-sm outline-none transition-all duration-200 [&>option]:bg-[#0c0c0c]"
+                  >
+                    <option value="">Select a range…</option>
+                    {BUDGET_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="contact-timeline"
+                    className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium"
+                  >
+                    Timeline{" "}
+                    <span className="normal-case tracking-normal text-gray-400">(optional)</span>
+                  </label>
+                  <select
+                    id="contact-timeline"
+                    {...register("timeline")}
+                    defaultValue=""
+                    className="w-full h-[46px] bg-black/60 border border-white/[0.08] focus:border-primary/60 focus:bg-black/90 rounded-xl px-3.5 text-white font-barlow text-sm outline-none transition-all duration-200 [&>option]:bg-[#0c0c0c]"
+                  >
+                    <option value="">When do you need it?</option>
+                    {TIMELINE_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Optional — feeds the lead-source report in the admin dashboard. */}
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="heardAbout"
+                  className="text-xs font-mono uppercase tracking-wider text-gray-400 font-medium"
+                >
+                  How did you hear about us?{" "}
+                  <span className="normal-case tracking-normal text-gray-400">(optional)</span>
+                </label>
+                <select
+                  id="heardAbout"
+                  {...register("heardAbout")}
+                  defaultValue=""
+                  className="w-full h-[46px] bg-black/60 border border-white/[0.08] focus:border-primary/60 focus:bg-black/90 rounded-xl px-3.5 text-white font-barlow text-sm outline-none transition-all duration-200 [&>option]:bg-[#0c0c0c]"
+                >
+                  <option value="">Select one…</option>
+                  {HEARD_ABOUT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <Turnstile
                 siteKey={captcha.siteKey}
                 onToken={captcha.onToken}
@@ -335,7 +474,7 @@ const ContactFormAndInfo = () => {
               <button
                 type="submit"
                 disabled={isSending || !captcha.ready}
-                className="group/btn relative w-full h-[46px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-[#0A84FF] shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-[#0070e0] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+                className="group/btn relative w-full h-[46px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-primary-solid shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-primary-solid-hover hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
               >
                 <span>{isSending ? "Sending Message..." : "Send Message"}</span>
                 {!isSending && (
@@ -344,6 +483,7 @@ const ContactFormAndInfo = () => {
               </button>
               <TurnstileStatus {...captcha} />
             </form>
+            )}
           </div>
 
           {/* Right Info & Consultation (5 cols) */}
@@ -353,6 +493,7 @@ const ContactFormAndInfo = () => {
           </div>
         </div>
       </div>
+      <BookingModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
     </div>
   );
 };

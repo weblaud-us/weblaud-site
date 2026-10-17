@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, redirect, useActionData, useNavigation, Link } from "react-router";
+import { Form, redirect, useActionData, useNavigation, useSearchParams, Link } from "react-router";
 import {
   FiMail,
   FiLock,
@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi";
 import type { Route } from "./+types/login";
 import SectionBadge from "~/components/ui/section-badge";
+import weblaudLogo from "~/assets/weblaud-logo.svg";
 import { apiFetch, ApiError, withClientContext } from "~/lib/api.server";
 import { createPortalSession, getPortalSession } from "~/lib/portal.server";
 
@@ -53,6 +54,8 @@ export default function PortalLogin() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const [showPassword, setShowPassword] = useState(false);
+  // Set by /portal/forgot-password after a successful reset.
+  const resetDone = useSearchParams()[0].get("reset") === "1";
 
   return (
     <div className="min-h-screen relative bg-black text-white flex flex-col justify-center items-center px-4 py-12 overflow-hidden selection:bg-primary selection:text-white">
@@ -62,11 +65,7 @@ export default function PortalLogin() {
 
       <div className="w-full max-w-sm relative z-10 space-y-6">
         <div className="flex flex-col items-center text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0a84ff] to-[#0055b3] p-[1px] shadow-[0_0_25px_rgba(10,132,255,0.3)]">
-            <div className="w-full h-full rounded-[15px] bg-[#0c1220] flex items-center justify-center text-primary font-bold text-sm">
-              W
-            </div>
-          </div>
+          <img src={weblaudLogo} alt="Weblaud" className="h-9 w-auto" />
 
           <SectionBadge
             icon={<FiLock className="w-3.5 h-3.5 text-primary" />}
@@ -113,12 +112,20 @@ export default function PortalLogin() {
             </div>
 
             <div className="space-y-1.5">
-              <label
-                htmlFor="password"
-                className="block text-xs font-mono uppercase tracking-wider text-gray-400 font-medium"
-              >
-                Password
-              </label>
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="block text-xs font-mono uppercase tracking-wider text-gray-400 font-medium"
+                >
+                  Password
+                </label>
+                <Link
+                  to="/portal/forgot-password"
+                  className="text-xs font-barlow text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none z-10 text-gray-400">
                   <FiLock className="w-4 h-4" />
@@ -146,6 +153,15 @@ export default function PortalLogin() {
                 </button>
               </div>
             </div>
+
+            {resetDone && !actionData?.error && (
+              <p
+                role="status"
+                className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-barlow"
+              >
+                Password updated — sign in with your new password.
+              </p>
+            )}
 
             {actionData?.error && (
               <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-xs font-barlow">

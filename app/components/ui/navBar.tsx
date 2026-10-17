@@ -4,19 +4,19 @@ import { HiMenuAlt3, HiX } from "react-icons/hi";
 import { ChevronRight } from "lucide-react";
 import weblaudLogo from "~/assets/weblaud-logo.svg";
 import logo from "~/assets/weblaud.com.svg";
-// import { Button } from "./button";
-// import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
+import { Button } from "./button";
+import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 
 const NavBar = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // No entrance animation: the navbar used to render hidden (opacity 0 +
+  // blur) until hydration flipped it visible, so the logo — the page's
+  // largest-paint candidate — waited ~4 s for JS on a phone.
   useEffect(() => {
-    setIsVisible(true);
-
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true);
@@ -46,7 +46,9 @@ const NavBar = () => {
     { name: "Services", href: "/services" },
     { name: "Projects", href: "/projects" },
     { name: "Insights", href: "/insights" },
-    { name: "Career", href: "/career" },
+    // Career lives in the footer; the main nav is for people hiring us.
+    { name: "Pricing", href: "/software-development-cost" },
+    { name: "Free Audit", href: "/audit" },
     { name: "Contact", href: "/contact" },
   ];
 
@@ -70,17 +72,13 @@ const NavBar = () => {
               isScrolled
                 ? "bg-[#0e0e0e] border border-light-black/50 rounded-2xl px-4 md:px-6 py-2 md:py-3 shadow-lg shadow-black/50"
                 : "bg-[#0e0e0e] border border-white/[0.08] md:border-light-black rounded-2xl md:rounded-3xl px-4 sm:px-6 md:px-8 py-2.5 md:py-4 shadow-lg shadow-black/40"
-            } ${
-              isVisible
-                ? "opacity-100 blur-0 translate-y-0"
-                : "opacity-0 blur-[10px] -translate-y-5"
             }`}
           >
             <div className="shrink-0">
               <Link
                 to="/"
                 className={`transition-all duration-300 flex items-center ${
-                  isScrolled ? "h-8" : "h-9 md:h-10"
+                  isScrolled ? "h-7 sm:h-8" : "h-8 sm:h-9 md:h-10"
                 }`}
               >
                 <img
@@ -126,29 +124,39 @@ const NavBar = () => {
             <div className="hidden lg:flex items-center">
               <Link
                 to="/calculator"
-                className={`relative group inline-flex items-center justify-center font-barlow font-semibold text-white bg-[#0A84FF] hover:bg-blue-600 transition-all duration-300 rounded-xl shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[1px] active:translate-y-0 ${
+                className={`relative group inline-flex items-center justify-center font-barlow font-semibold text-white bg-primary-solid hover:bg-primary-solid-hover transition-all duration-300 rounded-xl shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[1px] active:translate-y-0 ${
                   isScrolled ? "px-5 py-2 text-xs" : "px-6 py-2.5 text-sm"
                 }`}
               >
                 <span>Cost Estimator</span>
               </Link>
             </div>
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden text-white cursor-pointer p-2 sm:p-2.5 bg-white/[0.08] hover:bg-white/[0.14] border border-white/[0.1] hover:border-white/[0.2] rounded-xl backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden group shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
-              aria-label="Toggle menu"
-            >
-              <div className="absolute inset-0 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0 group-hover:translate-x-full transition-transform duration-700"></div>
-              <div
-                className={`relative transition-transform duration-300 ${isMobileMenuOpen ? "rotate-90" : "rotate-0"}`}
+            {/* Below lg the desktop CTA is hidden, so phones get their own
+                compact one next to the menu toggle — most traffic is mobile. */}
+            <div className="lg:hidden flex items-center gap-2">
+              <Link
+                to="/calculator"
+                className="inline-flex items-center justify-center h-9 sm:h-10 px-3.5 sm:px-4 rounded-xl font-barlow font-semibold text-xs sm:text-sm text-white bg-primary-solid hover:bg-primary-solid-hover transition-colors duration-300 shadow-[0_2px_12px_rgba(10,132,255,0.35)] whitespace-nowrap"
               >
-                {isMobileMenuOpen ? (
-                  <HiX className="w-5 h-5 sm:w-6 sm:h-6" />
-                ) : (
-                  <HiMenuAlt3 className="w-5 h-5 sm:w-6 sm:h-6" />
-                )}
-              </div>
-            </button>
+                Get estimate
+              </Link>
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="lg:hidden text-white cursor-pointer p-2 sm:p-2.5 bg-white/[0.08] hover:bg-white/[0.14] border border-white/[0.1] hover:border-white/[0.2] rounded-xl backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden group shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
+                aria-label="Toggle menu"
+              >
+                <div className="absolute inset-0 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0 group-hover:translate-x-full transition-transform duration-700"></div>
+                <div
+                  className={`relative transition-transform duration-300 ${isMobileMenuOpen ? "rotate-90" : "rotate-0"}`}
+                >
+                  {isMobileMenuOpen ? (
+                    <HiX className="w-5 h-5 sm:w-6 sm:h-6" />
+                  ) : (
+                    <HiMenuAlt3 className="w-5 h-5 sm:w-6 sm:h-6" />
+                  )}
+                </div>
+              </button>
+            </div>
           </div>
 
           <div
@@ -222,9 +230,8 @@ const NavBar = () => {
                 })}
               </nav>
 
-              {/* Book a Call — mobile drawer button (commented out; re-enable when needed)
               <div
-                className={`transition-all duration-500 ${
+                className={`space-y-3 transition-all duration-500 ${
                   isMobileMenuOpen
                     ? "opacity-100 blur-0 translate-y-0 scale-100"
                     : "opacity-0 blur-sm translate-y-10 scale-95"
@@ -240,14 +247,20 @@ const NavBar = () => {
                 >
                   Book a Call
                 </Button>
+                <Link
+                  to="/calculator"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center w-full rounded-xl border border-white/10 hover:border-white/25 bg-white/[0.04] px-8 py-3.5 font-barlow font-semibold text-sm text-white transition-colors duration-300"
+                >
+                  Get an estimate in 2 minutes
+                </Link>
               </div>
-              */}
 
             </div>
           </div>
         </div>
       </nav>
-      {/* <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} /> */}
+      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 };

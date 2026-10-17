@@ -145,6 +145,7 @@ function formatDeadline(iso?: string) {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC", // match the server so hydration agrees (see insights.tsx)
   });
 }
 
@@ -206,7 +207,7 @@ export default function CareerDetail({ loaderData }: Route.ComponentProps) {
           <div className="hidden md:flex items-center gap-4 pt-2">
             <Link
               to={`/career/${job.slug}/apply`}
-              className="group inline-flex items-center justify-center gap-2.5 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-sm px-7 py-3 rounded-full transition-all duration-300 shadow-lg shadow-blue-500/25 hover:scale-[1.02] cursor-pointer"
+              className="group inline-flex items-center justify-center gap-2.5 bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-semibold text-sm px-7 py-3 rounded-full transition-all duration-300 shadow-lg shadow-blue-500/25 hover:scale-[1.02] cursor-pointer"
             >
               <span>Apply for this Role</span>
               <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
@@ -345,7 +346,7 @@ export default function CareerDetail({ loaderData }: Route.ComponentProps) {
             />
             <Link
               to={`/career/${job.slug}/apply`}
-              className="group relative z-10 inline-flex items-center gap-2 sm:gap-2.5 bg-primary hover:bg-primary/90 text-white font-barlow font-semibold text-xs sm:text-sm px-5 py-2.5 sm:px-6 sm:py-3 rounded-full transition-all duration-300 shadow-md shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] cursor-pointer"
+              className="group relative z-10 inline-flex items-center gap-2 sm:gap-2.5 bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-semibold text-xs sm:text-sm px-5 py-2.5 sm:px-6 sm:py-3 rounded-full transition-all duration-300 shadow-md shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] cursor-pointer"
             >
               <span>Apply for this Role</span>
               <span className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
@@ -382,7 +383,7 @@ export default function CareerDetail({ loaderData }: Route.ComponentProps) {
         </div>
         <Link
           to={`/career/${job.slug}/apply`}
-          className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-xs px-4.5 py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 shrink-0 cursor-pointer"
+          className="group inline-flex items-center justify-center gap-2 bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-semibold text-xs px-4.5 py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 shrink-0 cursor-pointer"
         >
           <span>Apply Now</span>
           <span className="flex items-center justify-center w-4.5 h-4.5 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors">

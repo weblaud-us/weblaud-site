@@ -13,6 +13,8 @@ import {
   isUsableConfig,
 } from "~/lib/calculator-defaults";
 import type { CalculatorConfig } from "~/lib/types";
+import { readAttribution } from "~/lib/attribution";
+import { parseHeardAbout } from "~/lib/leads";
 
 export async function loader() {
   const config = await fetchOptional<CalculatorConfig | null>(
@@ -63,6 +65,8 @@ export async function action({ request }: Route.ActionArgs) {
           projectTypeId: String(formData.get("projectTypeId") ?? ""),
           featureIds,
           speedId: String(formData.get("speedId") ?? ""),
+          heardAbout: parseHeardAbout(formData.get("heardAbout")),
+          attribution: readAttribution(request),
         },
       }),
     );

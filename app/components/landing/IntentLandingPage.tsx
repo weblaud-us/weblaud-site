@@ -8,6 +8,7 @@ import Discuss from "~/components/aboutUs/discuss";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import type { LandingPageConfig } from "~/lib/types";
+import { relatedLandingLinks } from "~/data/landing/links";
 import {
   Scale,
   HelpCircle,
@@ -18,6 +19,7 @@ import {
   TrendingUp,
   Calendar,
   Calculator,
+  ArrowRight,
 } from "lucide-react";
 
 const PLUS_TRANSITION: Transition = {
@@ -205,7 +207,7 @@ export default function IntentLandingPage({
             {config.ctaLink ? (
               <Link
                 to={config.ctaLink.to}
-                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-barlow font-semibold text-xs sm:text-sm hover:bg-blue-600 transition-all duration-300 shadow-md shadow-blue-500/20 hover:shadow-blue-500/35 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-solid text-white font-barlow font-semibold text-xs sm:text-sm hover:bg-primary-solid-hover transition-all duration-300 shadow-md shadow-blue-500/20 hover:shadow-blue-500/35 hover:-translate-y-0.5"
               >
                 <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/90" />
                 <span>{config.ctaLink.label}</span>
@@ -213,7 +215,7 @@ export default function IntentLandingPage({
             ) : (
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-barlow font-semibold text-xs sm:text-sm hover:bg-blue-600 transition-all duration-300 shadow-md shadow-blue-500/20 hover:shadow-blue-500/35 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-solid text-white font-barlow font-semibold text-xs sm:text-sm hover:bg-primary-solid-hover transition-all duration-300 shadow-md shadow-blue-500/20 hover:shadow-blue-500/35 hover:-translate-y-0.5"
               >
                 <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/90" />
                 <span>Book Technical Discovery</span>
@@ -448,6 +450,33 @@ export default function IntentLandingPage({
             </ul>
           </div>
         )}
+
+        {/* Cross-links: without these, most landing pages were reachable only
+            from the sitemap — no internal link pointed at them. */}
+        <nav aria-labelledby="keep-exploring" className="space-y-5">
+          <h2
+            id="keep-exploring"
+            className="text-xl sm:text-2xl font-bold font-barlow text-white tracking-tight"
+          >
+            Keep exploring
+          </h2>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {relatedLandingLinks(config.path).map((link) => (
+              <li key={link.path}>
+                <Link
+                  to={link.path}
+                  className="group flex items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-[#0e0e0e] hover:border-primary/40 px-4 py-3.5 font-barlow text-sm text-gray-200 hover:text-white transition-colors duration-300"
+                >
+                  <span>{link.label}</span>
+                  <ArrowRight
+                    className="w-4 h-4 text-primary shrink-0 group-hover:translate-x-0.5 transition-transform"
+                    aria-hidden="true"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
 
       <Discuss />

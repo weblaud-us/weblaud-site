@@ -1,5 +1,5 @@
 import HeroBanner from "../ui/hero-banner";
-import ourServicesImg from "~/assets/our-services.png";
+import ourServicesImg from "~/assets/our-services.webp";
 import { FiCode } from "react-icons/fi";
 
 const BannerOurServices = () => {

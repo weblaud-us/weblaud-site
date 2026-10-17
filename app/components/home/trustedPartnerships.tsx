@@ -232,11 +232,23 @@ const partnersRow2: Partner[] = [
   },
 ];
 
-const PartnerLogoCard = ({ partner }: { partner: Partner }) => {
+/**
+ * `duplicate`: the marquee renders each row three times for a seamless loop.
+ * Only the first copy is exposed to assistive tech, so a screen reader lists
+ * each partner once instead of three times.
+ */
+const PartnerLogoCard = ({
+  partner,
+  duplicate = false,
+}: {
+  partner: Partner;
+  duplicate?: boolean;
+}) => {
   return (
     <div
-      aria-label={`${partner.name} - ${partner.category}`}
-      role="img"
+      aria-label={duplicate ? undefined : `${partner.name} - ${partner.category}`}
+      aria-hidden={duplicate || undefined}
+      role={duplicate ? undefined : "img"}
       className="partner-card group relative flex items-center gap-2.5 sm:gap-3.5 mx-1.5 sm:mx-2 md:mx-2.5 rounded-xl sm:rounded-2xl px-3.5 sm:px-4 md:px-5 h-[48px] sm:h-[56px] md:h-[64px] min-w-[135px] sm:min-w-[155px] md:min-w-[170px] cursor-pointer shrink-0 transition-all duration-300 overflow-hidden select-none bg-[#111111] border border-white/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:-translate-y-[2px]"
       style={
         {
@@ -254,8 +266,9 @@ const PartnerLogoCard = ({ partner }: { partner: Partner }) => {
         }}
       />
 
-      {/* Icon with Brand Color */}
+      {/* Icon with Brand Color — decorative; the card's label names it. */}
       <div
+        aria-hidden="true"
         className="text-base sm:text-lg md:text-xl shrink-0 transition-transform duration-300 group-hover:scale-110"
         style={{
           color: partner.color,
@@ -332,14 +345,22 @@ const TrustedPartnerships = () => {
         {/* Row 1: Scrolling Left */}
         <div className="flex items-center animate-marquee-left py-1.5 sm:py-2 transform-gpu">
           {tripledRow1.map((partner, index) => (
-            <PartnerLogoCard key={`r1-${partner.name}-${index}`} partner={partner} />
+            <PartnerLogoCard
+              key={`r1-${partner.name}-${index}`}
+              partner={partner}
+              duplicate={index >= partnersRow1.length}
+            />
           ))}
         </div>
 
         {/* Row 2: Scrolling Right */}
         <div className="flex items-center animate-marquee-right py-1.5 sm:py-2 transform-gpu">
           {tripledRow2.map((partner, index) => (
-            <PartnerLogoCard key={`r2-${partner.name}-${index}`} partner={partner} />
+            <PartnerLogoCard
+              key={`r2-${partner.name}-${index}`}
+              partner={partner}
+              duplicate={index >= partnersRow2.length}
+            />
           ))}
         </div>
       </div>

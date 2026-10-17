@@ -3,7 +3,15 @@ import { Link, useSearchParams, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/contact-submissions";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
+import { handleLeadPipelineIntent } from "~/lib/lead-actions.server";
+import { BUDGET_LABEL, TIMELINE_LABEL, isLeadStage } from "~/lib/leads";
 import type { ContactSubmission, Paginated } from "~/lib/types";
+import {
+  LeadPipelineActions,
+  LeadPipelineSummary,
+  LeadSource,
+  StageFilter,
+} from "~/components/admin/lead-pipeline";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
@@ -35,23 +43,35 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import { LocalTime } from "~/components/ui/local-time";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") ?? "1";
   // The backend leaves spam out of the default list; the Spam tab asks for it.
   const showSpam = url.searchParams.get("view") === "spam";
+  const stageParam = url.searchParams.get("stage");
+  const stage = !showSpam && isLeadStage(stageParam) ? stageParam : null;
   const result = await callAdminApi(request, (accessToken) =>
     apiFetch<Paginated<ContactSubmission>>(
-      `/contact/admin?page=${page}&limit=20${showSpam ? "&status=spam" : ""}`,
+      `/contact/admin?page=${page}&limit=20${showSpam ? "&status=spam" : ""}${
+        stage ? `&stage=${stage}` : ""
+      }`,
       { accessToken },
     ),
   );
-  return { result, page: Number(page), showSpam };
+  return { result, page: Number(page), showSpam, stage };
 }
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
+  const pipelineResult = await handleLeadPipelineIntent(
+    request,
+    formData,
+    "/contact/admin",
+  );
+  if (pipelineResult) return pipelineResult;
+
   const intent = String(formData.get("intent"));
   const id = String(formData.get("id"));
 
@@ -88,7 +108,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function AdminContactSubmissions({
   loaderData,
 }: Route.ComponentProps) {
-  const { result, page, showSpam } = loaderData;
+  const { result, page, showSpam, stage } = loaderData;
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
   const navigation = useNavigation();
@@ -130,6 +150,8 @@ export default function AdminContactSubmissions({
         ))}
       </div>
 
+      {!showSpam && <StageFilter active={stage} />}
+
       {showSpam && result.items.length > 0 && (
         <p className="text-sm text-white/50 mb-4">
           Filed automatically by the spam filter and never emailed to you. Use
@@ -151,11 +173,19 @@ export default function AdminContactSubmissions({
         {result.items.length === 0 ? (
           <EmptyState
             icon={Inbox}
-            title={showSpam ? "No spam" : "No submissions yet"}
+            title={
+              showSpam
+                ? "No spam"
+                : stage
+                  ? "No leads in this stage"
+                  : "No submissions yet"
+            }
             description={
               showSpam
                 ? "Messages the spam filter catches will show up here."
-                : "Leads from the contact form will show up here."
+                : stage
+                  ? "Pick another stage above, or All stages."
+                  : "Leads from the contact form will show up here."
             }
           />
         ) : (
@@ -165,8 +195,11 @@ export default function AdminContactSubmissions({
               <TableHead className="text-white/60">From</TableHead>
               <TableHead className="text-white/60">Contact</TableHead>
               <TableHead className="text-white/60">Message</TableHead>
+              <TableHead className="text-white/60">Source</TableHead>
               <TableHead className="text-white/60">Received</TableHead>
-              <TableHead className="text-white/60">Status</TableHead>
+              {!showSpam && (
+                <TableHead className="text-white/60">Pipeline</TableHead>
+              )}
               <TableHead className="text-white/60 text-right">
                 Actions
               </TableHead>
@@ -175,7 +208,10 @@ export default function AdminContactSubmissions({
           <TableBody>
             {filtered.length === 0 && (
               <TableRow className="border-white/10">
-                <TableCell colSpan={6} className="text-white/40 py-8 text-center">
+                <TableCell
+                  colSpan={showSpam ? 6 : 7}
+                  className="text-white/40 py-8 text-center"
+                >
                   No submissions match "{query}".
                 </TableCell>
               </TableRow>
@@ -197,12 +233,26 @@ export default function AdminContactSubmissions({
                 </TableCell>
                 <TableCell className="text-white/50 max-w-sm whitespace-normal">
                   {lead.message}
-                </TableCell>
-                <TableCell className="text-white/50">
-                  {new Date(lead.createdAt).toLocaleDateString()}
+                  {(lead.budget || lead.timeline) && (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {lead.budget && (
+                        <Badge variant="outline">Budget: {BUDGET_LABEL[lead.budget]}</Badge>
+                      )}
+                      {lead.timeline && (
+                        <Badge variant="outline">{TIMELINE_LABEL[lead.timeline]}</Badge>
+                      )}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={lead.status === "new" ? "default" : "secondary"}>
+                  <LeadSource lead={lead} />
+                </TableCell>
+                <TableCell className="text-white/50">
+                  <div><LocalTime value={lead.createdAt} /></div>
+                  <Badge
+                    className="mt-1"
+                    variant={lead.status === "new" ? "default" : "secondary"}
+                  >
                     {lead.status}
                   </Badge>
                   {lead.spamReason && (
@@ -211,7 +261,20 @@ export default function AdminContactSubmissions({
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="text-right space-x-2">
+                {!showSpam && (
+                  <TableCell>
+                    <LeadPipelineSummary lead={lead} />
+                  </TableCell>
+                )}
+                <TableCell className="text-right space-x-2 space-y-2">
+                  {lead.status !== "spam" && (
+                    <LeadPipelineActions
+                      lead={lead}
+                      leadId={lead._id}
+                      name={`${lead.firstName} ${lead.lastName}`.trim()}
+                      email={lead.email}
+                    />
+                  )}
                   {lead.status === "spam" && (
                     <Button
                       variant="outline"

@@ -14,6 +14,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { EmptyState } from "~/components/admin/empty-state";
 import { Clock, Trash2, Receipt } from "lucide-react";
+import { addUtcDays, formatShortDate, startOfUtcWeek } from "~/lib/dates";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   await requirePortalUser(request);
@@ -95,14 +96,6 @@ function formatHours(minutes: number) {
   return (minutes / 60).toFixed(2);
 }
 
-function startOfWeek(date: Date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  d.setDate(diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
 
 function AddEntryForm({ tasks }: { tasks: Task[] }) {
   const fetcher = useFetcher<{ ok?: boolean; error?: string }>();
@@ -159,7 +152,7 @@ function EntryRow({ entry, canManage }: { entry: TimeEntry; canManage: boolean }
       <Clock className="size-4 text-white/30 shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="text-sm text-white">
-          {new Date(entry.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })} &middot;{" "}
+          {formatShortDate(entry.date)} &middot;{" "}
           {formatHours(entry.minutes)}h
           {taskTitle(entry.task) && <span className="text-white/40"> &middot; {taskTitle(entry.task)}</span>}
         </p>
@@ -216,13 +209,11 @@ function GenerateInvoiceForm({ unbilledIds }: { unbilledIds: string[] }) {
 export default function PortalProjectTime({ loaderData }: Route.ComponentProps) {
   const { entries, tasks } = loaderData;
   const { user, isPm } = useOutletContext<ProjectWorkspaceContext>();
-  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
+  // UTC weeks: entry days are stored as midnight UTC, and a local-time week
+  // differed between the server render (UTC) and the browser.
+  const [weekStart, setWeekStart] = useState(() => startOfUtcWeek(new Date()));
 
-  const weekEnd = useMemo(() => {
-    const d = new Date(weekStart);
-    d.setDate(d.getDate() + 7);
-    return d;
-  }, [weekStart]);
+  const weekEnd = useMemo(() => addUtcDays(weekStart, 7), [weekStart]);
 
   const weekEntries = entries.filter((e) => {
     const d = new Date(e.date);
@@ -257,18 +248,13 @@ export default function PortalProjectTime({ loaderData }: Route.ComponentProps) 
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  setWeekStart((d) => {
-                    const n = new Date(d);
-                    n.setDate(n.getDate() - 7);
-                    return n;
-                  })
+                  setWeekStart((d) => addUtcDays(d, -7))
                 }
               >
                 Prev week
               </Button>
               <span className="text-xs text-white/50">
-                {weekStart.toLocaleDateString(undefined, { month: "short", day: "numeric" })} &ndash;{" "}
-                {new Date(weekEnd.getTime() - 86400000).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                {formatShortDate(weekStart)} &ndash; {formatShortDate(addUtcDays(weekEnd, -1))}
               </span>
               <Button
                 type="button"

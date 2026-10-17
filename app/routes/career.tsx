@@ -143,9 +143,9 @@ export default function CareerHub({ loaderData }: Route.ComponentProps) {
                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-2.5 sm:mb-4 group-hover:scale-105 transition-transform duration-300">
                   {perk.icon}
                 </div>
-                <h3 className="text-xs sm:text-base md:text-lg font-bold font-barlow text-white tracking-tight mb-1 sm:mb-2 leading-snug">
+                <h2 className="text-xs sm:text-base md:text-lg font-bold font-barlow text-white tracking-tight mb-1 sm:mb-2 leading-snug">
                   {perk.title}
-                </h3>
+                </h2>
               </div>
               <p className="text-[11px] sm:text-sm text-gray-400 font-barlow leading-relaxed">
                 {perk.description}
@@ -182,7 +182,7 @@ export default function CareerHub({ loaderData }: Route.ComponentProps) {
                 onClick={() => setSelectedDept("all")}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-barlow font-semibold transition-all duration-200 cursor-pointer ${
                   selectedDept === "all"
-                    ? "bg-primary text-white shadow-md shadow-blue-500/20"
+                    ? "bg-primary-solid text-white shadow-md shadow-blue-500/20"
                     : "bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:text-white hover:border-white/20"
                 }`}
               >
@@ -200,7 +200,7 @@ export default function CareerHub({ loaderData }: Route.ComponentProps) {
                     onClick={() => setSelectedDept(dept)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-barlow font-semibold transition-all duration-200 cursor-pointer ${
                       isSelected
-                        ? "bg-primary text-white shadow-md shadow-blue-500/20"
+                        ? "bg-primary-solid text-white shadow-md shadow-blue-500/20"
                         : "bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:text-white hover:border-white/20"
                     }`}
                   >
@@ -227,7 +227,7 @@ export default function CareerHub({ loaderData }: Route.ComponentProps) {
                   {/* Badges row */}
                   <div className="flex flex-wrap items-center gap-2 mb-4 relative z-10">
                     {job.jobType && (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-semibold font-barlow">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-[#5ab0ff] text-[11px] font-semibold font-barlow">
                         <FiBriefcase className="mr-1.5 w-3 h-3" />
                         {job.jobType}
                       </span>
@@ -281,7 +281,7 @@ export default function CareerHub({ loaderData }: Route.ComponentProps) {
                   </span>
                   <Link
                     to={`/career/${job.slug}`}
-                    className="group/btn inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/25 hover:bg-primary text-primary hover:text-white text-xs font-barlow font-semibold transition-all duration-300"
+                    className="group/btn inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/25 hover:bg-primary-solid text-primary hover:text-white text-xs font-barlow font-semibold transition-all duration-300"
                   >
                     <span>View Role</span>
                     <span className="flex items-center justify-center w-4 h-4 rounded-full bg-primary/20 group-hover/btn:bg-white/20 transition-colors">
@@ -306,7 +306,7 @@ export default function CareerHub({ loaderData }: Route.ComponentProps) {
             </p>
             <Link
               to="/contact"
-              className="group inline-flex items-center justify-center gap-2.5 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer"
+              className="group inline-flex items-center justify-center gap-2.5 bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer"
             >
               <span>Send General Application</span>
               <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">

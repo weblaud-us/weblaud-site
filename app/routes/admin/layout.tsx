@@ -32,6 +32,7 @@ import {
   Repeat,
   History,
   type LucideIcon,
+  Gauge,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -93,6 +94,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: "/cpadmin/contact-submissions", label: "Submissions", icon: Inbox },
       { to: "/cpadmin/estimate-submissions", label: "Estimates", icon: Calculator },
+      { to: "/cpadmin/audit-submissions", label: "Website Audits", icon: Gauge },
       { to: "/cpadmin/applicants", label: "Applicants", icon: ClipboardList },
     ],
   },

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "~/components/ui/button";
 import SectionBadge from "~/components/ui/section-badge";
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router";
 import { estimateProject } from "~/lib/calculator";
+import { track } from "~/lib/analytics";
 import type { CalculatorConfig } from "~/lib/types";
 import { CALCULATOR_STEPS, StepIndicator } from "./stepIndicator";
 import { OptionCard } from "./optionCard";
@@ -56,6 +57,9 @@ export default function ProjectCalculator({
   const { projectTypes, features, timelineSpeeds } = config;
 
   const [step, setStep] = useState(1);
+  useEffect(() => {
+    track("calculator_step", { step });
+  }, [step]);
   const [selectedType, setSelectedType] = useState<string>(
     projectTypes[0]?.id ?? "",
   );
@@ -149,7 +153,7 @@ export default function ProjectCalculator({
               <motion.div key="step1" {...STEP_TRANSITION} className="space-y-4 sm:space-y-5">
                 <fieldset>
                   <legend className="text-base sm:text-xl font-bold font-barlow text-white mb-3 sm:mb-4 flex items-start gap-2.5 leading-snug">
-                    <span className="w-6 h-6 rounded-lg bg-primary/10 border border-primary/20 text-primary font-mono text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">
+                    <span className="w-6 h-6 rounded-lg bg-primary/10 border border-primary/20 text-[#5ab0ff] font-mono text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">
                       01
                     </span>
                     <span>Select your primary software focus:</span>
@@ -173,7 +177,7 @@ export default function ProjectCalculator({
                             aria-hidden="true"
                             className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all duration-300 shrink-0 ${
                               selectedType === type.id
-                                ? "bg-primary border-primary text-white shadow-md shadow-blue-500/40 ring-2 ring-primary/20"
+                                ? "bg-primary-solid border-primary-solid text-white shadow-md shadow-blue-500/40 ring-2 ring-primary/20"
                                 : "border-white/20 bg-white/[0.02]"
                             }`}
                           >
@@ -194,7 +198,7 @@ export default function ProjectCalculator({
               <motion.div key="step2" {...STEP_TRANSITION} className="space-y-4 sm:space-y-5">
                 <fieldset>
                   <legend className="text-base sm:text-xl font-bold font-barlow text-white mb-3 sm:mb-4 flex items-start gap-2.5 leading-snug">
-                    <span className="w-6 h-6 rounded-lg bg-primary/10 border border-primary/20 text-primary font-mono text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">
+                    <span className="w-6 h-6 rounded-lg bg-primary/10 border border-primary/20 text-[#5ab0ff] font-mono text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">
                       02
                     </span>
                     <span>Choose required technical capabilities:</span>
@@ -217,7 +221,7 @@ export default function ProjectCalculator({
                               aria-hidden="true"
                               className={`w-5 h-5 rounded-lg flex items-center justify-center border transition-all duration-300 shrink-0 ${
                                 isChecked
-                                  ? "bg-primary border-primary text-white shadow-md shadow-blue-500/40 ring-2 ring-primary/20"
+                                  ? "bg-primary-solid border-primary-solid text-white shadow-md shadow-blue-500/40 ring-2 ring-primary/20"
                                   : "border-white/20 bg-white/[0.02]"
                               }`}
                             >
@@ -237,7 +241,7 @@ export default function ProjectCalculator({
               <motion.div key="step3" {...STEP_TRANSITION} className="space-y-5 sm:space-y-6">
                 <fieldset>
                   <legend className="text-base sm:text-xl font-bold font-barlow text-white mb-3 sm:mb-4 flex items-start gap-2.5 leading-snug">
-                    <span className="w-6 h-6 rounded-lg bg-primary/10 border border-primary/20 text-primary font-mono text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">
+                    <span className="w-6 h-6 rounded-lg bg-primary/10 border border-primary/20 text-[#5ab0ff] font-mono text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">
                       03
                     </span>
                     <span>Select delivery pace & view estimated breakdown:</span>
@@ -259,7 +263,7 @@ export default function ProjectCalculator({
                             aria-hidden="true"
                             className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all duration-300 shrink-0 ${
                               selectedSpeed === speed.id
-                                ? "bg-primary border-primary text-white shadow-md shadow-blue-500/40 ring-2 ring-primary/20"
+                                ? "bg-primary-solid border-primary-solid text-white shadow-md shadow-blue-500/40 ring-2 ring-primary/20"
                                 : "border-white/20 bg-white/[0.02]"
                             }`}
                           >
@@ -314,7 +318,7 @@ export default function ProjectCalculator({
               <button
                 type="button"
                 onClick={() => setStep((s) => s + 1)}
-                className="group inline-flex items-center justify-center gap-2.5 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer"
+                className="group inline-flex items-center justify-center gap-2.5 bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer"
               >
                 <span>Next Step</span>
                 <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">

@@ -2,13 +2,49 @@ import type { Route } from "./+types/services";
 import BannerOurServices from "~/components/services/bannerOurServices";
 import OurServices from "~/components/services/ourServices";
 import Discuss from "~/components/aboutUs/discuss";
+import FAQ, { type FaqItem } from "~/components/home/faq";
+import SolutionLinks from "~/components/services/solutionLinks";
 import { fetchOptional, resolveMediaUrl } from "~/lib/api.server";
+import { optimizeMediaUrl } from "~/lib/media";
 import type { AdminService } from "~/lib/types";
+
+/**
+ * Rendered on the page *and* emitted as FAQPage JSON-LD. Google requires
+ * marked-up questions to be visible; the schema used to describe an FAQ this
+ * page never showed.
+ */
+const SERVICES_FAQS: FaqItem[] = [
+  {
+    _id: "services-faq-1",
+    question: "What services does Weblaud LLC provide?",
+    answer:
+      "Weblaud LLC provides end-to-end software development including custom operations platforms, B2B SaaS web applications, cross-platform mobile apps (React Native & Flutter), production AI/LLM integrations, real-time WebSocket infrastructure, and cloud DevOps management.",
+  },
+  {
+    _id: "services-faq-2",
+    question: "What technologies and frameworks does Weblaud LLC use?",
+    answer:
+      "We specialize in React, React Router v7, TypeScript, Node.js, Python, FastAPI, NestJS, Flutter, React Native, PostgreSQL, Redis, Docker, and AWS cloud infrastructure.",
+  },
+  {
+    _id: "services-faq-3",
+    question: "Does Weblaud LLC build custom AI and LLM solutions?",
+    answer:
+      "Yes, Weblaud LLC builds production RAG (Retrieval-Augmented Generation) systems, vector database caching, semantic search, and custom LLM agent pipelines using Python, FastAPI, and OpenAI/Anthropic APIs.",
+  },
+  {
+    _id: "services-faq-4",
+    question: "Does Weblaud LLC provide software maintenance and SLA support?",
+    answer:
+      "Yes, we provide 99.9% uptime SLA monitoring, continuous cloud DevOps management, database backups, security patch updates, and feature expansion as your active user base grows.",
+  },
+];
 
 export async function loader() {
   const services = await fetchOptional<AdminService[]>("/services", []);
   return {
-    services: services.map((s) => ({ ...s, image: resolveMediaUrl(s.image) })),
+    // Service icons render at 160 px.
+    services: services.map((s) => ({ ...s, image: optimizeMediaUrl(resolveMediaUrl(s.image), 320) })),
   };
 }
 
@@ -103,40 +139,11 @@ export function meta({}: Route.MetaArgs) {
       "script:ld+json": {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What services does Weblaud LLC provide?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Weblaud LLC provides end-to-end software development including custom operations platforms, B2B SaaS web applications, cross-platform mobile apps (React Native & Flutter), production AI/LLM integrations, real-time WebSocket infrastructure, and cloud DevOps management.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What technologies and frameworks does Weblaud LLC use?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "We specialize in React, React Router v7, TypeScript, Node.js, Python, FastAPI, NestJS, Flutter, React Native, PostgreSQL, Redis, Docker, and AWS cloud infrastructure.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does Weblaud LLC build custom AI and LLM solutions?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes, Weblaud LLC builds production RAG (Retrieval-Augmented Generation) systems, vector database caching, semantic search, and custom LLM agent pipelines using Python, FastAPI, and OpenAI/Anthropic APIs.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does Weblaud LLC provide software maintenance and SLA support?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes, we provide 99.9% uptime SLA monitoring, continuous cloud DevOps management, database backups, security patch updates, and feature expansion as your active user base grows.",
-            },
-          },
-        ],
+        mainEntity: SERVICES_FAQS.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: { "@type": "Answer", text: faq.answer },
+        })),
       },
     },
     {
@@ -168,6 +175,8 @@ const Services = ({ loaderData }: Route.ComponentProps) => {
     <>
       <BannerOurServices />
       <OurServices services={loaderData.services} />
+      <SolutionLinks />
+      <FAQ faqs={SERVICES_FAQS} />
       <Discuss />
     </>
   );

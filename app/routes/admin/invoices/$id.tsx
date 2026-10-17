@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { LocalTime } from "~/components/ui/local-time";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const [invoice, payments] = await Promise.all([
@@ -141,7 +142,7 @@ function money(amount: number, currency: string) {
   try {
     return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
   } catch {
-    return `${currency} ${amount.toLocaleString()}`;
+    return `${currency} ${amount.toLocaleString("en-US")}`;
   }
 }
 
@@ -295,7 +296,7 @@ export default function AdminInvoiceDetail({ loaderData }: Route.ComponentProps)
               <TableBody>
                 {payments.map((p) => (
                   <TableRow key={p._id} className="border-white/10">
-                    <TableCell className="text-white/50">{new Date(p.createdAt).toLocaleString()}</TableCell>
+                    <TableCell className="text-white/50"><LocalTime value={p.createdAt} withTime /></TableCell>
                     <TableCell className="text-white">{money(p.amount, p.currency)}</TableCell>
                     <TableCell className="text-white/50 capitalize">{p.provider}</TableCell>
                     <TableCell>

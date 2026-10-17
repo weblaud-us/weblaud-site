@@ -10,6 +10,7 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { EmptyState } from "~/components/admin/empty-state";
 import { Receipt, Download, CreditCard } from "lucide-react";
+import { formatDate } from "~/lib/dates";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   await requirePortalUser(request);
@@ -99,7 +100,7 @@ export default function PortalProjectInvoices({ loaderData }: Route.ComponentPro
             <div>
               <p className="font-medium text-white">{invoice.number}</p>
               <p className="text-xs text-white/40 mt-0.5">
-                Due {new Date(invoice.dueDate).toLocaleDateString()}
+                Due {formatDate(invoice.dueDate)}
               </p>
             </div>
             <Badge variant={STATUS_VARIANT[invoice.status]}>{STATUS_LABEL[invoice.status]}</Badge>

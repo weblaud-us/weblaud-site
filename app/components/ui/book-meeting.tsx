@@ -3,6 +3,7 @@ import { getBlurAnimationClasses } from "~/lib/animations";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import { useState } from "react";
 import { FiCalendar, FiArrowUpRight } from "react-icons/fi";
+import { DISCOVERY_CALL } from "~/lib/constants";
 
 const BookMeeting = () => {
   const [consultationRef, isConsultationVisible] = useBlurAnimation();
@@ -34,19 +35,19 @@ const BookMeeting = () => {
                 Book a Consultation
               </h2>
               <span className="text-[11px] font-mono text-primary uppercase tracking-wider font-semibold">
-                Free 30-Min Strategy Call
+                Free {DISCOVERY_CALL.short} Strategy Call
               </span>
             </div>
           </div>
 
           <p className="text-gray-300 font-barlow text-xs sm:text-sm leading-relaxed">
-            Want to discuss architecture, timeline, or engineering feasibility in detail? Schedule a free 30-minute consultation with our lead technical architects.
+            Want to discuss architecture, timeline, or engineering feasibility in detail? Schedule a free {DISCOVERY_CALL.label} consultation with our lead technical architects.
           </p>
 
           <button
             type="button"
             onClick={handleBookMeeting}
-            className="group/btn relative w-full h-[44px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-[#0A84FF] shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-[#0070e0] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+            className="group/btn relative w-full h-[44px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-primary-solid shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-primary-solid-hover hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
           >
             <span>Book a Meeting</span>
             <FiArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />

@@ -112,7 +112,7 @@ export function EstimateSuccessModal({
                   </span>
                   <p className="text-sm sm:text-lg font-bold font-barlow text-white flex items-center gap-1.5 mt-0.5">
                     <FiClock className="text-primary text-xs sm:text-sm shrink-0" />
-                    <span>{estimate.totalWeeks} Sprints</span>
+                    <span>{estimate.totalWeeks} weeks</span>
                   </p>
                 </div>
                 <div>
@@ -139,7 +139,7 @@ export function EstimateSuccessModal({
                   onClose();
                   onBookCall();
                 }}
-                className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer whitespace-nowrap"
+                className="group inline-flex items-center justify-center gap-2 bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-semibold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer whitespace-nowrap"
               >
                 <span>Book Discovery Call</span>
                 <span className="flex items-center justify-center w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">

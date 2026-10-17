@@ -2,6 +2,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { track } from "~/lib/analytics";
+import { BOOKING_URL } from "~/lib/constants";
+
+// Zcal's iframe embed of the same invite every booking link points at.
+const BOOKING_EMBED_URL = `${BOOKING_URL}?showBackground=1&embed=1&embedType=iframe`;
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -15,6 +20,9 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
       setIsLoading(true);
+      // Every "Book a call" button on the site opens this modal, so one event
+      // here covers them all; the path says which page it came from.
+      track("book_call_click", { location: window.location.pathname });
     } else {
       document.body.style.overflow = "unset";
     }
@@ -50,7 +58,9 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
             {/* Header / Close Button */}
             <div className="absolute top-0 right-0 z-20 p-4 flex justify-end pointer-events-none">
               <button
+                type="button"
                 onClick={onClose}
+                aria-label="Close booking calendar"
                 className="p-2 rounded-full bg-black/50 text-white/70 hover:text-white hover:bg-black/70 transition-colors cursor-pointer backdrop-blur-md pointer-events-auto"
               >
                 <X size={20} />
@@ -66,7 +76,8 @@ export const BookingModal = ({ isOpen, onClose }: BookingModalProps) => {
 
             <div className="w-full h-full sm:h-[80vh] bg-white">
               <iframe
-                src="https://zcal.co/i/JW03svfU?showBackground=1&embed=1&embedType=iframe"
+                src={BOOKING_EMBED_URL}
+                title="Book a discovery call with Weblaud"
                 loading="lazy"
                 style={{ border: "none", width: "100%", height: "100%" }}
                 id="zcal-invite"

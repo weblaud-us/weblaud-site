@@ -58,6 +58,7 @@ Ideal client: founders and operators worldwide who value senior-only squads, fix
 
 ## Instant Cost Estimator
 - [Live Sprint Cost Estimator](${baseUrl}/calculator): Interactive scope & budget calculator for web, mobile, and AI engineering projects.
+- [Free Website Audit](${baseUrl}/audit): Free instant website speed, Core Web Vitals, SEO and accessibility audit powered by Google Lighthouse, with a prioritized fix plan by email.
 
 ## Technical Insights & RAG Knowledge Base
 ${insights

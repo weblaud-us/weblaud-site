@@ -2,6 +2,8 @@ import type { Route } from "./+types/contactUs";
 import BannerContactUs from "~/components/contact/bannerContactUs";
 import ContactFormAndInfo from "~/components/contact/contactFormAndInfo";
 import { apiFetch, ApiError, captchaHeader, withClientContext } from "~/lib/api.server";
+import { readAttribution } from "~/lib/attribution";
+import { parseBudget, parseHeardAbout, parseTimeline } from "~/lib/leads";
 
 // Submissions faster than this are almost certainly bots, not humans.
 const MIN_FILL_MS = 3000;
@@ -36,6 +38,10 @@ export async function action({ request }: Route.ActionArgs) {
           email: String(formData.get("email") ?? "").trim(),
           phone: String(formData.get("phone") ?? "").trim() || undefined,
           message: String(formData.get("message") ?? "").trim(),
+          heardAbout: parseHeardAbout(formData.get("heardAbout")),
+          budget: parseBudget(formData.get("budget")),
+          timeline: parseTimeline(formData.get("timeline")),
+          attribution: readAttribution(request),
         },
       }),
     );

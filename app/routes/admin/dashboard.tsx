@@ -8,8 +8,11 @@ import type {
   AgingBucketLabel,
   AnalyticsOverview,
   ClientProjectStatus,
+  HeardAbout,
+  LeadsSummary,
   Paginated,
 } from "~/lib/types";
+import { HEARD_ABOUT_LABEL, LEAD_STAGES } from "~/lib/leads";
 import type { BackendProject } from "~/lib/adapters/project.server";
 import { StatCard } from "~/components/admin/stat-card";
 import {
@@ -21,6 +24,7 @@ import {
   Inbox,
   Info,
   Calculator,
+  Gauge,
   Phone,
   Briefcase,
   ClipboardList,
@@ -104,8 +108,21 @@ async function safeAnalytics(request: Request): Promise<AnalyticsOverview> {
   }
 }
 
+/** Same rule as safeAnalytics: a broken rollup must not take the panel down. */
+async function safeLeadsSummary(request: Request): Promise<LeadsSummary | null> {
+  try {
+    return await callAdminApi(request, (accessToken) =>
+      apiFetch<LeadsSummary>("/leads/admin/summary", { accessToken }),
+    );
+  } catch (err) {
+    if (err instanceof ApiError) return null;
+    throw err;
+  }
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
   const [
+    leads,
     analytics,
     projects,
     insightsTotal,
@@ -114,9 +131,11 @@ export async function loader({ request }: Route.LoaderArgs) {
     testimonialsTotal,
     submissions,
     estimates,
+    audits,
     careers,
     applicants,
   ] = await Promise.all([
+    safeLeadsSummary(request),
     safeAnalytics(request),
     safeCount(async () => (await apiFetch<BackendProject[]>("/projects")).length),
     safeCount(async () =>
@@ -143,6 +162,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     ),
     safeStatusCounts(request, "/contact/admin"),
     safeStatusCounts(request, "/estimates/admin"),
+    safeStatusCounts(request, "/audits/admin"),
     safeCount(async () =>
       (
         await callAdminApi(request, (accessToken) =>
@@ -154,6 +174,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   ]);
 
   return {
+    leads,
     analytics,
     stats: {
       projects,
@@ -165,6 +186,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       newSubmissions: submissions.unread,
       estimates: estimates.total,
       newEstimates: estimates.unread,
+      newAudits: audits.unread,
       careers,
       newApplicants: applicants.unread,
     },
@@ -183,6 +205,7 @@ const SECTIONS = [
   { to: "/cpadmin/contact-info", label: "Contact Info", desc: "Address, email, phone", icon: Phone },
   { to: "/cpadmin/contact-submissions", label: "Contact Submissions", desc: "Leads from the contact form", icon: Inbox },
   { to: "/cpadmin/estimate-submissions", label: "Estimate Submissions", desc: "Leads from the cost estimator", icon: Calculator },
+  { to: "/cpadmin/audit-submissions", label: "Website Audits", desc: "Leads from the free audit tool", icon: Gauge },
   { to: "/cpadmin/applicants", label: "Applicants", desc: "Applications from job posts", icon: ClipboardList },
 ];
 
@@ -224,7 +247,7 @@ function formatMoney(amount: number, currency: string) {
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `${currency} ${amount.toLocaleString()}`;
+    return `${currency} ${amount.toLocaleString("en-US")}`;
   }
 }
 
@@ -285,6 +308,144 @@ function AgingBars({ aging }: { aging: AgingBucket[] }) {
   );
 }
 
+/**
+ * Lead counts per pipeline stage, each tile linking to the contact list
+ * filtered to that stage (estimates have the same filter on their page).
+ */
+function LeadPipelinePanel({ leads }: { leads: LeadsSummary }) {
+  const open =
+    leads.stages.new +
+    leads.stages.contacted +
+    leads.stages.call_booked +
+    leads.stages.proposal_sent;
+  const closed = leads.stages.won + leads.stages.lost;
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-sm font-medium text-white">Sales pipeline</p>
+        <span className="text-xs text-white/40 tabular-nums">
+          {open} open
+          {closed > 0 &&
+            ` · ${Math.round((leads.stages.won / closed) * 100)}% win rate`}
+        </span>
+      </div>
+
+      {leads.followUpsDue > 0 && (
+        <Link
+          to="/cpadmin/contact-submissions"
+          className="mb-4 flex items-center gap-3 rounded-lg border border-amber-400/20 bg-amber-400/[0.06] px-3 py-2.5 hover:bg-amber-400/10 transition-colors"
+        >
+          <AlertTriangle className="size-4 text-amber-400 shrink-0" />
+          <p className="flex-1 text-sm text-white/85">
+            <span className="font-semibold tabular-nums">{leads.followUpsDue}</span>{" "}
+            lead{leads.followUpsDue === 1 ? "" : "s"} waiting on a follow-up
+          </p>
+          <ArrowRight className="size-3.5 text-white/30" />
+        </Link>
+      )}
+
+      <div className="grid grid-cols-3 gap-3">
+        {LEAD_STAGES.map((stage) => (
+          <Link
+            key={stage.value}
+            to={`/cpadmin/contact-submissions?stage=${stage.value}`}
+            className="rounded-lg bg-black/20 px-3 py-2.5 hover:bg-black/30 transition-colors"
+          >
+            <p className="text-xl font-semibold text-white leading-none tabular-nums">
+              {leads.stages[stage.value]}
+            </p>
+            <p className="text-xs text-white/45 mt-1.5">{stage.label}</p>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Self-reported "How did you hear about us?" over the window, as a single-hue
+ * bar list (magnitude only, so one colour). Direct-labelled with counts;
+ * hovering a row shows its share.
+ */
+function LeadSourcesPanel({ sources }: { sources: LeadsSummary["sources"] }) {
+  const rows = Object.entries(sources.heardAbout)
+    .map(([key, count]) => ({
+      key,
+      label:
+        key === "unknown"
+          ? "Not answered"
+          : (HEARD_ABOUT_LABEL[key as HeardAbout] ?? key),
+      count,
+    }))
+    // "Not answered" last regardless of size — it's the absence of a signal.
+    .sort((a, b) =>
+      a.key === "unknown" ? 1 : b.key === "unknown" ? -1 : b.count - a.count,
+    );
+  const max = Math.max(...rows.map((r) => r.count), 1);
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-sm font-medium text-white">Where leads come from</p>
+        <span className="text-xs text-white/40">
+          Last {sources.windowDays} days · {sources.total} lead
+          {sources.total === 1 ? "" : "s"}
+        </span>
+      </div>
+
+      {rows.length === 0 ? (
+        <p className="text-sm text-white/40">
+          No leads in this window yet. Each form asks "How did you hear about
+          us?" — answers show up here.
+        </p>
+      ) : (
+        <div className="space-y-2.5">
+          {rows.map((row) => {
+            const share = sources.total ? Math.round((row.count / sources.total) * 100) : 0;
+            return (
+              <div
+                key={row.key}
+                className="flex items-center gap-3"
+                title={`${row.label}: ${row.count} (${share}%)`}
+              >
+                <span className="w-40 shrink-0 text-xs text-white/60 truncate">{row.label}</span>
+                <div className="flex-1 h-2 rounded-full bg-white/[0.04] overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${
+                      row.key === "unknown" ? "bg-white/20" : "bg-[#0A84FF]/80"
+                    }`}
+                    style={{ width: `${Math.max(3, Math.round((row.count / max) * 100))}%` }}
+                  />
+                </div>
+                <span className="w-8 shrink-0 text-right text-xs text-white/70 tabular-nums">
+                  {row.count}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {sources.utmSources.length > 0 && (
+        <p className="mt-4 text-xs text-white/40">
+          Top campaigns:{" "}
+          {sources.utmSources.map((s) => `${s.source} (${s.count})`).join(", ")}
+        </p>
+      )}
+
+      {/* Audit-tool funnel: runs that never turned into a lead. */}
+      {!!sources.auditsRunUnclaimed && (
+        <p className="mt-2 text-xs text-white/40">
+          Plus {sources.auditsRunUnclaimed} website audit
+          {sources.auditsRunUnclaimed === 1 ? "" : "s"} run without requesting
+          the report.
+        </p>
+      )}
+    </div>
+  );
+}
+
 interface ActionItem {
   key: string;
   label: string;
@@ -333,7 +494,7 @@ function ActionRequiredList({ items }: { items: ActionItem[] }) {
 }
 
 export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
-  const { stats, analytics } = loaderData;
+  const { stats, analytics, leads } = loaderData;
 
   const actionItems: ActionItem[] = [
     {
@@ -411,6 +572,13 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
           accent={analytics.receivables.overdue.some((a) => a.amount > 0)}
         />
       </div>
+
+      {leads && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+          <LeadPipelinePanel leads={leads} />
+          <LeadSourcesPanel sources={leads.sources} />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
@@ -518,7 +686,7 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
                     Budget {formatMoney(project.budgetAmount, project.currency)}
                   </span>
                   <span className="text-sm font-semibold text-white tabular-nums shrink-0">
-                    Cost {project.laborCost.toLocaleString()}
+                    Cost {project.laborCost.toLocaleString("en-US")}
                   </span>
                   <span className={`text-sm font-semibold tabular-nums shrink-0 ${marginColor}`}>
                     {margin >= 0 ? "+" : ""}
@@ -557,6 +725,13 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
           icon={Calculator}
           to="/cpadmin/estimate-submissions"
           accent={stats.newEstimates > 0}
+        />
+        <StatCard
+          label="New audit leads"
+          value={stats.newAudits}
+          icon={Gauge}
+          to="/cpadmin/audit-submissions"
+          accent={stats.newAudits > 0}
         />
         <StatCard
           label="New applicants"

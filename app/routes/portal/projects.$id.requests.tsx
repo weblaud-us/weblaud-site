@@ -11,6 +11,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { Badge } from "~/components/ui/badge";
 import { EmptyState } from "~/components/admin/empty-state";
 import { HelpCircle, Send, CheckCheck } from "lucide-react";
+import { LocalTime } from "~/components/ui/local-time";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   await requirePortalUser(request);
@@ -156,7 +157,7 @@ export default function PortalProjectRequests({ loaderData }: Route.ComponentPro
             <div key={req._id} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
               <div className="flex items-start justify-between gap-3 mb-2">
                 <p className="text-xs text-white/40">
-                  {authorName(req.requestedBy)} · {new Date(req.createdAt).toLocaleDateString()}
+                  {authorName(req.requestedBy)} · <LocalTime value={req.createdAt} />
                 </p>
                 <Badge variant={STATUS_VARIANT[req.status]}>{STATUS_LABEL[req.status]}</Badge>
               </div>

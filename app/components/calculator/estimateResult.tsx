@@ -46,7 +46,7 @@ export function EstimateResult({
           <div className="flex items-center gap-2 sm:gap-3 pt-1">
             <FiClock className="text-primary shrink-0 text-lg sm:text-2xl" aria-hidden="true" />
             <span className="text-xl sm:text-3xl md:text-4xl font-bold font-barlow text-white tracking-tight">
-              {estimate.totalWeeks} Sprint Weeks
+              {estimate.totalWeeks} Weeks
             </span>
           </div>
           <p className="text-xs text-gray-400 font-barlow leading-relaxed pt-1">
@@ -108,7 +108,7 @@ export function EstimateResult({
           <button
             type="button"
             onClick={onBookCall}
-            className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer"
+            className="group inline-flex items-center justify-center gap-2 bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer"
           >
             <span>Book Discovery Call</span>
             <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 group-hover:bg-white/30 transition-colors duration-300">

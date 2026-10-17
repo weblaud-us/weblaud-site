@@ -3,13 +3,15 @@ import BannerOurProjects from "~/components/projects/bannerOurProjects";
 import OurCaseStudies from "~/components/projects/ourCaseStudies";
 import Discuss from "~/components/aboutUs/discuss";
 import { fetchOptional, resolveMediaUrl } from "~/lib/api.server";
+import { optimizeMediaUrl } from "~/lib/media";
 import { toProject, type BackendProject } from "~/lib/adapters/project.server";
 
 export async function loader() {
   const backendProjects = await fetchOptional<BackendProject[]>("/projects", []);
   const projects = backendProjects
     .map(toProject)
-    .map((p) => ({ ...p, image: resolveMediaUrl(p.image) }));
+    // Card images render ~400 px wide.
+    .map((p) => ({ ...p, image: optimizeMediaUrl(resolveMediaUrl(p.image), 800) }));
   return { projects };
 }
 

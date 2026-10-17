@@ -7,6 +7,7 @@ import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
 import { RouteErrorBoundary } from "~/components/ui/error-page";
 import { apiFetch, resolveMediaUrl, ApiError } from "~/lib/api.server";
+import { optimizeMediaUrl } from "~/lib/media";
 import type { Insight } from "~/lib/types";
 import { FiCheckCircle } from "react-icons/fi";
 import {
@@ -26,7 +27,7 @@ export async function loader({ params }: Route.LoaderArgs) {
         ...article,
         author: {
           ...article.author,
-          avatarUrl: resolveMediaUrl(article.author.avatarUrl),
+          avatarUrl: optimizeMediaUrl(resolveMediaUrl(article.author.avatarUrl), 96),
         },
       },
     };
@@ -47,10 +48,12 @@ function articleISODate(iso: string) {
 function formatPublishedDate(iso: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
+  // timeZone: see insights.tsx — keeps server and browser on the same day.
   return d.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   });
 }
 
@@ -352,6 +355,24 @@ export default function ArticleDetail({ loaderData }: Route.ComponentProps) {
           ))}
         </div>
 
+        {/* Lead offer — readers of technical articles often own a site. */}
+        <aside className="mt-10 sm:mt-12 rounded-2xl p-5 sm:p-6 border border-primary/30 bg-gradient-to-br from-[#0c1424] via-[#090e1a] to-[#070707] flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+          <div>
+            <p className="text-white font-barlow font-bold text-base sm:text-lg">
+              How does your own site score?
+            </p>
+            <p className="text-gray-400 font-barlow text-xs sm:text-sm mt-1">
+              Free speed, SEO and accessibility audit with Google Lighthouse — results in under a minute.
+            </p>
+          </div>
+          <Link
+            to="/audit"
+            className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-primary-solid text-white font-barlow font-semibold text-sm hover:bg-primary-solid-hover transition-colors shrink-0"
+          >
+            Run free audit
+          </Link>
+        </aside>
+
         {/* Author Bio Card & Return Link */}
         <div className="rounded-2xl p-4 sm:p-5 bg-[#0e0e0e] border border-[#1f1f1f] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3.5 sm:gap-4 mt-10 sm:mt-12">
           <div className="flex items-center gap-3 text-left">
@@ -373,7 +394,7 @@ export default function ArticleDetail({ loaderData }: Route.ComponentProps) {
 
           <Link
             to="/insights"
-            className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 rounded-xl bg-primary text-white font-barlow font-semibold text-xs hover:bg-blue-600 transition-all duration-300 shadow-md shadow-blue-500/20 shrink-0 hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 rounded-xl bg-primary-solid text-white font-barlow font-semibold text-xs hover:bg-primary-solid-hover transition-all duration-300 shadow-md shadow-blue-500/20 shrink-0 hover:-translate-y-0.5"
           >
             <span>Explore More Blueprints</span>
           </Link>

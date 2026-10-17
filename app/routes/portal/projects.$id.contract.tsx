@@ -13,6 +13,7 @@ import { Badge } from "~/components/ui/badge";
 import { EmptyState } from "~/components/admin/empty-state";
 import { SignaturePad } from "~/components/portal/signature-pad";
 import { FileSignature, ExternalLink, Award } from "lucide-react";
+import { LocalTime } from "~/components/ui/local-time";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   await requirePortalUser(request);
@@ -143,7 +144,7 @@ export default function PortalProjectContract({ loaderData }: Route.ComponentPro
           {contract.status === "accepted" && contract.acceptance && (
             <p className="text-xs text-white/40 mt-3">
               Accepted by {contract.acceptance.name} on{" "}
-              {new Date(contract.acceptance.acceptedAt).toLocaleDateString()}
+              <LocalTime value={contract.acceptance.acceptedAt} />
             </p>
           )}
 

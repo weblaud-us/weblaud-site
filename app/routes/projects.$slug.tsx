@@ -16,8 +16,9 @@ import { MorphingTabs, type MorphingTabsItem } from "~/components/ui/morphing-ta
 import { RouteErrorBoundary } from "~/components/ui/error-page";
 import type { Route } from "./+types/projects.$slug";
 import { apiFetch, resolveMediaUrl, ApiError } from "~/lib/api.server";
+import { optimizeMediaUrl } from "~/lib/media";
 import { toProject, type BackendProject } from "~/lib/adapters/project.server";
-import { RESULTS_DISCLOSURE } from "~/lib/constants";
+import { COMPANY, RESULTS_DISCLOSURE } from "~/lib/constants";
 import {
   SiPhp,
   SiNodedotjs,
@@ -103,11 +104,21 @@ export async function loader({ params }: Route.LoaderArgs) {
     const backendProject = await apiFetch<BackendProject>(
       `/projects/slug/${params.slug}`,
     );
+    const cover = resolveMediaUrl(backendProject.coverImage);
+    const base = toProject(backendProject);
     const project = {
-      ...toProject(backendProject),
-      image: resolveMediaUrl(backendProject.coverImage),
+      ...base,
+      image: optimizeMediaUrl(cover, 1600),
+      // Gallery images render at most ~900 px wide (two columns of max-w-4xl).
+      detailImages: base.detailImages
+        .map((url) => resolveMediaUrl(url))
+        .filter(Boolean)
+        .map((url) => optimizeMediaUrl(url, 1200)),
     };
-    return { project };
+    // Shares of a case study should show that project, not the generic site
+    // card. 1200 px wide matches what social previews display.
+    const ogImage = cover ? optimizeMediaUrl(cover, 1200) : COMPANY.ogImage;
+    return { project, ogImage };
   } catch (err) {
     if (err instanceof ApiError && err.status === 404) {
       throw new Response("Not Found", { status: 404 });
@@ -119,6 +130,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 export function meta({ data }: Route.MetaArgs) {
   const project = data?.project;
   if (!project) return [{ title: "Case Study Not Found - Weblaud LLC" }];
+  const ogImage = data.ogImage;
 
   const pageUrl = `https://weblaud.com/projects/${project.slug}`;
   const pageTitle = `${project.title} Case Study | Weblaud LLC`;
@@ -130,12 +142,12 @@ export function meta({ data }: Route.MetaArgs) {
     { property: "og:description", content: project.description },
     { property: "og:type", content: "article" },
     { property: "og:url", content: pageUrl },
-    { property: "og:image", content: "https://weblaud.com/og-image.jpg" },
+    { property: "og:image", content: ogImage },
     { property: "og:image:alt", content: project.imageAlt },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: pageTitle },
     { name: "twitter:description", content: project.description },
-    { name: "twitter:image", content: "https://weblaud.com/og-image.jpg" },
+    { name: "twitter:image", content: ogImage },
     {
       "script:ld+json": {
         "@context": "https://schema.org",
@@ -143,6 +155,7 @@ export function meta({ data }: Route.MetaArgs) {
         headline: pageTitle,
         description: project.description,
         url: pageUrl,
+        image: ogImage,
         author: {
           "@type": "Organization",
           name: "Weblaud LLC",
@@ -307,6 +320,12 @@ export default function CaseStudy({ loaderData }: Route.ComponentProps) {
               <img
                 src={project.image}
                 alt={project.imageAlt}
+                // The case study's hero — its largest paint.
+                width={1600}
+                height={900}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 className="w-full h-auto object-cover aspect-video group-hover:scale-102 transition-transform duration-700 rounded-xl sm:rounded-2xl"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none rounded-xl sm:rounded-2xl" />
@@ -323,6 +342,11 @@ export default function CaseStudy({ loaderData }: Route.ComponentProps) {
             <p className="text-white font-barlow text-base sm:text-lg md:text-xl leading-relaxed font-medium">
               "{project.businessImpact}"
             </p>
+            {/* Required wherever these representative figures appear — see
+                RESULTS_DISCLOSURE in lib/constants. */}
+            <p className="pt-2 text-xs text-gray-400 font-barlow leading-relaxed">
+              {RESULTS_DISCLOSURE}
+            </p>
           </section>
         )}
 
@@ -335,6 +359,34 @@ export default function CaseStudy({ loaderData }: Route.ComponentProps) {
               ariaLabel="Project Challenge and Solution"
             />
           </div>
+        )}
+
+        {/* Screens from the build — stored by the CMS (detailImages) but
+            never shown until now. */}
+        {project.detailImages.length > 0 && (
+          <section className="space-y-4">
+            <h2 className="text-base sm:text-lg md:text-xl font-bold font-barlow text-white tracking-tight">
+              Inside the build
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {project.detailImages.map((src, i) => (
+                <div
+                  key={src}
+                  className="p-2 bg-[#0e0e0e] border border-[#1f1f1f] rounded-2xl overflow-hidden"
+                >
+                  <img
+                    src={src}
+                    alt={`${project.title} — screen ${i + 1}`}
+                    width={1200}
+                    height={675}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-auto aspect-video object-cover rounded-xl"
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         {/* Section: Key Deliverables & Milestones */}

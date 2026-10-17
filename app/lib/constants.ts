@@ -1,4 +1,36 @@
-export const BOOKING_URL = "https://zcal.co/weblaud/30min";
+/**
+ * The one booking link — SINGLE SOURCE OF TRUTH. It is the Zcal invite the
+ * site's booking modal embeds (see booking-modal.tsx), and the backend's
+ * BOOKING_URL env var (used in lead auto-reply emails) must be set to the
+ * same link, or leads get emailed a different event than the site books.
+ */
+export const BOOKING_URL = "https://zcal.co/i/JW03svfU";
+
+/**
+ * Discovery call length — SINGLE SOURCE OF TRUTH. The site used to say both
+ * "15-minute" and "30-minute"; every mention of the call's length must derive
+ * from this. The Zcal event behind BOOKING_URL must be this long too.
+ */
+export const DISCOVERY_CALL = {
+  minutes: 15,
+  /** Prose, e.g. "a free 15-minute call" */
+  label: "15-minute",
+  /** Badges and micro-copy, e.g. "15-min session" */
+  short: "15-min",
+} as const;
+
+/**
+ * Reply-time promises — SINGLE SOURCE OF TRUTH, so the contact page, CTAs,
+ * and emails can't drift apart.
+ */
+export const RESPONSE_TIME = {
+  /** First human reply to an inquiry, e.g. "We typically reply within 24 hours." */
+  reply: "within 24 hours",
+  /** Compact form for micro-copy, e.g. "Response within 24 h" */
+  replyShort: "24 h",
+  /** Written proposal after a discovery call */
+  proposal: "within 48 hours",
+} as const;
 
 /**
  * Delivery timeline — SINGLE SOURCE OF TRUTH.

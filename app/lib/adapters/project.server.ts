@@ -30,5 +30,6 @@ export function toProject(doc: BackendProject): Project {
     solution: doc.solution,
     techStack: doc.techStack ?? [],
     businessImpact: doc.businessImpact,
+    detailImages: doc.detailImages ?? [],
   };
 }

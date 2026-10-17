@@ -7,6 +7,9 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
+import { Select } from "~/components/ui/select";
+import { HEARD_ABOUT_OPTIONS } from "~/lib/leads";
+import { track } from "~/lib/analytics";
 import type { EstimateSelection } from "~/lib/calculator";
 import { Turnstile, TurnstileStatus, useTurnstile } from "~/components/ui/turnstile";
 
@@ -16,6 +19,8 @@ interface LeadFormFields {
   company: string;
   phone: string;
   notes: string;
+  /** Optional "How did you hear about us?" — see HEARD_ABOUT_OPTIONS. */
+  heardAbout: string;
   /** Honeypot — hidden from humans, irresistible to bots. */
   website: string;
 }
@@ -46,18 +51,23 @@ export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<LeadFormFields>();
 
   useEffect(() => {
     if (fetcher.state !== "idle" || !fetcher.data) return;
 
     if (fetcher.data.ok) {
-      toast.success("Estimate sent — we'll be in touch shortly.");
+      toast.success("Estimate sent — check your inbox.");
+      track("generate_lead", {
+        form: "estimate",
+        heard_about: getValues("heardAbout") || undefined,
+      });
       onSubmitted();
     } else if (fetcher.data.error) {
       toast.error(fetcher.data.error);
     }
-  }, [fetcher.state, fetcher.data, onSubmitted]);
+  }, [fetcher.state, fetcher.data, onSubmitted, getValues]);
 
   const onValid = (data: LeadFormFields) => {
     fetcher.submit(
@@ -77,7 +87,7 @@ export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
       <div className="mt-8 text-center" role="status">
         <div className="inline-flex items-center gap-2 text-emerald-400 font-barlow font-semibold text-sm">
           <FiCheckCircle aria-hidden="true" />
-          <span>Estimate saved. A copy is on its way to our team.</span>
+          <span>Estimate sent. A copy is on its way to your inbox.</span>
         </div>
         <p className="text-xs text-gray-400 font-barlow mt-2">
           Want to move faster? Book a call and we'll walk through this scope
@@ -92,9 +102,9 @@ export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
       onSubmit={handleSubmit(onValid)}
       className="mt-8 pt-8 border-t border-white/10 text-left"
     >
-      <h4 className="text-base font-bold font-barlow text-white">
+      <h2 className="text-base font-bold font-barlow text-white">
         Send me this estimate
-      </h4>
+      </h2>
       <p className="text-xs text-gray-400 font-barlow mt-1 mb-5">
         We'll save your scope so the first call starts where you left off.
       </p>
@@ -172,6 +182,26 @@ export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
         </div>
 
         <div className="sm:col-span-2">
+          <Label htmlFor="estimate-heard-about">
+            How did you hear about us?{" "}
+            <span className="text-gray-500">(optional)</span>
+          </Label>
+          <Select
+            id="estimate-heard-about"
+            defaultValue=""
+            className="mt-1.5 w-full py-2.5"
+            {...register("heardAbout")}
+          >
+            <option value="">Select one…</option>
+            {HEARD_ABOUT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        <div className="sm:col-span-2">
           <Label htmlFor="estimate-notes">
             Anything else we should know?{" "}
             <span className="text-gray-500">(optional)</span>
@@ -197,7 +227,7 @@ export function LeadForm({ selection, onSubmitted, submitted }: LeadFormProps) {
         <button
           type="submit"
           disabled={isSending || !captcha.ready}
-          className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-barlow font-semibold text-xs sm:text-sm px-4.5 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
+          className="group inline-flex items-center justify-center gap-2 bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-semibold text-xs sm:text-sm px-4.5 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-300 shadow-md shadow-blue-500/25 hover:scale-[1.02] cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
         >
           <span>{isSending ? "Sending..." : "Send Me This Estimate"}</span>
           {!isSending && (

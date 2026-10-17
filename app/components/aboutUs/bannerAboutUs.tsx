@@ -1,5 +1,5 @@
 import HeroBanner from "../ui/hero-banner";
-import techCube from "~/assets/about-us.png";
+import techCube from "~/assets/about-us.webp";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import { useState } from "react";
 import { FiCpu } from "react-icons/fi";

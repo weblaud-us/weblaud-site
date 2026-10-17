@@ -12,6 +12,7 @@ import { useState } from "react";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import SectionBadge from "~/components/ui/section-badge";
 import { Rocket } from "lucide-react";
+import { DISCOVERY_CALL, RESPONSE_TIME } from "~/lib/constants";
 
 const LetsDiscuss = () => {
   const location = useLocation();
@@ -124,9 +125,9 @@ const LetsDiscuss = () => {
               )}`}
               style={getBlurAnimationDelay(400)}
             >
-              Book a free 15-minute strategy call. We'll review your
-              requirements, scope your project, and send a detailed proposal
-              within 48 hours.
+              Book a free {DISCOVERY_CALL.label} strategy call. We'll review your
+              requirements, scope your project, and send a detailed proposal{" "}
+              {RESPONSE_TIME.proposal}.
             </p>
 
             <div

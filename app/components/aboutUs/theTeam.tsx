@@ -101,9 +101,9 @@ const TheTeam = ({ teamMembers }: TheTeamProps) => {
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   className="space-y-1"
                 >
-                  <h4 className="text-2xl font-bold font-barlow text-white tracking-tight">
+                  <h3 className="text-2xl font-bold font-barlow text-white tracking-tight">
                     {currentMember.name}
-                  </h4>
+                  </h3>
                   <p className="text-primary font-mono text-sm sm:text-base font-medium">
                     {currentMember.title}
                   </p>
@@ -189,9 +189,9 @@ const TheTeam = ({ teamMembers }: TheTeamProps) => {
 
                         {/* Card bottom info tag */}
                         <div className="absolute bottom-0 left-0 right-0 p-6 space-y-1">
-                          <h4 className="text-2xl font-bold font-barlow text-white tracking-tight">
+                          <h3 className="text-2xl font-bold font-barlow text-white tracking-tight">
                             {member.name}
-                          </h4>
+                          </h3>
                           <p className="text-primary font-mono text-sm tracking-wide font-medium">
                             {member.title}
                           </p>

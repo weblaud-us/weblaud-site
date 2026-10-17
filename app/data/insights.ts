@@ -153,7 +153,7 @@ export const insights: InsightArticle[] = [
       },
       {
         heading: "Measurable Business Outcomes",
-        text: "Our clients routinely reduce customer onboarding friction by 70% and process 4x more daily transactions without hiring additional operational staff. Compare our sprint approach in [Weblaud vs Traditional Agencies](/vs/traditional-agencies).",
+        text: "In a typical engagement, teams cut customer onboarding friction by around 70% and handle up to 4x more daily transactions without hiring additional operational staff — individual results vary with scope, data quality, and existing systems. Compare our sprint approach in [Weblaud vs Traditional Agencies](/vs/traditional-agencies).",
       },
     ],
   },

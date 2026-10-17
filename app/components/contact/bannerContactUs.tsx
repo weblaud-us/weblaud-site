@@ -1,4 +1,4 @@
-import contactImage from "~/assets/contact-us.png";
+import contactImage from "~/assets/contact-us.webp";
 import HeroBanner from "../ui/hero-banner";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
 import { useState } from "react";

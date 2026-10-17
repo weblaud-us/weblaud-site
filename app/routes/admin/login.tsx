@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, redirect, useActionData, useNavigation, Link } from "react-router";
+import { Form, redirect, useActionData, useNavigation, useSearchParams, Link } from "react-router";
 import {
   FiMail,
   FiLock,
@@ -65,6 +65,8 @@ export default function AdminLogin() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const [showPassword, setShowPassword] = useState(false);
+  // Set by /portal/forgot-password?from=admin after a successful reset.
+  const resetDone = useSearchParams()[0].get("reset") === "1";
 
   return (
     <div className="min-h-screen relative bg-black text-white flex flex-col justify-center items-center px-4 py-12 overflow-hidden selection:bg-primary selection:text-white">
@@ -131,12 +133,20 @@ export default function AdminLogin() {
 
             {/* Password Field */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="password"
-                className="block text-xs font-mono uppercase tracking-wider text-gray-400 font-medium"
-              >
-                Password
-              </label>
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="block text-xs font-mono uppercase tracking-wider text-gray-400 font-medium"
+                >
+                  Password
+                </label>
+                <Link
+                  to="/portal/forgot-password?from=admin"
+                  className="text-xs font-barlow text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none z-10 text-gray-400">
                   <FiLock className="w-4 h-4" />
@@ -166,6 +176,15 @@ export default function AdminLogin() {
             </div>
 
             {/* Error Message */}
+            {resetDone && !actionData?.error && (
+              <p
+                role="status"
+                className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-barlow"
+              >
+                Password updated — sign in with your new password.
+              </p>
+            )}
+
             {actionData?.error && (
               <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-xs font-barlow">
                 <FiAlertCircle className="w-4 h-4 shrink-0" />

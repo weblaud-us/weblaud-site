@@ -9,3 +9,5 @@
 # Local Netlify folder
 .netlify
 .md
+# Headless Chrome / Lighthouse crash-reporter noise
+debug.log

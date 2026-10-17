@@ -5,9 +5,11 @@ import { callPortalApi, requirePortalUser } from "~/lib/portal.server";
 import type { Feature, ProjectStaffRef } from "~/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
+import { Progress } from "~/components/ui/progress";
 import { CalendarClock, Wallet, ListChecks, Users } from "lucide-react";
 import type { ProjectWorkspaceContext } from "./projects.$id";
 import { CheckCircle2, Circle, CircleDot } from "lucide-react";
+import { formatDate } from "~/lib/dates";
 
 /** Features moved to their own collection (see feature.module.ts) — no longer embedded on the project the parent layout already fetched, so this tab fetches its own. */
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -34,7 +36,7 @@ function money(amount: number, currency: string) {
   try {
     return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
   } catch {
-    return `${currency} ${amount.toLocaleString()}`;
+    return `${currency} ${amount.toLocaleString("en-US")}`;
   }
 }
 
@@ -115,11 +117,11 @@ export default function PortalProjectOverview({ loaderData }: Route.ComponentPro
             {(project.timeline.startDate || project.timeline.endDate) && (
               <p className="text-xs text-white/50 mb-4">
                 {project.timeline.startDate
-                  ? new Date(project.timeline.startDate).toLocaleDateString()
+                  ? formatDate(project.timeline.startDate)
                   : "TBD"}
                 {" → "}
                 {project.timeline.endDate
-                  ? new Date(project.timeline.endDate).toLocaleDateString()
+                  ? formatDate(project.timeline.endDate)
                   : "TBD"}
               </p>
             )}
@@ -136,7 +138,7 @@ export default function PortalProjectOverview({ loaderData }: Route.ComponentPro
                       <p className="text-sm text-white">{milestone.title}</p>
                       {milestone.dueDate && (
                         <p className="text-xs text-white/40 mt-0.5">
-                          Due {new Date(milestone.dueDate).toLocaleDateString()}
+                          Due {formatDate(milestone.dueDate)}
                         </p>
                       )}
                     </div>
@@ -157,9 +159,27 @@ export default function PortalProjectOverview({ loaderData }: Route.ComponentPro
             <p className="text-2xl font-semibold text-white">
               {money(project.budget.amount, project.budget.currency)}
             </p>
-            <p className="text-xs text-white/40 mt-1">
-              {money(project.budget.spent, project.budget.currency)} invoiced so far
-            </p>
+            {/* budget.spent is the sum of *paid* invoices (see the backend
+                ProjectBudget schema) — it used to be labelled "invoiced". */}
+            {project.budget.amount > 0 && (
+              <Progress
+                value={Math.min(100, (project.budget.spent / project.budget.amount) * 100)}
+                className="h-1.5 mt-3"
+                aria-label="Share of the budget paid so far"
+              />
+            )}
+            <div className="flex items-center justify-between gap-2 text-xs mt-2">
+              <span className="text-white/60">
+                {money(project.budget.spent, project.budget.currency)} paid
+              </span>
+              <span className="text-white/40">
+                {money(
+                  Math.max(0, project.budget.amount - project.budget.spent),
+                  project.budget.currency,
+                )}{" "}
+                remaining
+              </span>
+            </div>
           </div>
 
           {/* Team */}

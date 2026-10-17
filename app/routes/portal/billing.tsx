@@ -9,6 +9,7 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { EmptyState } from "~/components/admin/empty-state";
 import { Receipt, Download, CreditCard, FileSignature, ExternalLink } from "lucide-react";
+import { formatDate } from "~/lib/dates";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requirePortalUser(request);
@@ -73,7 +74,7 @@ function money(amount: number, currency: string) {
   try {
     return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
   } catch {
-    return `${currency} ${amount.toLocaleString()}`;
+    return `${currency} ${amount.toLocaleString("en-US")}`;
   }
 }
 
@@ -161,7 +162,7 @@ export default function PortalBilling({ loaderData }: Route.ComponentProps) {
                       <p className="font-medium text-white">{invoice.number}</p>
                       <p className="text-xs text-white/40 mt-0.5">
                         {project && <>{project.name} &middot; </>}
-                        Due {new Date(invoice.dueDate).toLocaleDateString()}
+                        Due {formatDate(invoice.dueDate)}
                       </p>
                     </div>
                     <Badge variant={INVOICE_STATUS_VARIANT[invoice.status]}>

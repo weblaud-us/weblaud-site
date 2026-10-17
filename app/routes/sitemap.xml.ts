@@ -30,6 +30,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     { path: "/services", priority: "0.9", changefreq: "weekly" },
     { path: "/projects", priority: "0.8", changefreq: "weekly" },
     { path: "/calculator", priority: "0.9", changefreq: "weekly" },
+    { path: "/audit", priority: "0.9", changefreq: "monthly" },
     { path: "/insights", priority: "0.9", changefreq: "weekly" },
     { path: "/career", priority: "0.7", changefreq: "weekly" },
     { path: "/contact", priority: "0.7", changefreq: "yearly" },

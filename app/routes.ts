@@ -7,6 +7,10 @@ export default [
   route("projects", "routes/projects.tsx"),
   route("projects/:slug", "routes/projects.$slug.tsx"),
   route("calculator", "routes/calculator.tsx"),
+  // Free website audit (lead magnet). The status route is a loader-only
+  // resource route the page polls while Google runs Lighthouse.
+  route("audit", "routes/audit.tsx"),
+  route("audit/status/:id", "routes/audit.status.$id.ts"),
   route("insights", "routes/insights.tsx"),
   route("insights/:slug", "routes/insights.$slug.tsx"),
   route("career", "routes/career.tsx"),
@@ -53,6 +57,7 @@ export default [
     route("contact-info", "routes/admin/contact-info.tsx"),
     route("contact-submissions", "routes/admin/contact-submissions.tsx"),
     route("estimate-submissions", "routes/admin/estimate-submissions.tsx"),
+    route("audit-submissions", "routes/admin/audit-submissions.tsx"),
     route("applicants", "routes/admin/applicants.tsx"),
 
     // Client portal / agency OS management.
@@ -83,6 +88,8 @@ export default [
   // session and layout from /cpadmin; see app/lib/portal.server.ts.
   route("portal/login", "routes/portal/login.tsx"),
   route("portal/accept-invite", "routes/portal/accept-invite.tsx"),
+  // Shared by portal and admin accounts (?from=admin returns to /cpadmin/login).
+  route("portal/forgot-password", "routes/portal/forgot-password.tsx"),
   route("portal", "routes/portal/layout.tsx", [
     index("routes/portal/dashboard.tsx"),
     route("review-queue", "routes/portal/review-queue.tsx"),

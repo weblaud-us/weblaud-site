@@ -6,29 +6,33 @@ import TrustedPartnerships from "~/components/home/trustedPartnerships";
 import OurSay from "~/components/home/ourSay";
 import FAQ from "~/components/home/faq";
 import LetsDiscuss from "~/components/home/letsDiscuss";
-import heroBanner from "~/assets/hero-icon.png";
+import FeaturedWork from "~/components/home/featuredWork";
 import { TIMELINE, COMPANY } from "~/lib/constants";
-import { fetchOptional } from "~/lib/api.server";
+import { fetchOptional, resolveMediaUrl } from "~/lib/api.server";
+import { optimizeMediaUrl } from "~/lib/media";
+import { toProject, type BackendProject } from "~/lib/adapters/project.server";
 import type { Testimonial, Faq } from "~/lib/types";
 
+/** How many case studies the home page features. */
+const FEATURED_PROJECT_COUNT = 3;
+
 export async function loader() {
-  const [testimonials, faqs] = await Promise.all([
+  const [testimonials, faqs, backendProjects] = await Promise.all([
     fetchOptional<Testimonial[]>("/testimonials", []),
     fetchOptional<Faq[]>("/faqs", []),
+    fetchOptional<BackendProject[]>("/projects", []),
   ]);
-  return { testimonials, faqs };
+  const featuredProjects = backendProjects
+    .slice(0, FEATURED_PROJECT_COUNT)
+    .map(toProject)
+    // Same card as /projects, which renders ~400 px wide.
+    .map((p) => ({ ...p, image: optimizeMediaUrl(resolveMediaUrl(p.image), 800) }));
+  return { testimonials, faqs, featuredProjects };
 }
 
-export const links: Route.LinksFunction = () => {
-  return [
-    {
-      rel: "preload",
-      as: "image",
-      href: heroBanner,
-      fetchPriority: "high",
-    },
-  ];
-};
+// No manual hero preload here: React already emits one for the hero <img>
+// (fetchPriority="high", with its srcset) — a second one here downloaded the
+// full-size image twice on phones.
 
 export function headers() {
   return {
@@ -139,6 +143,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
     <>
       <BannerHome />
       <TrustedPartnerships />
+      <FeaturedWork projects={loaderData.featuredProjects} />
       <OurSpeciality />
       <WhyChooseUs />
       <OurSay testimonials={loaderData.testimonials} />

@@ -8,9 +8,20 @@ import {
   useLocation,
   useRouteLoaderData,
 } from "react-router";
-import { useState, useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import Lenis from "lenis";
+
+// Self-hosted fonts (were Google Fonts: two extra origins and a
+// render-blocking stylesheet on every page). Each weight's CSS lists
+// per-script files behind unicode-range, so browsers fetch only the subsets a
+// page actually uses — normally just latin.
+import "@fontsource-variable/inter/index.css";
+import "@fontsource/barlow/400.css";
+import "@fontsource/barlow/500.css";
+import "@fontsource/barlow/600.css";
+import "@fontsource/barlow/700.css";
+import barlowBoldLatin from "@fontsource/barlow/files/barlow-latin-700-normal.woff2?url";
 
 import type { Route } from "./+types/root";
 import { TIMELINE, COMPANY } from "./lib/constants";
@@ -18,10 +29,14 @@ import Footer from "./components/ui/footer";
 import "./app.css";
 import NavBar from "./components/ui/navBar";
 import { Toaster } from "./components/ui/sonner";
-import IntroLoader from "./components/ui/introLoader";
 import ErrorPage from "./components/ui/error-page";
 import { fetchOptional } from "./lib/api.server";
+import { captureFirstTouch } from "./lib/attribution";
 import type { ContactInfo } from "./lib/types";
+
+// Disabled for now (see App) but kept: lazy so its ~700 lines of animation
+// code aren't in every page's root bundle while it isn't shown.
+const IntroLoader = lazy(() => import("./components/ui/introLoader"));
 
 const GA_MEASUREMENT_ID = "G-16QLSZ8K04";
 
@@ -47,26 +62,17 @@ export async function loader() {
   return { contactInfo, turnstileSiteKey };
 }
 
-const FONTS_URL =
-  "https://fonts.googleapis.com/css2?" +
-  [
-    "family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900",
-    "family=Barlow:wght@400;500;600;700",
-    "display=swap",
-  ].join("&");
-
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.png", type: "image/png" },
-  { rel: "preconnect", href: "https://www.googletagmanager.com" },
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  // Only the face every page's <h1> renders in. Preloading more fonts would
+  // compete with the CSS and hero image for a phone's first round trips.
   {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
+    rel: "preload",
+    href: barlowBoldLatin,
+    as: "font",
+    type: "font/woff2",
     crossOrigin: "anonymous",
   },
-  // Preload the font CSS to eliminate render-blocking
-  { rel: "preload", href: FONTS_URL, as: "style" },
-  { rel: "stylesheet", href: FONTS_URL },
 ];
 
 export const meta: Route.MetaFunction = () => {
@@ -102,6 +108,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   // again on the way back to a public page.
   useEffect(() => {
     (window as unknown as Record<string, boolean>)[`ga-disable-${GA_MEASUREMENT_ID}`] = privatePage;
+  }, [privatePage]);
+
+  // Where this visitor first came from, for lead attribution. A no-op once
+  // stored, and never recorded from a portal/admin page.
+  useEffect(() => {
+    if (!privatePage) captureFirstTouch();
   }, [privatePage]);
 
   const jsonLd = {
@@ -199,24 +211,36 @@ export function Layout({ children }: { children: React.ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google Analytics (GA4) — public marketing pages only. */}
+        {/* Google Analytics (GA4) — public marketing pages only.
+            The page view is queued in dataLayer immediately, but gtag.js
+            (~195 KB, with long tasks) is only fetched once the page has
+            loaded and the main thread is idle, so it never competes with
+            first paint on a phone. gtag.js replays the queue when it runs. */}
         {!privatePage && (
-          <>
-            <script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-            ></script>
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', '${GA_MEASUREMENT_ID}');
+              (function(){
+                function inject(){
+                  var s = document.createElement('script');
+                  s.async = true;
+                  s.src = 'https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}';
+                  document.head.appendChild(s);
+                }
+                function whenIdle(){
+                  if ('requestIdleCallback' in window) requestIdleCallback(inject, { timeout: 2000 });
+                  else setTimeout(inject, 1);
+                }
+                if (document.readyState === 'complete') whenIdle();
+                else window.addEventListener('load', whenIdle, { once: true });
+              })();
             `,
-              }}
-            />
-          </>
+            }}
+          />
         )}
       </head>
       <body className="[overflow-x:clip] antialiased">
@@ -256,6 +280,14 @@ export default function App({ loaderData }: Route.ComponentProps) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // Smooth scrolling only applies to mouse/trackpad wheels — Lenis leaves
+    // touch scrolling native — yet its animation-frame loop below would run
+    // every frame on phones for nothing. Skip it there, and for anyone who
+    // asked their OS for reduced motion.
+    const wantsSmoothScroll =
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!wantsSmoothScroll) return;
 
     const lenis = new Lenis({
       duration: 1.1,
@@ -302,9 +334,15 @@ export default function App({ loaderData }: Route.ComponentProps) {
   }
 
   return (
-    <>
+    // reducedMotion="user": framer-motion skips transform/layout animations
+    // for visitors whose OS asks for reduced motion.
+    <MotionConfig reducedMotion="user">
       <AnimatePresence mode="wait">
-        {showLoader && <IntroLoader onComplete={handleLoaderComplete} />}
+        {showLoader && (
+          <Suspense fallback={null}>
+            <IntroLoader onComplete={handleLoaderComplete} />
+          </Suspense>
+        )}
       </AnimatePresence>
 
       <AnimatePresence initial={false}>
@@ -315,12 +353,18 @@ export default function App({ loaderData }: Route.ComponentProps) {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <NavBar />
-            <AnimatePresence mode="wait">
+            {/* initial={false}: the server-rendered page must be visible at
+                first paint. Without it the SSR HTML shipped <main> at
+                opacity 0 + blur, and nothing appeared until the JS had
+                downloaded and hydrated (~4–5 s on a mid-range phone).
+                Client-side route changes still fade. No filter: blur() —
+                blurring the whole page is expensive on mobile GPUs. */}
+            <AnimatePresence mode="wait" initial={false}>
               <motion.main
                 key={location.pathname}
-                initial={{ opacity: 0, y: 8, filter: "blur(3px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -4, filter: "blur(2px)" }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Outlet />
@@ -330,7 +374,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </MotionConfig>
   );
 }
 
@@ -368,7 +412,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       badge = "Server error";
       title = "Our server hit a snag.";
       description =
-        "Something failed while we were putting this page together. Our team has been notified — please try again shortly.";
+        // No error monitoring is wired up yet, so don't claim anyone was notified.
+        `Something failed while we were putting this page together. Please try again shortly — if it keeps happening, email ${COMPANY.email}.`;
     } else {
       title = error.statusText || title;
     }

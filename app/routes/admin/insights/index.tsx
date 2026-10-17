@@ -35,6 +35,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import { formatDate } from "~/lib/dates";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
@@ -146,7 +147,7 @@ export default function AdminInsightsIndex({
                   {insight.category}
                 </TableCell>
                 <TableCell className="text-white/50">
-                  {new Date(insight.publishedAt).toLocaleDateString()}
+                  {formatDate(insight.publishedAt)}
                 </TableCell>
                 <TableCell>
                   <Badge variant={insight.isActive ? "default" : "secondary"}>

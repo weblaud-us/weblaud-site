@@ -3,8 +3,16 @@ import { useSearchParams, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/estimate-submissions";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
+import { handleLeadPipelineIntent } from "~/lib/lead-actions.server";
+import { isLeadStage } from "~/lib/leads";
 import { formatCurrency } from "~/lib/utils";
 import type { EstimateSubmission, Paginated } from "~/lib/types";
+import {
+  LeadPipelineActions,
+  LeadPipelineSummary,
+  LeadSource,
+  StageFilter,
+} from "~/components/admin/lead-pipeline";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
@@ -36,21 +44,31 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import { LocalTime } from "~/components/ui/local-time";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") ?? "1";
+  const stageParam = url.searchParams.get("stage");
+  const stage = isLeadStage(stageParam) ? stageParam : null;
   const result = await callAdminApi(request, (accessToken) =>
     apiFetch<Paginated<EstimateSubmission>>(
-      `/estimates/admin?page=${page}&limit=20`,
+      `/estimates/admin?page=${page}&limit=20${stage ? `&stage=${stage}` : ""}`,
       { accessToken },
     ),
   );
-  return { result, page: Number(page) };
+  return { result, page: Number(page), stage };
 }
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
+  const pipelineResult = await handleLeadPipelineIntent(
+    request,
+    formData,
+    "/estimates/admin",
+  );
+  if (pipelineResult) return pipelineResult;
+
   const intent = String(formData.get("intent"));
   const id = String(formData.get("id"));
 
@@ -78,7 +96,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function AdminEstimateSubmissions({
   loaderData,
 }: Route.ComponentProps) {
-  const { result, page } = loaderData;
+  const { result, page, stage } = loaderData;
   const [searchParams] = useSearchParams();
   const submit = useSubmit();
   const navigation = useNavigation();
@@ -104,6 +122,7 @@ export default function AdminEstimateSubmissions({
         description="Leads from the cost estimator on /calculator, with the scope they selected."
       />
 
+      <StageFilter active={stage} />
       {result.items.length > 0 && (
         <ListSearch
           value={query}
@@ -117,8 +136,12 @@ export default function AdminEstimateSubmissions({
         {result.items.length === 0 ? (
           <EmptyState
             icon={Calculator}
-            title="No estimates yet"
-            description="Leads from the cost estimator will show up here."
+            title={stage ? "No leads in this stage" : "No estimates yet"}
+            description={
+              stage
+                ? "Pick another stage above, or All stages."
+                : "Leads from the cost estimator will show up here."
+            }
           />
         ) : (
           <Table>
@@ -128,8 +151,9 @@ export default function AdminEstimateSubmissions({
                 <TableHead className="text-white/60">Contact</TableHead>
                 <TableHead className="text-white/60">Scope</TableHead>
                 <TableHead className="text-white/60">Estimate</TableHead>
+                <TableHead className="text-white/60">Source</TableHead>
                 <TableHead className="text-white/60">Received</TableHead>
-                <TableHead className="text-white/60">Status</TableHead>
+                <TableHead className="text-white/60">Pipeline</TableHead>
                 <TableHead className="text-white/60 text-right">
                   Actions
                 </TableHead>
@@ -139,7 +163,7 @@ export default function AdminEstimateSubmissions({
               {filtered.length === 0 && (
                 <TableRow className="border-white/10">
                   <TableCell
-                    colSpan={7}
+                    colSpan={8}
                     className="text-white/40 py-8 text-center"
                   >
                     No estimates match "{query}".
@@ -195,17 +219,29 @@ export default function AdminEstimateSubmissions({
                       {lead.result.totalWeeks} sprint weeks
                     </div>
                   </TableCell>
-                  <TableCell className="text-white/50">
-                    {new Date(lead.createdAt).toLocaleDateString()}
-                  </TableCell>
                   <TableCell>
+                    <LeadSource lead={lead} />
+                  </TableCell>
+                  <TableCell className="text-white/50">
+                    <div><LocalTime value={lead.createdAt} /></div>
                     <Badge
+                      className="mt-1"
                       variant={lead.status === "new" ? "default" : "secondary"}
                     >
                       {lead.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right space-x-2">
+                  <TableCell>
+                    <LeadPipelineSummary lead={lead} />
+                  </TableCell>
+                  <TableCell className="text-right space-x-2 space-y-2">
+                    <LeadPipelineActions
+                      lead={lead}
+                      leadId={lead._id}
+                      name={lead.name}
+                      email={lead.email}
+                      company={lead.company}
+                    />
                     {lead.status === "new" && (
                       <Button
                         variant="outline"

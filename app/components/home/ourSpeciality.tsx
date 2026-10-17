@@ -26,11 +26,11 @@ import VerticalTabs from "../ui/vertical-tabs";
 import SectionBadge from "../ui/section-badge";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
-import strategyImg from "~/assets/strategy.png";
-import designImg from "~/assets/design.png";
-import developmentImg from "~/assets/development.png";
-import maintainImg from "~/assets/maintain.png";
-import scaleImg from "~/assets/scale.png";
+import strategyImg from "~/assets/strategy.webp";
+import designImg from "~/assets/design.webp";
+import developmentImg from "~/assets/development.webp";
+import maintainImg from "~/assets/maintain.webp";
+import scaleImg from "~/assets/scale.webp";
 
 interface FeatureItem {
   name: string;
@@ -294,7 +294,10 @@ const OurSpeciality = () => {
                           <img
                             src={activeContent.image}
                             alt={activeContent.title}
-                            loading="eager"
+                            // Lazy: below the fold, and hidden entirely on
+                            // phones (md:flex) — lazy images that never
+                            // display are never downloaded.
+                            loading="lazy"
                             decoding="async"
                             className="relative z-10 w-full h-auto object-contain drop-shadow-[0_25px_50px_rgba(0,0,0,0.6)]"
                           />

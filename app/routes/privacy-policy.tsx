@@ -64,7 +64,8 @@ const sections = [
         We are deeply committed to protecting your privacy and ensuring your personal information
         is handled with the highest standards of safety, transparency, and data integrity. This
         Privacy Policy outlines how we collect, use, and safeguard your data when you visit our
-        website, interact with our calculators, or engage our engineering services.
+        website, interact with our calculators, use our client portal, or engage our engineering
+        services. <span className="text-gray-400">Last updated: October 17, 2026.</span>
       </p>
     ),
   },
@@ -101,6 +102,33 @@ const sections = [
               referral channels captured to analyze traffic trends and protect system integrity.
             </p>
           </div>
+
+          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] space-y-1.5">
+            <div className="flex items-center gap-2 text-white font-semibold text-sm">
+              <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+              <span>Cookies</span>
+            </div>
+            <p className="text-xs text-gray-400 pl-6 leading-relaxed">
+              Essential session cookies keep you signed in to the client portal. A first-party
+              cookie (<code className="text-gray-300">wl_ft</code>) remembers how you first found us
+              — campaign tags, referring site, and landing page — for up to 90 days, so we can tell
+              which channels bring inquiries; it is never shared or sold. Google Analytics sets its
+              own cookies on our public pages, never in the portal.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] space-y-1.5">
+            <div className="flex items-center gap-2 text-white font-semibold text-sm">
+              <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+              <span>Client Portal & Contract Records</span>
+            </div>
+            <p className="text-xs text-gray-400 pl-6 leading-relaxed">
+              For clients: account details, files and messages you share in the portal, and invoice
+              and payment records. When you accept a contract electronically we record your typed
+              name, your drawn signature, the time, your IP address, and your browser user-agent as
+              evidence of acceptance.
+            </p>
+          </div>
         </div>
       </div>
     ),
@@ -131,10 +159,34 @@ const sections = [
               link: "https://zcal.co",
             },
             {
-              name: "Google Fonts",
-              badge: "Typography Delivery",
-              desc: "Serves optimized web typefaces directly from high-speed edge CDN nodes.",
-              link: "https://fonts.google.com",
+              name: "Stripe",
+              badge: "Payments",
+              desc: "Processes invoice payments. Card details go directly to Stripe and never touch our servers.",
+              link: "https://stripe.com/privacy",
+            },
+            {
+              name: "MongoDB Atlas",
+              badge: "Database Hosting",
+              desc: "Hosts the database that stores inquiries, accounts, and project records.",
+              link: "https://www.mongodb.com/legal/privacy",
+            },
+            {
+              name: "Cloudinary",
+              badge: "File Storage",
+              desc: "Stores images and files uploaded to the site and the client portal, such as project files and job applications.",
+              link: "https://cloudinary.com/privacy",
+            },
+            {
+              name: "Google Workspace",
+              badge: "Email Delivery",
+              desc: "Sends inquiry confirmations, estimates, audit reports, and portal notifications.",
+              link: "https://policies.google.com/privacy",
+            },
+            {
+              name: "Google PageSpeed Insights",
+              badge: "Website Audit",
+              desc: "Runs the free website audit: the page address you enter is sent to Google for testing.",
+              link: "https://policies.google.com/privacy",
             },
             {
               name: "Google Analytics (GA4)",
@@ -234,7 +286,7 @@ const sections = [
         <div className="flex flex-wrap items-center gap-3">
           <a
             href="mailto:info@weblaud.com"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-blue-600 transition-all duration-300 shadow-lg shadow-blue-500/25"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-solid text-white font-semibold text-sm hover:bg-primary-solid-hover transition-all duration-300 shadow-lg shadow-blue-500/25"
           >
             <Mail className="w-4 h-4" />
             <span>info@weblaud.com</span>

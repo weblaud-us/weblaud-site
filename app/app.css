@@ -4,8 +4,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  /* "Inter Variable" is the family @fontsource-variable/inter registers. */
   --font-sans:
-    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-barlow: Barlow, sans-serif;
 
@@ -91,7 +92,13 @@ html.lenis body {
 }
 
 @theme inline {
+  /* Brand blue — for text, borders, rings, glows and tints. On black it is
+     5.8:1, but white text ON it is only 3.65:1 (WCAG AA needs 4.5:1). */
   --color-primary: #0a84ff;
+  /* Solid fills that carry white text (buttons, badges, active pills):
+     4.8:1 with white. Hover goes one step darker. */
+  --color-primary-solid: #0070e0;
+  --color-primary-solid-hover: #005ec0;
   --color-black: #000000;
   --color-light-black: #2c2b2b;
   --color-white: #ffffff;

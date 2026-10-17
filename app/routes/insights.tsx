@@ -26,10 +26,14 @@ export async function loader() {
 function formatPublishedDate(iso: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
+  // timeZone: the server renders in UTC; without it a visitor east or west of
+  // UTC could format a different day, and the mismatch threw away the whole
+  // server-rendered page on hydration (React error #418).
   return d.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
+    timeZone: "UTC",
   });
 }
 
@@ -164,15 +168,15 @@ export default function InsightsHub({ loaderData }: Route.ComponentProps) {
                     type="button"
                     onClick={() => setSelectedCategory(cat)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-barlow font-semibold transition-all duration-300 cursor-pointer outline-none ${isActive
-                        ? "bg-primary text-white shadow-md shadow-blue-500/25"
+                        ? "bg-primary-solid text-white shadow-md shadow-blue-500/25"
                         : "text-gray-400 hover:text-white hover:bg-white/[0.04]"
                       }`}
                   >
                     <span>{cat}</span>
                     <span
                       className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${isActive
-                          ? "bg-white/20 text-white"
-                          : "bg-white/[0.05] text-gray-500"
+                          ? "bg-black/25 text-white" // darkens the pill; white/20 lightened it below 4.5:1
+                          : "bg-white/[0.05] text-gray-400"
                         }`}
                     >
                       {count}
@@ -243,7 +247,7 @@ export default function InsightsHub({ loaderData }: Route.ComponentProps) {
 
                     <Link
                       to={`/insights/${featuredArticle.slug}`}
-                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary text-white font-barlow font-semibold text-xs sm:text-sm hover:bg-blue-600 transition-all duration-300 shadow-md shadow-blue-500/20"
+                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary-solid text-white font-barlow font-semibold text-xs sm:text-sm hover:bg-primary-solid-hover transition-all duration-300 shadow-md shadow-blue-500/20"
                     >
                       <span>Read Architecture Teardown</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -376,7 +380,7 @@ export default function InsightsHub({ loaderData }: Route.ComponentProps) {
                   setSelectedCategory("All");
                   setSearchQuery("");
                 }}
-                className="mt-1 inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-primary text-white font-barlow font-semibold text-xs sm:text-sm hover:bg-blue-600 transition-all duration-300 shadow-md shadow-blue-500/20 hover:-translate-y-0.5 cursor-pointer relative z-10"
+                className="mt-1 inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-primary-solid text-white font-barlow font-semibold text-xs sm:text-sm hover:bg-primary-solid-hover transition-all duration-300 shadow-md shadow-blue-500/20 hover:-translate-y-0.5 cursor-pointer relative z-10"
               >
                 <span>Reset All Filters</span>
               </button>

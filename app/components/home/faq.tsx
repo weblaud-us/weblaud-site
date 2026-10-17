@@ -45,8 +45,11 @@ const PLUS_TRANSITION: Transition = {
   bounce: 0.28,
 };
 
+/** Only what the list renders — so static FAQs (e.g. /services) can reuse it, not just CMS rows. */
+export type FaqItem = Pick<Faq, "_id" | "question" | "answer">;
+
 interface FAQRowProps {
-  item: Faq;
+  item: FaqItem;
   number: string;
   isOpen: boolean;
   panelId: string;
@@ -188,7 +191,7 @@ function FAQRow({
 }
 
 interface FAQProps {
-  faqs: Faq[];
+  faqs: FaqItem[];
 }
 
 export default function FAQ({ faqs }: FAQProps) {

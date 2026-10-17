@@ -1,5 +1,5 @@
 import HeroBanner from "../ui/hero-banner";
-import ourProjectsImg from "~/assets/our-projects.png";
+import ourProjectsImg from "~/assets/our-projects.webp";
 import { FiLayers } from "react-icons/fi";
 
 const BannerOurProjects = () => {

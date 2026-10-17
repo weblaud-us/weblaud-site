@@ -25,6 +25,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { KanbanSquare, Plus, Trash2, CalendarClock, Clock } from "lucide-react";
+import { formatShortDate } from "~/lib/dates";
 
 const COLUMNS: { status: TaskStatus; label: string }[] = [
   { status: "backlog", label: "Backlog" },
@@ -440,7 +441,7 @@ function TaskCard({
           {task.dueDate && (
             <span className="flex items-center gap-1 text-[10px] text-white/40">
               <CalendarClock className="size-3" />
-              {new Date(task.dueDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+              {formatShortDate(task.dueDate)}
             </span>
           )}
         </div>

@@ -180,7 +180,7 @@ const sections = [
         <div className="flex flex-wrap items-center gap-3">
           <a
             href="mailto:info@weblaud.com"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-blue-600 transition-all duration-300 shadow-lg shadow-blue-500/25"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-solid text-white font-semibold text-sm hover:bg-primary-solid-hover transition-all duration-300 shadow-lg shadow-blue-500/25"
           >
             <Mail className="w-4 h-4" />
             <span>info@weblaud.com</span>

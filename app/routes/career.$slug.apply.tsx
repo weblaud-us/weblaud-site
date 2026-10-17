@@ -127,6 +127,7 @@ function formatDeadline(iso?: string) {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC", // match the server so hydration agrees (see insights.tsx)
   });
 }
 
@@ -246,7 +247,7 @@ export default function CareerApplyPage({ loaderData }: Route.ComponentProps) {
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     to="/career"
-                    className="group/btn relative h-[46px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-[#0A84FF] shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-[#0070e0] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                    className="group/btn relative h-[46px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-primary-solid shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-primary-solid-hover hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <span>View All Roles</span>
                     <FiArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -554,7 +555,7 @@ export default function CareerApplyPage({ loaderData }: Route.ComponentProps) {
                     <button
                       type="submit"
                       disabled={isSubmitting || !captcha.ready}
-                      className="group/btn relative w-full h-[46px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-[#0A84FF] shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-[#0070e0] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
+                      className="group/btn relative w-full h-[46px] px-6 rounded-[10px] text-sm font-semibold font-barlow text-white bg-primary-solid shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:bg-primary-solid-hover hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[2px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-98"
                     >
                       <span>{isSubmitting ? "Submitting Application..." : "Submit Application"}</span>
                       {!isSubmitting && (

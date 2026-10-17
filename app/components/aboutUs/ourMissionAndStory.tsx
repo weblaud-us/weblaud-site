@@ -1,6 +1,6 @@
-import globe from "~/assets/globe.svg";
-import target from "~/assets/target.svg";
-import visionImg from "~/assets/vision.png";
+import globe from "~/assets/globe.webp";
+import target from "~/assets/target.webp";
+import visionImg from "~/assets/vision.webp";
 import { SectionBackground } from "../ui/section-background";
 import { ContentCard } from "../ui/content-card";
 import { ImageContainer } from "../ui/image-container";

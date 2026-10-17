@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { LocalTime } from "~/components/ui/local-time";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const entries = await callAdminApi(request, (accessToken) =>
@@ -101,7 +102,7 @@ export default function AdminAuditLog({ loaderData }: Route.ComponentProps) {
                 {filtered.map((entry) => (
                   <TableRow key={entry._id} className="border-white/10">
                     <TableCell className="text-white/50 whitespace-nowrap">
-                      {new Date(entry.at).toLocaleString()}
+                      <LocalTime value={entry.at} withTime />
                     </TableCell>
                     <TableCell className="text-white whitespace-nowrap">{actorName(entry.actor)}</TableCell>
                     <TableCell className="text-white/80 whitespace-nowrap">{actionLabel(entry.action)}</TableCell>

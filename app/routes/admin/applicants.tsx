@@ -27,6 +27,7 @@ import {
   PaginationItem,
   PaginationLink,
 } from "~/components/ui/pagination";
+import { LocalTime } from "~/components/ui/local-time";
 
 /** The filters the backend's applicant listing understands. */
 function filterQuery(searchParams: URLSearchParams) {
@@ -208,7 +209,7 @@ export default function AdminApplicants({ loaderData }: Route.ComponentProps) {
                     {applicant.careerId?.title ?? "—"}
                   </TableCell>
                   <TableCell className="text-white/50">
-                    {new Date(applicant.createdAt).toLocaleDateString()}
+                    <LocalTime value={applicant.createdAt} />
                   </TableCell>
                   <TableCell>
                     {applicant.hasResume ? (

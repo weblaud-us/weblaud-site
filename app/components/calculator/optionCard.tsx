@@ -68,14 +68,14 @@ export function OptionCard({
         )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2 sm:gap-3">
-            <h4
+            <span
               className={cn(
-                "text-sm sm:text-lg font-bold font-barlow tracking-tight transition-colors leading-snug",
+                "block text-sm sm:text-lg font-bold font-barlow tracking-tight transition-colors leading-snug",
                 checked ? "text-white" : "text-gray-200 group-hover:text-white",
               )}
             >
               {title}
-            </h4>
+            </span>
             {indicator}
           </div>
           {desc && (

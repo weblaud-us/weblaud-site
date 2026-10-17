@@ -10,10 +10,14 @@ import { getBlurAnimationClasses } from "~/lib/animations";
 import weblaudFooterLogo from "~/assets/Weblaud_LLC_Footer.svg";
 import type { ContactInfo as ContactInfoType } from "~/lib/types";
 import { ChevronRight } from "lucide-react";
+import { landingLinksIn } from "~/data/landing/links";
 
 interface FooterProps {
   contactInfo: ContactInfoType | null;
 }
+
+const toNavLinks = (links: { path: string; label: string }[]) =>
+  links.map(({ path, label }) => ({ label, href: path }));
 
 const footerNavGroups = [
   {
@@ -23,22 +27,33 @@ const footerNavGroups = [
       { label: "About Us", href: "/aboutus" },
       { label: "Career", href: "/career" },
       { label: "Contact Us", href: "/contact" },
+      // Existing clients had no way back into the portal from the site.
+      { label: "Client Login", href: "/portal/login" },
     ],
   },
   {
     title: "Solutions",
     links: [
+      ...toNavLinks(landingLinksIn("solutions")),
+      { label: "For Startups", href: "/for-startups" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
       { label: "Our Services", href: "/services" },
       { label: "Our Projects", href: "/projects" },
+      { label: "Pricing", href: "/software-development-cost" },
       { label: "Project Estimator", href: "/calculator" },
+      { label: "Free Website Audit", href: "/audit" },
       { label: "Engineering Insights", href: "/insights" },
     ],
   },
   {
     title: "Compare",
     links: [
-      { label: "Weblaud vs In-House", href: "/vs/in-house-engineers" },
-      { label: "Weblaud vs Agencies", href: "/vs/traditional-agencies" },
+      ...toNavLinks(landingLinksIn("vs")),
+      { label: "Choosing an Agency", href: "/best-software-agency" },
     ],
   },
 ];
@@ -104,8 +119,8 @@ const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
           isFooterVisible
         )}`}
       >
-        {/* Main Grid with 2-col on mobile, expanding to 6-col on desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-8 pt-8 sm:pt-12 pb-10 sm:pb-14">
+        {/* Main Grid with 2-col on mobile, expanding to 7-col on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-6 sm:gap-8 lg:gap-8 pt-8 sm:pt-12 pb-10 sm:pb-14">
           {/* Brand Column (takes 2 cols on mobile and lg) */}
           <div className="col-span-2 sm:col-span-2 lg:col-span-2 space-y-3.5 sm:space-y-4">
             <Link to="/" className="inline-block">
@@ -153,9 +168,9 @@ const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
           {/* Navigation List Columns */}
           {footerNavGroups.map((group) => (
             <div key={group.title} className="col-span-1 space-y-3 sm:space-y-4">
-              <h4 className="text-[11px] sm:text-xs font-mono font-semibold tracking-wider text-white uppercase select-none">
+              <h2 className="text-[11px] sm:text-xs font-mono font-semibold tracking-wider text-white uppercase select-none">
                 {group.title}
-              </h4>
+              </h2>
               <ul className="space-y-2 sm:space-y-2.5">
                 {group.links.map(({ label, href }) => (
                   <li key={label}>
@@ -176,9 +191,9 @@ const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
 
           {/* Social Links Column */}
           <div className="col-span-1 space-y-3 sm:space-y-4">
-            <h4 className="text-[11px] sm:text-xs font-mono font-semibold tracking-wider text-white uppercase select-none">
+            <h2 className="text-[11px] sm:text-xs font-mono font-semibold tracking-wider text-white uppercase select-none">
               Connect
-            </h4>
+            </h2>
             <div className="grid grid-cols-2 gap-2 sm:gap-2.5 max-w-max">
               {socialLinks.map(({ icon, url }, index) => (
                 <motion.div

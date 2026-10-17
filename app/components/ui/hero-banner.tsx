@@ -106,7 +106,7 @@ const HeroBanner = ({
                 {button.href ? (
                   <a
                     href={button.href}
-                    className="relative group h-[38px] w-auto inline-flex items-center justify-center px-4.5 sm:px-5 rounded-[10px] text-[13px] font-semibold text-white bg-[#0A84FF] overflow-hidden shadow-[0_2px_10px_rgba(10,132,255,0.35)] hover:shadow-[0_6px_20px_rgba(10,132,255,0.3)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer shrink-0"
+                    className="relative group h-[38px] w-auto inline-flex items-center justify-center px-4.5 sm:px-5 rounded-[10px] text-[13px] font-semibold text-white bg-primary-solid overflow-hidden shadow-[0_2px_10px_rgba(10,132,255,0.35)] hover:shadow-[0_6px_20px_rgba(10,132,255,0.3)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer shrink-0"
                   >
                     <span className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                     <span className="absolute inset-0 bg-gradient-to-b from-white/15 to-transparent opacity-100 mix-blend-overlay"></span>
@@ -116,7 +116,7 @@ const HeroBanner = ({
                   <button
                     type="button"
                     onClick={button.onClick}
-                    className="relative group h-[38px] w-auto inline-flex items-center justify-center px-4.5 sm:px-5 rounded-[10px] text-[13px] font-semibold text-white bg-[#0A84FF] overflow-hidden shadow-[0_2px_10px_rgba(10,132,255,0.35)] hover:shadow-[0_6px_20px_rgba(10,132,255,0.3)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer shrink-0"
+                    className="relative group h-[38px] w-auto inline-flex items-center justify-center px-4.5 sm:px-5 rounded-[10px] text-[13px] font-semibold text-white bg-primary-solid overflow-hidden shadow-[0_2px_10px_rgba(10,132,255,0.35)] hover:shadow-[0_6px_20px_rgba(10,132,255,0.3)] hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.98] transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#0A84FF] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer shrink-0"
                   >
                     <span className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                     <span className="absolute inset-0 bg-gradient-to-b from-white/15 to-transparent opacity-100 mix-blend-overlay"></span>
@@ -136,7 +136,9 @@ const HeroBanner = ({
                 className="w-64 sm:w-72 md:w-80 lg:w-96 max-w-full h-auto hover:scale-105 transition-transform duration-500"
                 src={image.src}
                 alt={image.alt}
-                loading="lazy"
+                // Top-of-page hero: lazy-loading it only delayed its paint.
+                loading="eager"
+                decoding="async"
               />
             </div>
           )}

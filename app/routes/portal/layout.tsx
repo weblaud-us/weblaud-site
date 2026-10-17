@@ -24,6 +24,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { cn } from "~/lib/utils";
+import weblaudLogo from "~/assets/weblaud-logo.svg";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requirePortalUser(request);
@@ -245,11 +246,11 @@ export default function PortalLayout({ loaderData }: Route.ComponentProps) {
         }
       >
         <div className="px-5 py-5 border-b border-white/10 flex items-center justify-between">
-          <Link to="/portal" className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-md bg-[#0A84FF] text-xs font-bold text-white">
-              W
-            </div>
-            <p className="font-semibold text-sm tracking-tight">Weblaud Portal</p>
+          <Link to="/portal" className="flex items-center gap-2" aria-label="Weblaud Portal home">
+            <img src={weblaudLogo} alt="" className="h-6 w-auto" />
+            <span className="rounded border border-white/15 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-white/60">
+              Portal
+            </span>
           </Link>
           <button
             onClick={() => setIsSidebarOpen(false)}

@@ -28,7 +28,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           title: "text-white font-barlow font-semibold text-sm",
           description: "text-white/70 font-barlow text-xs",
           actionButton:
-            "bg-primary hover:bg-primary/90 text-white font-barlow font-medium",
+            "bg-primary-solid hover:bg-primary-solid-hover text-white font-barlow font-medium",
           cancelButton: "bg-white/10 hover:bg-white/20 text-white font-barlow",
           closeButton:
             "!bg-[#1a1a1a] !border !border-white/10 !text-gray-400 hover:!text-white hover:!bg-white/20 transition-all !cursor-pointer",

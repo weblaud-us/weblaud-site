@@ -13,6 +13,8 @@ export interface Project {
   solution: string;
   techStack: string[];
   businessImpact: string;
+  /** Extra screenshots for the case study page (backend `detailImages`). */
+  detailImages: string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -201,7 +203,126 @@ export interface CalculatorConfig {
   timelineSpeeds: TimelineSpeed[];
 }
 
-export interface EstimateSubmission {
+/**
+ * Sales-pipeline stage shared by contact and estimate leads. Separate from a
+ * lead's inbox `status` (new/read/spam). Labels live in app/lib/leads.ts;
+ * backend source of truth is backend/src/modules/leads/lead.constants.ts.
+ */
+export type LeadStage =
+  | "new"
+  | "contacted"
+  | "call_booked"
+  | "proposal_sent"
+  | "won"
+  | "lost";
+
+/** Self-reported "How did you hear about us?" answer. */
+export type HeardAbout =
+  | "google"
+  | "ai_assistant"
+  | "clutch"
+  | "linkedin"
+  | "referral"
+  | "other";
+
+/** Optional contact-form qualifiers. Labels and option order live in app/lib/leads.ts. */
+export type BudgetBand = "under_5k" | "5k_10k" | "10k_20k" | "20k_plus" | "not_sure";
+export type LeadTimeline = "asap" | "1_3_months" | "3_6_months" | "exploring";
+
+/** First-touch marketing source, captured by app/lib/attribution.ts. */
+export interface LeadAttribution {
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  referrer?: string;
+  landingPath?: string;
+}
+
+/** Pipeline + source fields every lead record carries. */
+export interface LeadPipelineFields {
+  /** Missing on leads created before the pipeline existed — treat as "new". */
+  stage?: LeadStage;
+  internalNotes?: string;
+  nextFollowUpAt?: string;
+  lostReason?: string;
+  attribution?: LeadAttribution;
+  heardAbout?: HeardAbout;
+  /** When the automatic reply/estimate email went out to the lead. */
+  autoReplySentAt?: string;
+}
+
+/** GET /leads/admin/summary — contact (spam excluded) + estimate leads. */
+export interface LeadsSummary {
+  stages: Record<LeadStage, number>;
+  /** Same definition as the daily follow-up email. */
+  followUpsDue: number;
+  sources: {
+    windowDays: number;
+    total: number;
+    /** HeardAbout values plus "unknown" (skipped / pre-dates the question). */
+    heardAbout: Record<string, number>;
+    utmSources: { source: string; count: number }[];
+    /** Website audits run in the window whose report nobody claimed. */
+    auditsRunUnclaimed?: number;
+  };
+}
+
+/** Lighthouse category scores, 0–100. */
+export interface AuditScores {
+  performance: number;
+  seo: number;
+  accessibility: number;
+  bestPractices: number;
+}
+
+export interface AuditVitals {
+  lcpMs?: number;
+  cls?: number;
+  tbtMs?: number;
+  fcpMs?: number;
+}
+
+export type AuditStrategy = "mobile" | "desktop";
+
+/** GET /audits/:id — what the public /audit page may see while polling. */
+export interface AuditPublicResult {
+  id: string;
+  runStatus: "running" | "done" | "failed";
+  /** "quota" | "unreachable" | "timeout" | "api" */
+  failureReason?: string;
+  url: string;
+  host: string;
+  strategy: AuditStrategy;
+  scores?: AuditScores;
+  vitals?: AuditVitals;
+  issueCount: number;
+  claimed: boolean;
+}
+
+/** A claimed website audit, as listed in /cpadmin/audit-submissions. */
+export interface AuditSubmission extends LeadPipelineFields {
+  _id: string;
+  url: string;
+  host: string;
+  strategy: AuditStrategy;
+  scores?: AuditScores;
+  vitals?: AuditVitals;
+  issues: {
+    id: string;
+    title: string;
+    displayValue?: string;
+    savingsMs?: number;
+    category: string;
+  }[];
+  name: string;
+  email: string;
+  company?: string;
+  status: string;
+  createdAt: string;
+  claimedAt?: string;
+}
+
+export interface EstimateSubmission extends LeadPipelineFields {
   _id: string;
   name: string;
   email: string;
@@ -302,13 +423,15 @@ export interface LandingPageConfig {
 /** "spam": caught by the backend content filter — kept for review, never emailed. */
 export type ContactSubmissionStatus = "new" | "read" | "spam";
 
-export interface ContactSubmission {
+export interface ContactSubmission extends LeadPipelineFields {
   _id: string;
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
   message: string;
+  budget?: BudgetBand;
+  timeline?: LeadTimeline;
   status: ContactSubmissionStatus;
   /** Why the backend filed it as spam, e.g. "3 links in message". */
   spamReason?: string;
