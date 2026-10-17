@@ -33,7 +33,7 @@ export async function action({ request }: Route.ActionArgs) {
     }
 
     if (intent === "email-preferences") {
-      const categories = ["contracts", "invoices", "approvals", "changeRequests", "updates", "mentions"] as const;
+      const categories = ["contracts", "invoices", "approvals", "changeRequests", "updates", "mentions", "digest"] as const;
       const body = Object.fromEntries(categories.map((c) => [c, formData.get(c) === "on"]));
       await callPortalApi(request, (accessToken) =>
         apiFetch("/users/me/email-preferences", { method: "PATCH", accessToken, body }),

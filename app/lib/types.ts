@@ -467,6 +467,8 @@ export interface EmailPreferences {
   changeRequests: boolean;
   updates: boolean;
   mentions: boolean;
+  /** The Monday summary email of each project's week. */
+  digest: boolean;
 }
 
 /** A user as returned by GET /users/me and populate() on PM/team fields. */

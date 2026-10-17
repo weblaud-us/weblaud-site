@@ -13,6 +13,11 @@ const CATEGORIES: { key: keyof EmailPreferences; label: string; description: str
   { key: "changeRequests", label: "Change requests", description: "Priced scope changes waiting on your approval." },
   { key: "updates", label: "Project updates", description: "New progress updates published on your projects." },
   { key: "mentions", label: "Mentions", description: "Someone @mentioned you in a comment." },
+  {
+    key: "digest",
+    label: "Weekly summary",
+    description: "A Monday email with last week's progress and anything waiting on you.",
+  },
 ];
 
 const DEFAULTS: EmailPreferences = {
@@ -22,6 +27,7 @@ const DEFAULTS: EmailPreferences = {
   changeRequests: true,
   updates: true,
   mentions: true,
+  digest: true,
 };
 
 /**

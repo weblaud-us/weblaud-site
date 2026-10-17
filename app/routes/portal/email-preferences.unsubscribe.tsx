@@ -12,6 +12,7 @@ const CATEGORY_LABEL: Record<string, string> = {
   changeRequests: "change request emails",
   updates: "project update emails",
   mentions: "mention emails",
+  digest: "weekly summary emails",
 };
 
 /**
