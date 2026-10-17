@@ -95,6 +95,8 @@ export default [
     route("review-queue", "routes/portal/review-queue.tsx"),
     route("billing", "routes/portal/billing.tsx"),
     route("settings", "routes/portal/settings.tsx"),
+    // A client org's own people — client admins invite and manage; see portal-team.controller.ts.
+    route("team", "routes/portal/team.tsx"),
     // Six top-level tabs (Overview, Work, Updates, Files, Decisions,
     // Billing) plus Time and Manage for staff; tabs with sub-pages are
     // layout routes. Every page reads the parent's already-fetched project

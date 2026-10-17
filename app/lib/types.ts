@@ -763,6 +763,17 @@ export interface ProjectAttention {
   summary: PortalAttentionSummary;
 }
 
+/** A person in the caller's client organization (GET /portal/team). */
+export interface TeamMember {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  orgRole?: OrgRole;
+  avatar?: string;
+  status: "active" | "invited" | "invite_expired" | "deactivated";
+}
+
 /** One row of a project's recent activity (GET /portal/projects/:id/activity). */
 export interface ProjectActivityItem {
   _id: string;

@@ -21,6 +21,7 @@ import {
   Settings,
   ChevronDown,
   ClipboardCheck,
+  Users,
   Wallet,
 } from "lucide-react";
 import { cn } from "~/lib/utils";
@@ -245,6 +246,8 @@ export default function PortalLayout({ loaderData }: Route.ComponentProps) {
   const isDashboardActive = location.pathname === "/portal";
   const isReviewQueueActive = location.pathname === "/portal/review-queue";
   const isBillingActive = location.pathname === "/portal/billing";
+  const isTeamActive = location.pathname === "/portal/team";
+  const isClientAdmin = user.role === "user" && user.orgRole === "client_admin";
 
   return (
     <div className="dark min-h-screen bg-black text-white flex font-sans">
@@ -310,6 +313,19 @@ export default function PortalLayout({ loaderData }: Route.ComponentProps) {
             <Wallet className={"size-4 shrink-0 " + (isBillingActive ? "text-[#0A84FF]" : "text-white/40")} />
             Billing
           </Link>
+
+          {isClientAdmin && (
+            <Link
+              to="/portal/team"
+              className={
+                "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors " +
+                (isTeamActive ? "bg-[#0A84FF]/15 text-white font-medium" : "text-white/55 hover:bg-white/5 hover:text-white")
+              }
+            >
+              <Users className={"size-4 shrink-0 " + (isTeamActive ? "text-[#0A84FF]" : "text-white/40")} />
+              Team
+            </Link>
+          )}
 
           {isStaff && (
             <Link
