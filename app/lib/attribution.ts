@@ -65,6 +65,15 @@ export function captureFirstTouch() {
   }
 }
 
+/** Removes the stored first touch — when a visitor who needs consent withdraws it. */
+export function clearFirstTouch() {
+  try {
+    document.cookie = `${COOKIE}=; Max-Age=0; Path=/; SameSite=Lax`;
+  } catch {
+    /* cookies blocked — nothing stored anyway */
+  }
+}
+
 /**
  * Server-side, in a form's route action: the stored first touch, or undefined.
  * Visitor-controlled, so re-validated here rather than trusted.

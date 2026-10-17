@@ -115,6 +115,16 @@ const sections = [
               which channels bring inquiries; it is never shared or sold. Google Analytics sets its
               own cookies on our public pages, never in the portal.
             </p>
+            <p className="text-xs text-gray-400 pl-6 leading-relaxed">
+              <span className="text-gray-300">Visitors in the EEA, the UK and Switzerland:</span>{" "}
+              Google Analytics cookies and <code className="text-gray-300">wl_ft</code> are only set
+              after you choose &ldquo;Accept&rdquo; in the cookie banner. Until then Analytics runs in
+              Google&rsquo;s consent mode and stores nothing on your device. Your choice is kept in a{" "}
+              <code className="text-gray-300">wl_consent</code> cookie for 180 days, and you can change
+              or withdraw it at any time with &ldquo;Cookie settings&rdquo; at the bottom of every
+              page — withdrawing removes the analytics and <code className="text-gray-300">wl_ft</code>{" "}
+              cookies.
+            </p>
           </div>
 
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] space-y-1.5">
@@ -195,6 +205,12 @@ const sections = [
               link: "https://tools.google.com/dlpage/gaoptout",
               optOut: true,
             },
+            {
+              name: "Sentry",
+              badge: "Error Monitoring",
+              desc: "Receives technical reports when something breaks on the site or in the portal. Form contents, cookies, link parameters, and your name and email are removed before a report is sent.",
+              link: "https://sentry.io/privacy/",
+            },
           ].map((provider, idx) => (
             <div
               key={idx}
@@ -202,7 +218,7 @@ const sections = [
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <h4 className="text-white font-bold text-sm">{provider.name}</h4>
+                  <h3 className="text-white font-bold text-sm">{provider.name}</h3>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                     {provider.badge}
                   </span>
@@ -260,10 +276,10 @@ const sections = [
     icon: LockKeyhole,
     content: (
       <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/5 via-[#0e0e0e] to-[#0e0e0e] border border-blue-500/20 space-y-2">
-        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+        <h3 className="text-sm font-bold text-white flex items-center gap-2">
           <LockKeyhole className="w-4 h-4 text-primary" />
           <span>Enterprise-Grade Encryption</span>
-        </h4>
+        </h3>
         <p className="text-sm text-gray-300 leading-relaxed">
           We apply robust organizational, administrative, and technical measures including TLS 1.3
           transit encryption, zero-trust backend access controls, and strict key rotation policies to

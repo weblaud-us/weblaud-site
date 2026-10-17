@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useRouteLoaderData } from "react-router";
 import { FaFacebook, FaLinkedin, FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { IoIosMail } from "react-icons/io";
@@ -11,6 +11,7 @@ import weblaudFooterLogo from "~/assets/Weblaud_LLC_Footer.svg";
 import type { ContactInfo as ContactInfoType } from "~/lib/types";
 import { ChevronRight } from "lucide-react";
 import { landingLinksIn } from "~/data/landing/links";
+import { OPEN_CONSENT_EVENT } from "~/lib/consent";
 
 interface FooterProps {
   contactInfo: ContactInfoType | null;
@@ -59,6 +60,8 @@ const footerNavGroups = [
 ];
 
 const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
+  // Typed loosely: importing root's loader type here would be a cycle.
+  const needsConsent = !!(useRouteLoaderData("root") as { needsConsent?: boolean } | undefined)?.needsConsent;
   const [footerRef, isFooterVisible] = useBlurAnimation<HTMLDivElement>(0.05, false);
 
   const socialLinks: { icon: React.ReactNode; url: string }[] = [
@@ -223,6 +226,17 @@ const Footer: React.FC<FooterProps> = ({ contactInfo }) => {
                 {label}
               </Link>
             ))}
+            {/* Only where a consent banner applies (EEA/UK/CH) — lets a
+                visitor change or withdraw their choice at any time. */}
+            {needsConsent && (
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new Event(OPEN_CONSENT_EVENT))}
+                className="hover:text-gray-300 transition-colors duration-200"
+              >
+                Cookie settings
+              </button>
+            )}
           </div>
         </div>
       </div>

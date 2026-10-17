@@ -32,6 +32,8 @@ import { Toaster } from "./components/ui/sonner";
 import ErrorPage from "./components/ui/error-page";
 import { fetchOptional } from "./lib/api.server";
 import { captureFirstTouch } from "./lib/attribution";
+import { analyticsAllowed, gaBootstrapScript, needsConsentFor, readConsent } from "./lib/consent";
+import { ConsentBanner } from "./components/ui/consent-banner";
 import type { ContactInfo } from "./lib/types";
 
 // Disabled for now (see App) but kept: lazy so its ~700 lines of animation
@@ -54,7 +56,7 @@ function isPrivatePath(pathname: string): boolean {
   );
 }
 
-export async function loader() {
+export async function loader({ request }: Route.LoaderArgs) {
   const contactInfo = await fetchOptional<ContactInfo | null>("/contact-info", null);
   // Public by design (it is embedded in every Turnstile widget). Read at
   // runtime so a key change needs a restart, not a rebuild. See turnstile.tsx.
@@ -63,7 +65,10 @@ export async function loader() {
   // public by design — it only allows sending events. Unset = no SDK at all.
   const sentryDsn = process.env.SENTRY_DSN?.trim() ?? "";
   const sentryEnvironment = process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || "production";
-  return { contactInfo, turnstileSiteKey, sentryDsn, sentryEnvironment };
+  // EEA/UK/CH visitors get Consent Mode defaults and the banner (lib/consent.ts).
+  const needsConsent = needsConsentFor(request.headers.get("CF-IPCountry"));
+  const consent = needsConsent ? readConsent(request.headers.get("Cookie")) : null;
+  return { contactInfo, turnstileSiteKey, sentryDsn, sentryEnvironment, needsConsent, consent };
 }
 
 export const links: Route.LinksFunction = () => [
@@ -116,11 +121,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
     (window as unknown as Record<string, boolean>)[`ga-disable-${GA_MEASUREMENT_ID}`] = privatePage;
   }, [privatePage]);
 
+  const needsConsent = rootData?.needsConsent ?? false;
+  const consent = rootData?.consent ?? null;
+
   // Where this visitor first came from, for lead attribution. A no-op once
-  // stored, and never recorded from a portal/admin page.
+  // stored, never recorded from a portal/admin page, and — where consent is
+  // required — only after the visitor accepts (the banner records it then).
   useEffect(() => {
-    if (!privatePage) captureFirstTouch();
-  }, [privatePage]);
+    if (!privatePage && analyticsAllowed(needsConsent, consent)) captureFirstTouch();
+  }, [privatePage, needsConsent, consent]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -231,32 +240,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {!privatePage && (
           <script
             dangerouslySetInnerHTML={{
-              __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${GA_MEASUREMENT_ID}');
-              (function(){
-                function inject(){
-                  var s = document.createElement('script');
-                  s.async = true;
-                  s.src = 'https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}';
-                  document.head.appendChild(s);
-                }
-                function whenIdle(){
-                  if ('requestIdleCallback' in window) requestIdleCallback(inject, { timeout: 2000 });
-                  else setTimeout(inject, 1);
-                }
-                if (document.readyState === 'complete') whenIdle();
-                else window.addEventListener('load', whenIdle, { once: true });
-              })();
-            `,
+              __html: gaBootstrapScript(GA_MEASUREMENT_ID, { needsConsent, consent }),
             }}
           />
         )}
       </head>
       <body className="[overflow-x:clip] antialiased">
         {children}
+        {needsConsent && !privatePage && <ConsentBanner initialChoice={consent} />}
         <Toaster />
         <ScrollRestoration />
         <Scripts />
