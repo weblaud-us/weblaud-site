@@ -1,8 +1,9 @@
+import { useMemo } from "react";
 import {
   useBlurAnimation,
   useBlurAnimationList,
 } from "~/hooks/useBlurAnimation";
-import { blurAnimation, getBlurAnimationClasses } from "~/lib/animations";
+import { getBlurAnimationClasses } from "~/lib/animations";
 import { ProjectCard } from "../ui/project-card";
 import SectionBadge from "../ui/section-badge";
 import { FiLayers } from "react-icons/fi";
@@ -13,8 +14,9 @@ interface OurCaseStudiesProps {
 }
 
 const OurCaseStudies = ({ projects }: OurCaseStudiesProps) => {
+  const projectIds = useMemo(() => projects.map((p) => p.id), [projects]);
   const { itemRefs, isItemVisible } = useBlurAnimationList(
-    projects.map((p) => p.id),
+    projectIds,
     0.1
   );
 
@@ -22,8 +24,6 @@ const OurCaseStudies = ({ projects }: OurCaseStudiesProps) => {
   const [descRef, isDescVisible] = useBlurAnimation();
 
   if (projects.length === 0) return null;
-
-  const animationVariants = ["heavy", "scale", "light"] as const;
 
   return (
     <div className="bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-12 md:py-16 lg:py-25">
@@ -56,11 +56,6 @@ const OurCaseStudies = ({ projects }: OurCaseStudiesProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {projects.map((project, index) => {
             const isVisible = isItemVisible(project.id);
-            const variant = animationVariants[index % animationVariants.length];
-            const animation = blurAnimation(isVisible, index, {
-              variant,
-              staggerDelay: 150,
-            });
 
             return (
               <div
@@ -68,8 +63,8 @@ const OurCaseStudies = ({ projects }: OurCaseStudiesProps) => {
                 ref={(el) => {
                   if (el) itemRefs.current.set(project.id, el);
                 }}
-                className={`h-full ${getBlurAnimationClasses(isVisible)}`}
-                style={{ transitionDelay: `${index * 150}ms` }}
+                className={`h-full ${getBlurAnimationClasses(isVisible, { variant: "default" })}`}
+                style={{ transitionDelay: `${(index % 3) * 120}ms` }}
               >
                 <ProjectCard
                   title={project.title}

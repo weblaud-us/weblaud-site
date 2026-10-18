@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 {
   "js/ts.experimental.useTsgo": false
 }
+=======
+{"css.lint.unknownAtRules":"ignore"}
+>>>>>>> 3173e480d3072e85bd944eb578a0dcc41eced7ea

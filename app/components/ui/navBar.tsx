@@ -17,15 +17,23 @@ const NavBar = () => {
   // blur) until hydration flipped it visible, so the logo — the page's
   // largest-paint candidate — waited ~4 s for JS on a phone.
   useEffect(() => {
+<<<<<<< HEAD
+=======
+    setIsVisible(true);
+
+    let ticking = false;
+>>>>>>> 3173e480d3072e85bd944eb578a0dcc41eced7ea
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -46,9 +54,12 @@ const NavBar = () => {
     { name: "Services", href: "/services" },
     { name: "Projects", href: "/projects" },
     { name: "Insights", href: "/insights" },
+<<<<<<< HEAD
     // Career lives in the footer; the main nav is for people hiring us.
     { name: "Pricing", href: "/software-development-cost" },
     { name: "Free Audit", href: "/audit" },
+=======
+>>>>>>> 3173e480d3072e85bd944eb578a0dcc41eced7ea
     { name: "Contact", href: "/contact" },
   ];
 
