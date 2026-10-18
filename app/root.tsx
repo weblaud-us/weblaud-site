@@ -116,6 +116,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
   // Undefined while an error boundary renders after the root loader failed.
   const rootData = useRouteLoaderData<typeof loader>("root");
   const privatePage = isPrivatePath(pathname);
+  // /portal and /cpadmin are dark-mode-only (see their layout.tsx), but Radix
+  // UI's dropdown/dialog/alert-dialog primitives portal their content to
+  // document.body by default — a sibling of those layouts' own "dark"-classed
+  // wrapper div, not a descendant. That broke the CSS-variable cascade
+  // (app.css's .dark overrides never reached the portaled content), so every
+  // popover/dialog in the portal and admin panel silently rendered with the
+  // light theme's colors — invisible white-on-white text in the notification
+  // bell, for one. Scoping "dark" to body instead keeps portaled content
+  // (also a body child) inside the same cascade, and only this route tree.
+  const isDarkChrome = pathname.startsWith("/portal") || pathname.startsWith("/cpadmin");
 
   // GA isn't loaded on a private page's first load (see the <head> below), but
   // a visitor who arrives on the marketing site and navigates client-side into
@@ -250,7 +260,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           />
         )}
       </head>
-      <body className="[overflow-x:clip] antialiased">
+      <body className={`[overflow-x:clip] antialiased${isDarkChrome ? " dark" : ""}`}>
         {children}
         {needsConsent && !privatePage && <ConsentBanner initialChoice={consent} />}
         <Toaster />

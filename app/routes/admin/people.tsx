@@ -47,7 +47,7 @@ import {
 } from "~/components/ui/pagination";
 
 interface UsersListResponse {
-  data: PortalUser[];
+  items: PortalUser[];
   total: number;
   page: number;
   limit: number;
@@ -69,7 +69,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   ]);
 
   return {
-    people: users.data,
+    people: users.items,
     organizations,
     page,
     totalPages: Math.max(1, Math.ceil(users.total / PAGE_SIZE)),

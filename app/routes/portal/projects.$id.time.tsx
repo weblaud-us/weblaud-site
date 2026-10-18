@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { useFetcher, useOutletContext } from "react-router";
+import { useFetcher, useOutletContext, redirect } from "react-router";
 import { toast } from "sonner";
 import type { Route } from "./+types/projects.$id.time";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callPortalApi, requirePortalUser } from "~/lib/portal.server";
-import type { Task, TimeEntry } from "~/lib/types";
+import type { ClientProject, ProjectStaffRef, Task, TimeEntry } from "~/lib/types";
 import type { ProjectWorkspaceContext } from "./projects.$id";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -17,7 +17,19 @@ import { Clock, Trash2, Receipt } from "lucide-react";
 import { addUtcDays, formatShortDate, startOfUtcWeek } from "~/lib/dates";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
-  await requirePortalUser(request);
+  const user = await requirePortalUser(request);
+  const project = await callPortalApi(request, (accessToken) =>
+    apiFetch<ClientProject>(`/portal/projects/${params.id}`, { accessToken }),
+  );
+
+  const pmId = typeof project.projectManager === "object" ? project.projectManager._id : project.projectManager;
+  const teamIds = (project.team as ProjectStaffRef[]).map((m) => (typeof m === "object" ? m._id : m));
+  const isStaffOnProject = user.role === "admin" || pmId === user._id || teamIds.includes(user._id);
+  // Time entries are staff-only (see time-entry-project.controller.ts) — a
+  // client who navigates here directly (stale link, bookmark) would
+  // otherwise 403 on the fetch below and blow up this loader.
+  if (!isStaffOnProject) throw redirect(`/portal/projects/${params.id}`);
+
   const [entries, tasks] = await Promise.all([
     callPortalApi(request, (accessToken) =>
       apiFetch<TimeEntry[]>(`/portal/projects/${params.id}/time-entries`, { accessToken }),

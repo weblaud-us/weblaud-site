@@ -7,7 +7,7 @@ import { AdminPageHeader } from "~/components/admin/page-header";
 import { ClientProjectForm, parseClientProjectForm } from "./project-form";
 
 interface UsersListResponse {
-  data: PortalUser[];
+  items: PortalUser[];
   total: number;
   page: number;
   limit: number;
@@ -37,7 +37,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       apiFetch<UsersListResponse>("/users?page=1&limit=200", { accessToken }),
     ),
   ]);
-  return { organizations, staff: toStaffList(users.data) };
+  return { organizations, staff: toStaffList(users.items) };
 }
 
 export async function action({ request }: Route.ActionArgs) {

@@ -9,7 +9,7 @@ import { FeaturesEditor } from "~/components/portal/features-editor";
 import { ClientProjectForm, parseClientProjectForm } from "./project-form";
 
 interface UsersListResponse {
-  data: PortalUser[];
+  items: PortalUser[];
   total: number;
   page: number;
   limit: number;
@@ -48,7 +48,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       apiFetch<Feature[]>(`/portal/projects/${params.id}/features`, { accessToken }),
     ),
   ]);
-  return { project, organizations, staff: toStaffList(users.data), features };
+  return { project, organizations, staff: toStaffList(users.items), features };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {

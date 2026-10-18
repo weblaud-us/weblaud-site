@@ -24,10 +24,22 @@ const STATUS_OPTIONS: { value: ClientProject["status"]; label: string }[] = [
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await requirePortalUser(request);
-  const [project, staffList, features] = await Promise.all([
-    callPortalApi(request, (accessToken) =>
-      apiFetch<ClientProject>(`/portal/projects/${params.id}`, { accessToken }),
-    ),
+  const project = await callPortalApi(request, (accessToken) =>
+    apiFetch<ClientProject>(`/portal/projects/${params.id}`, { accessToken }),
+  );
+
+  const pmId = typeof project.projectManager === "object" ? project.projectManager._id : project.projectManager;
+  const isPm = user.role === "admin" || pmId === user._id;
+  // Checked before the staff-only /users/staff call below (admin/manager
+  // only — see users.controller.ts#findStaff), not just as a UI nicety: a
+  // non-PM client hitting that endpoint 403s, which would otherwise blow up
+  // this loader before this redirect ever ran. The backend enforces the PM
+  // requirement too (assertProjectManager on PATCH /portal/projects/:id) —
+  // redirecting here just avoids showing a non-PM a form that would 403 on
+  // submit.
+  if (!isPm) throw redirect(`/portal/projects/${params.id}`);
+
+  const [staffList, features] = await Promise.all([
     callPortalApi(request, (accessToken) =>
       apiFetch<ProjectStaffRef[]>("/users/staff", { accessToken }),
     ),
@@ -35,13 +47,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       apiFetch<Feature[]>(`/portal/projects/${params.id}/features`, { accessToken }),
     ),
   ]);
-
-  const pmId = typeof project.projectManager === "object" ? project.projectManager._id : project.projectManager;
-  const isPm = user.role === "admin" || pmId === user._id;
-  // The backend enforces this too (assertProjectManager on PATCH
-  // /portal/projects/:id) — redirecting here just avoids showing a
-  // non-PM a form that would 403 on submit.
-  if (!isPm) throw redirect(`/portal/projects/${params.id}`);
 
   return { project, staff: staffList, features };
 }
