@@ -16,9 +16,9 @@ This file is the single plan for the work that came out of the October 2026 audi
 
 | Phase | Goal | Size | Status |
 |---|---|---|---|
-| [0](#phase-0--secure-and-ship-what-is-built) | Commit, merge, deploy everything already built | 1–2 days | ☐ Not started |
-| [1](#phase-1--conversion-and-trust-quick-wins) | Conversion leaks, trust fixes, portal quick wins | — | ✅ Built 2026-10-17, ships with Phase 0 |
-| [2](#phase-2--client-portal-usability--monitoring) | Portal that tells clients what to do; error monitoring | ~12 days | 🟡 Built 2026-10-17 (local commits, not deployed) — ships after Phase 0 |
+| [0](#phase-0--secure-and-ship-what-is-built) | Commit, merge, deploy everything already built | 1–2 days | 🟡 Site shipped 2026-10-21; backend committed, not pushed |
+| [1](#phase-1--conversion-and-trust-quick-wins) | Conversion leaks, trust fixes, portal quick wins | — | ✅ Shipped 2026-10-21 |
+| [2](#phase-2--client-portal-usability--monitoring) | Portal that tells clients what to do; error monitoring | ~12 days | 🟡 Site shipped 2026-10-21; backend waits on the Phase 0 deploy |
 | [3](#phase-3--win-clients-online-proposals) | Backend hardening, then online proposals → deposit | ~17 days | ☐ Not started |
 | [4](#phase-4--grow-and-retain) | Reviews, referrals, nurture, billing automation, support | ongoing | ☐ Not started |
 
@@ -50,21 +50,24 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 
 ## Phase 0 — Secure and ship what is built
 
-**Why:** none of the last month's work is in production. That includes the client portal, lead pipeline, free audit tool, mobile performance fixes and Phase 1. About 25 backend modules have never been committed and exist only on one machine. Production runs `git reset --hard origin/main` on deploy, so nothing local reaches weblaud.com until it is pushed.
+**Why:** **this phase ran in the wrong order, and production is inconsistent because of it.** As of 2026-10-22 the *site* is committed, merged, pushed and deployed, but the *backend* has never been pushed — its `origin/main` is still at `1d8a727`. weblaud.com therefore serves the new portal, lead pipeline and `/audit` pages against an API that has none of their endpoints: `/api/v1/portal/projects`, `/portal/team`, `/audits` and `/leads` all return 404 in production, and the contact form's new budget and timeline fields are likely rejected by the old `forbidNonWhitelisted` pipe.
+
+**What is left in this phase is the backend half.** Deploying it is what makes the already-deployed site correct again. Production runs `git reset --hard origin/main` on deploy, so nothing local reaches the API until it is pushed.
 
 ### 0.1 Commit and merge
 
-- [ ] **Backend:** commit everything, including the untracked modules: analytics, approval, audit-log, audits, change-request, client-project, comment, contract, counter, dashboard, feature, file, invoice, leads, notification, organization, payment, project-update, task, time-entry, update-request, mail templates, `scripts/*`, `src/common/utils/*`, the guards and `.github/workflows/ci.yml`.
-- [ ] **Site:** commit the working tree (lead pipeline, `/audit`, the perf/a11y pass, Phase 1).
-- [ ] **Site:** merge `origin/main`. It is 5 commits ahead (PR #14 from Shuvo).
+- [x] **Backend:** commit everything, including the untracked modules: analytics, approval, audit-log, audits, change-request, client-project, comment, contract, counter, dashboard, feature, file, invoice, leads, notification, organization, payment, project-update, task, time-entry, update-request, mail templates, `scripts/*`, `src/common/utils/*`, the guards and `.github/workflows/ci.yml`.
+- [x] **Site:** commit the working tree (lead pipeline, `/audit`, the perf/a11y pass, Phase 1).
+- [x] **Site:** merge `origin/main` (PR #14 from Shuvo) — done 2026-10-21, conflicts resolved and pushed.
   - Files changed on both sides: `app/app.css`, `components/home/bannerHome.tsx`, `components/ui/hero-banner.tsx`, `components/ui/navBar.tsx`, `root.tsx`, `routes/privacy-policy.tsx`, `routes/terms-of-service.tsx`.
   - Upstream changes: rAF-throttled scroll handlers, Lenis retuned to `duration: 0.5`, a "Scroll" indicator on the hero banners, "Career" removed from the nav.
   - How to resolve:
     - **Keep from local:** no `isVisible` state in the navbar; Lenis only on fine pointers; the mobile "Get estimate" button and "Pricing" link.
     - **Take from upstream:** the rAF throttle and its passive listener; the new Lenis numbers; the scroll indicator.
   - After merging, confirm the server HTML still has no `opacity:0` on `<main>` or the navbar.
-- [ ] `npm run typecheck && npm test && npm run build` (site) and `pnpm build && pnpm test` (backend) are green.
-- [ ] Push both repos. The site's `deploy.yml` now runs a `verify` job first.
+- [x] `npm run typecheck && npm test && npm run build` (site) and `pnpm build && pnpm test` (backend) are green. Last run 2026-10-22: site typecheck clean, 103 vitest tests, build OK; backend 333 Jest tests, build OK.
+- [x] ~~Push the **site**~~ — done 2026-10-21; `deploy.yml` runs its `verify` job first.
+- [ ] **Push the backend.** This is the one step between production and a working API.
 
 ### 0.2 Backend environment (production `.env`)
 
@@ -79,7 +82,7 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 ### 0.3 Deploy
 
 - [ ] Deploy the **backend**, then check that `GET /api/v1/portal/projects` returns **401** (not 404).
-- [ ] Deploy the **site** (push to `main`).
+- [x] ~~Deploy the **site** (push to `main`)~~ — done 2026-10-21, ahead of the backend. Re-deploy after the backend so the two match.
 
 ### 0.4 Dashboards and CMS (no code)
 
@@ -139,7 +142,7 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 
 **Order:** 2.1 → 2.2 → 2.3 (they build on each other), then 2.4–2.7 in any order.
 
-**Build status (2026-10-17):** 2.1–2.7 are built and committed locally in both repos, on top of a "checkpoint Phase 0.1" commit in each. Nothing is pushed or deployed. Phase 0 (merge `origin/main`, push, deploy backend first) still comes first.
+**Build status (updated 2026-10-22):** 2.1–2.7 are built and committed in both repos. The **site** half is pushed and deployed (2026-10-21); the **backend** half is committed but still unpushed, so none of the new portal APIs exist in production yet. Deploying the backend is the remaining Phase 0 step.
 
 - Verification at build time: backend 333 unit tests pass and `pnpm build` is OK; site typecheck is clean, 76 vitest tests pass and the build is OK. Old project URLs return 301 to the new tabs (checked with curl against the local production build). Consent was checked in headless Chrome: DE gets no `wl_ft` until Accept, US is unchanged. Lighthouse accessibility is 100 on `/` (with and without the banner) and on `/privacy-policy`.
 - **Not verified yet:** the portal pages in a real browser. Production has no portal API yet, and the local backend must not be booted. Do the phone walkthrough below after deploy.
@@ -175,9 +178,11 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 
 **Done when:** a client with one quoted change request and one unpaid invoice sees both on the dashboard and as badges on the right tabs, and clearing them removes the badges.
 
-### 2.2 Ten project tabs → six — ~3 days
+### 2.2 Ten project tabs → eight — ~3 days
 
 **Why:** 10 tabs (12 for staff) with overlapping meanings, and the tab bar scrolls sideways on phones.
+
+**Revised 2026-10-22:** the six-tab consolidation shipped first, then a follow-up promoted Discussion back to a top-level tab and added a full-page Activity timeline. Clients now see **eight** tabs, a PM ten. The phone goal is met by wrapping the tabs into a 4-column grid below `sm` rather than by fitting six across.
 
 **New structure.** Top-level tabs become **layout routes**; the old pages become their sub-pages. Every existing loader and action keeps working unchanged.
 
@@ -185,9 +190,11 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 |---|---|
 | Overview | Overview → `/portal/projects/:id` |
 | Work | Tasks → `/work/tasks`; new Milestones timeline → `/work/timeline` |
-| Updates | Updates → `/updates`; Discussion → `/updates/discussion` |
+| Updates | Updates → `/updates` |
+| Discussion | Discussion → `/discussion` (top-level since 2026-10-22) |
+| Activity | Full-page activity timeline → `/activity` (added 2026-10-22) |
 | Files | Files → `/files` (unchanged) |
-| Decisions | Approvals → `/decisions/approvals`; Change requests → `/decisions/changes`; Requests ("Ask for an update") → `/decisions/questions` |
+| Decisions | Approvals → `/decisions/approvals`; Change requests → `/decisions/change-requests`; Requests ("Ask for an update") → `/decisions/questions` |
 | Billing | Invoices → `/billing/invoices`; Contract → `/billing/contract` |
 | *(staff)* Time, Manage | unchanged |
 
@@ -195,11 +202,11 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 - [x] **Redirect old URLs** with redirect-only route files, like `routes/portal/invoices.$id.ts`. Notification `link` values stored in the database point at `/tasks`, `/approvals`, `/change-requests`, `/invoices` (see `backend/src/modules/*/…service.ts`), so these redirects must stay **permanently**.
 - [x] Backend: update the `link:` strings in the notification calls to the new paths, for new notifications.
 - [x] Badges from 2.1 attach to the new top-level tabs.
-- [x] Mobile: the six tabs fit at 360 px without sideways scrolling.
+- [x] Mobile: the eight tabs wrap into a 4-column grid at 360 px, so nothing scrolls sideways.
 
 **Done when:**
 - Every old link (from an email or a notification) lands on the right sub-page.
-- At 360 px, all six tabs are visible without scrolling.
+- At 360 px, all eight tabs are visible without sideways scrolling (they wrap onto two or three rows).
 - Approve, quote, pay, upload, comment and log-time all still work.
 
 ### 2.3 New Overview + one progress number — ~2 days
@@ -233,7 +240,7 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
   - **Skip the project if every section is empty.**
 - [x] Recipients: active client users in the project's organization whose `emailPreferences.digest !== false`.
 - [x] Add `digest` to `EmailPreferences` in three places: `user.schema.ts`, `EMAIL_CATEGORIES` in `users.service.ts`, and the update-preferences DTO. On the site, add it to the `EmailPreferences` type and `components/account/email-preferences-form.tsx`.
-- [x] Template `mail/templates/weekly-digest.hbs` with an unsubscribe link (existing `email-preference-token` util).
+- [x] Template `src/modules/mail/templates/weekly-digest.hbs` with an unsubscribe link (existing `email-preference-token` util).
 - [x] Store `lastDigestAt` on the project so a restart can't send twice in one week.
 - [x] Spec: the empty week is skipped, opted-out users are skipped, and a second run in the same week sends nothing.
 
@@ -249,7 +256,8 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
   - `organization` is forced to the caller's own and `role` is forced to `USER`.
   - `orgRole` must be `client_viewer` or `client_admin`.
   - Reuses `UsersService.invite`.
-  - Throttled to 10 per hour.
+  - Throttled to 10 per hour (the throttle is on the POSTs, not the `PATCH`).
+- [x] `POST /portal/team/:id/resend-invite`: re-send a pending invite (not in the original plan).
 - [x] `PATCH /portal/team/:id`: change `orgRole` or deactivate. It refuses to act on users outside the organization, and refuses to remove or demote the **last** client admin.
 - [x] Audit-log every change. Spec covers the organization scoping and the last-admin guard.
 
@@ -283,6 +291,15 @@ NODE_ENV=production API_BASE_URL=https://api.weblaud.com/api/v1 PORT=5299 \
 - [x] Accessibility: the banner is keyboard reachable, doesn't trap focus, and keeps Lighthouse accessibility at 100.
 
 **Done when:** with `CF-IPCountry: DE`, there are no GA cookies and no `wl_ft` until Accept. A US visitor's experience is unchanged.
+
+### Delivered outside the plan (2026-10-22)
+
+Work that shipped in the Phase 0/2 release but was on no roadmap item. Recorded here so it is not rediscovered as a surprise.
+
+- **Admin detail pages.** Every `/cpadmin` list gained a read-only drill-down at `/cpadmin/<resource>/:id` — 20 new routes on a shared skeleton, with two new shared components (`components/admin/panel.tsx`, `components/admin/lead-pipeline-card.tsx`). Nine matching `GET :id` admin endpoints were added to the backend (faq, testimonial, team, approval, change-request, audit-log, and contact/estimates/audits under `admin/:id`). These five resources — faqs, organizations, people, team, testimonials — are still edited in the list's dialog and have **no standalone edit form**; the detail pages deliberately carry no Edit button.
+- **`users.service.findAll` now returns `{ items }`, not `{ data }`.** The deployed `/cpadmin/people` already expected that shape, so this fixes a live bug — the `ResponseInterceptor` was unwrapping `data.data` and dropping `total`/`page`/`limit`.
+- **React Router v8 pre-migration.** The five `future.v8_*` flags are on. Because `v8_passThroughRequests` stops React Router normalising `.data` requests, redirects now go through `app/lib/request-url.ts` instead of `request.url`.
+- **Guard test for route registration.** `app/lib/portal-paths.test.ts` now walks `app/routes.ts` and fails if a URL either path map emits is not actually registered. Added after the `changes` / `change-requests` mismatch 404'd every change-request notification link while both suites stayed green.
 
 ### Phase 2 done when
 
@@ -432,7 +449,7 @@ Pick items in this order unless there's a business reason to change it. Each sti
 | 4.12 | **"Start a new project" in the portal** | 1 d | Creates a lead tagged as an existing client, linked to the organization. Repeat revenue. |
 | 4.13 | **Two-factor login (TOTP)** | 3 d | Required for staff, optional for client admins. Encrypted secret, recovery codes, a login step. |
 | 4.14 | **Pricing page and shareable estimate** | 2 d | `/pricing` built from `PRICING` (packages, discovery sprint, retainer). Calculator "share link" (selection in the query string) and an estimate PDF. |
-| 4.15 | **Backend lint backlog** | 2–3 d | ~576 ESLint errors. Clear them, then add a lint step (without `--fix`) to `backend/.github/workflows/ci.yml`. |
+| 4.15 | **Backend lint backlog** | 3–4 d | Re-measured 2026-10-22: **842 errors and 217 warnings in `src/` alone** (122 auto-fixable), not the ~576 first recorded. `eslint .` OOMs the V8 heap — it needs `--max-old-space-size=8192` and a narrowed scope. Clear them, then add a lint step (without `--fix`) to `backend/.github/workflows/ci.yml`. |
 | 4.16 | **AI scoping assistant** | 5+ d | A chat grounded only in services, pricing and case studies that qualifies the visitor and hands off to booking or creates a lead with the transcript. Needs guardrails, a cost cap and a human handoff. Only after 4.1–4.4 show demand. |
 
 **Off-site work (no code, ongoing, owner/marketing).** This is the biggest lever for being recommended by AI search:
