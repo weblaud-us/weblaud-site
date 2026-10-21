@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useFetcher, useOutletContext } from "react-router";
 import { toast } from "sonner";
 import type { Route } from "./+types/projects.$id.files";
-import { apiFetch, ApiError } from "~/lib/api.server";
+import { apiFetch, ApiError, resolveCommentAvatars } from "~/lib/api.server";
 import { callPortalApi, requirePortalUser } from "~/lib/portal.server";
 import type { Comment, ProjectFile, ProjectStaffRef } from "~/lib/types";
 import type { ProjectWorkspaceContext } from "./projects.$id";
@@ -77,7 +77,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       const comments = await callPortalApi(request, (accessToken) =>
         apiFetch<Comment[]>(endpoint, { accessToken }),
       );
-      return { ok: true, comments };
+      return { ok: true, comments: resolveCommentAvatars(comments) };
     }
     return { error: "Unknown action." };
   } catch (err) {
@@ -191,7 +191,7 @@ function VisibilityToggle({ file, isStaff }: { file: ProjectFile; isStaff: boole
         name="visibility"
         defaultValue={file.visibility}
         onChange={(e) => fetcher.submit(e.currentTarget.form)}
-        className="!py-1.5 !px-2 text-xs"
+        className="!py-1.5 !px-2 text-xs w-auto"
       >
         <option value="internal">Internal</option>
         <option value="client">Client-visible</option>

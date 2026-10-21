@@ -78,7 +78,7 @@ export default function AdminLogin() {
       <div className="w-full max-w-sm relative z-10 space-y-6">
         {/* Header */}
         <div className="flex flex-col items-center text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0a84ff] to-[#0055b3] p-[1px] shadow-[0_0_25px_rgba(10,132,255,0.3)]">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-[#0055b3] p-[1px] shadow-[0_0_25px_rgba(10,132,255,0.3)]">
             <div className="w-full h-full rounded-[15px] bg-[#0c1220] flex items-center justify-center text-primary">
               <FiShield className="w-5 h-5" />
             </div>
@@ -205,7 +205,7 @@ export default function AdminLogin() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group/btn relative h-11 px-4 rounded-xl text-xs sm:text-sm font-semibold font-barlow text-white bg-gradient-to-r from-[#0a84ff] to-[#0070e0] border border-[#0a84ff]/50 shadow-[0_2px_14px_rgba(10,132,255,0.35)] hover:shadow-[0_4px_22px_rgba(10,132,255,0.5)] hover:-translate-y-[1px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                className="group/btn relative h-11 px-4 rounded-xl text-xs sm:text-sm font-semibold font-barlow text-white bg-gradient-to-r from-primary to-[#0070e0] border border-primary/50 shadow-[0_2px_14px_rgba(10,132,255,0.35)] hover:shadow-[0_4px_22px_rgba(10,132,255,0.5)] hover:-translate-y-[1px] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
               >
                 <span>{isSubmitting ? "Signing in..." : "Sign In"}</span>
                 {!isSubmitting && (

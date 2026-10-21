@@ -28,4 +28,30 @@ export default {
   ...(process.env.WEBLAUD_DEPLOY_TARGET === "netlify"
     ? { buildDirectory: "build-netlify" }
     : {}),
+  /**
+   * The React Router v8 behaviours, opted into now so the upgrade is a version
+   * bump rather than a migration. A flag left unset is what prints the
+   * "Future Flag Warning" lines on `react-router dev`.
+   */
+  future: {
+    // Route `middleware` exports run, and `context` in a loader/action is a
+    // RouterContextProvider. Nothing here exports middleware or passes a
+    // `getLoadContext` (we serve with react-router-serve), so this only
+    // unlocks the feature.
+    v8_middleware: true,
+    // Split each route module into per-export chunks, so loader-only code
+    // stays out of the browser bundle. Modules whose exports share values
+    // fall back to a single chunk instead of failing the build.
+    v8_splitRouteModules: true,
+    // Drive the dev server and build through Vite's Environment API (Vite 7).
+    v8_viteEnvironmentApi: true,
+    // Loaders and actions get the request as it came off the wire, `.data`
+    // suffix and internal `_routes`/`index` params included. Anything reading
+    // a page path or query string back out of `request.url` goes through
+    // requestPageUrl() in app/lib/request-url.ts.
+    v8_passThroughRequests: true,
+    // A `.data` request mirrors its page's trailing slash: `/path/_.data` for
+    // `/path/`, `/path.data` for `/path`, `/_.data` for the root.
+    v8_trailingSlashAwareDataRequests: true,
+  },
 } satisfies Config;

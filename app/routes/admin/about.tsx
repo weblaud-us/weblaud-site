@@ -219,7 +219,7 @@ export default function AdminAbout({ loaderData }: Route.ComponentProps) {
             {rows.map((key, i) => (
               <div
                 key={key}
-                className="grid grid-cols-2 gap-3 border-t border-white/10 pt-3 first:border-0 first:pt-0"
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-white/10 pt-3 first:border-0 first:pt-0"
               >
                 <Input
                   name="trackRecord.title"

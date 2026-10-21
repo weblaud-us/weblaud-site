@@ -3,8 +3,9 @@
  * builds the links stored on notifications and sent in emails — keep the
  * two maps in step.
  *
- * Six top-level tabs (Overview, Work, Updates, Files, Decisions, Billing),
- * plus Time and Manage for staff. The pre-2026-10 flat tabs live on as
+ * Eight top-level tabs (Overview, Work, Updates, Discussion, Activity,
+ * Files, Decisions, Billing), plus Time and Manage for staff. The
+ * pre-2026-10 flat tabs live on as
  * permanent redirects (LEGACY_SECTIONS), because notification links in the
  * database and in sent emails still point at them.
  */
@@ -14,6 +15,7 @@ export type ProjectSection =
   | "timeline"
   | "updates"
   | "discussion"
+  | "activity"
   | "files"
   | "approvals"
   | "changes"
@@ -23,15 +25,16 @@ export type ProjectSection =
   | "time"
   | "manage";
 
-const SECTION_PATHS: Record<ProjectSection, string> = {
+export const SECTION_PATHS: Record<ProjectSection, string> = {
   overview: "",
   tasks: "/work/tasks",
   timeline: "/work/timeline",
   updates: "/updates",
-  discussion: "/updates/discussion",
+  discussion: "/discussion",
+  activity: "/activity",
   files: "/files",
   approvals: "/decisions/approvals",
-  changes: "/decisions/changes",
+  changes: "/decisions/change-requests",
   questions: "/decisions/questions",
   invoices: "/billing/invoices",
   contract: "/billing/contract",
@@ -39,14 +42,20 @@ const SECTION_PATHS: Record<ProjectSection, string> = {
   manage: "/manage",
 };
 
-export function projectPath(projectId: string, section: ProjectSection = "overview"): string {
+export function projectPath(
+  projectId: string,
+  section: ProjectSection = "overview",
+): string {
   return `/portal/projects/${projectId}${SECTION_PATHS[section]}`;
 }
 
-/** Old flat tab segment → its section in the new structure. */
+/**
+ * Old flat tab segment → its section in the new structure. No "discussion":
+ * the old `/discussion` URL is already the current URL, so a redirect entry
+ * for it would loop.
+ */
 export const LEGACY_SECTIONS = {
   tasks: "tasks",
-  discussion: "discussion",
   approvals: "approvals",
   "change-requests": "changes",
   requests: "questions",
@@ -62,12 +71,15 @@ export type LegacySegment = keyof typeof LEGACY_SECTIONS;
  * isn't one of the old tabs.
  */
 export function legacyProjectRedirect(url: string | URL): string | null {
-  const { pathname, search } = typeof url === "string" ? new URL(url, "http://x") : url;
+  const { pathname, search } =
+    typeof url === "string" ? new URL(url, "http://x") : url;
   const match = pathname.match(/^\/portal\/projects\/([^/]+)\/([^/]+)\/?$/);
   if (!match) return null;
   const [, projectId, segment] = match;
   if (!Object.hasOwn(LEGACY_SECTIONS, segment)) return null;
-  return projectPath(projectId, LEGACY_SECTIONS[segment as LegacySegment]) + search;
+  return (
+    projectPath(projectId, LEGACY_SECTIONS[segment as LegacySegment]) + search
+  );
 }
 
 /** First sub-page of each tab that has sub-pages — where the bare tab URL lands. */
@@ -81,7 +93,8 @@ export type SectionWithDefault = keyof typeof SECTION_DEFAULTS;
 
 /** `/portal/projects/:id/work` → `/portal/projects/:id/work/tasks` (keeps the query string). */
 export function sectionIndexRedirect(url: string | URL): string | null {
-  const { pathname, search } = typeof url === "string" ? new URL(url, "http://x") : url;
+  const { pathname, search } =
+    typeof url === "string" ? new URL(url, "http://x") : url;
   const match = pathname.match(/^(\/portal\/projects\/[^/]+\/([^/]+))\/?$/);
   if (!match) return null;
   const [, base, section] = match;

@@ -64,7 +64,7 @@ export default function NewProject() {
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-5xl">
       <AdminPageHeader
         title="New Project"
         description="Add a case study to show on /projects."
@@ -72,71 +72,73 @@ export default function NewProject() {
       />
 
       <Form method="post" encType="multipart/form-data" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Overview</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" name="name" required maxLength={200} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" className="h-24" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Media</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-6 lg:grid-cols-2 items-start">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Overview</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="cover">Cover image</Label>
-                <Input id="cover" name="cover" type="file" accept="image/*" />
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" name="name" required maxLength={200} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="coverImageAlt">Cover image alt text</Label>
-                <Input id="coverImageAlt" name="coverImageAlt" />
+                <Label htmlFor="description">Description</Label>
+                <Textarea id="description" name="description" className="h-24" />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="details">Detail images (up to 10)</Label>
-              <Input id="details" name="details" type="file" accept="image/*" multiple />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Case study details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="featureList">Key features (one per line)</Label>
-              <Textarea id="featureList" name="featureList" className="h-24" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="problem">Problem</Label>
-              <Textarea id="problem" name="problem" className="h-24" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="solution">Solution</Label>
-              <Textarea id="solution" name="solution" className="h-24" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="techStack">Tech stack (one per line)</Label>
-              <Textarea id="techStack" name="techStack" className="h-24" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="businessImpact">Business impact</Label>
-              <Textarea id="businessImpact" name="businessImpact" className="h-24" />
-            </div>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Media</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cover">Cover image</Label>
+                  <Input id="cover" name="cover" type="file" accept="image/*" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="coverImageAlt">Cover image alt text</Label>
+                  <Input id="coverImageAlt" name="coverImageAlt" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="details">Detail images (up to 10)</Label>
+                <Input id="details" name="details" type="file" accept="image/*" multiple />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="text-base">Case study details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="featureList">Key features (one per line)</Label>
+                <Textarea id="featureList" name="featureList" className="h-24" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="problem">Problem</Label>
+                <Textarea id="problem" name="problem" className="h-24" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="solution">Solution</Label>
+                <Textarea id="solution" name="solution" className="h-24" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="techStack">Tech stack (one per line)</Label>
+                <Textarea id="techStack" name="techStack" className="h-24" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="businessImpact">Business impact</Label>
+                <Textarea id="businessImpact" name="businessImpact" className="h-24" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {actionData?.error && (
           <p className="text-red-400 text-sm">{actionData.error}</p>

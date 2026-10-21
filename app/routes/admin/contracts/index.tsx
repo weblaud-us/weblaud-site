@@ -9,7 +9,7 @@ import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { FileSignature, Plus, Send, Ban, Pencil } from "lucide-react";
+import { FileSignature, Plus, Send, Ban, Pencil, Eye } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -73,6 +73,12 @@ function RowActions({ contract }: { contract: Contract }) {
 
   return (
     <div className="flex items-center justify-end gap-2">
+      <Link to={`/cpadmin/contracts/${contract._id}`}>
+        <Button type="button" size="sm" variant="ghost">
+          <Eye className="size-3.5" />
+          View
+        </Button>
+      </Link>
       {contract.status !== "accepted" && (
         <Link to={`/cpadmin/contracts/${contract._id}/edit`}>
           <Button type="button" size="sm" variant="ghost">
@@ -166,7 +172,14 @@ export default function AdminContractsIndex({ loaderData }: Route.ComponentProps
                 const org = contract.organization as Organization;
                 return (
                   <TableRow key={contract._id} className="border-white/10">
-                    <TableCell className="text-white font-medium">{contract.title}</TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/cpadmin/contracts/${contract._id}`}
+                        className="text-white font-medium hover:text-primary-bright transition-colors"
+                      >
+                        {contract.title}
+                      </Link>
+                    </TableCell>
                     <TableCell className="text-white/50">{org?.name ?? "—"}</TableCell>
                     <TableCell>
                       <Badge variant={STATUS_VARIANT[contract.status]}>

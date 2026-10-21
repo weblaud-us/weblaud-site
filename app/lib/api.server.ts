@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import type { Comment } from "./types";
 
 const API_BASE_URL = process.env.API_BASE_URL ?? "http://127.0.0.1:4000/api/v1";
 const API_ORIGIN = API_BASE_URL.replace(/\/api\/v1\/?$/, "");
@@ -78,6 +79,27 @@ export function resolveMediaUrl(pathOrUrl?: string | null): string {
   if (!pathOrUrl) return "";
   if (/^https?:\/\//.test(pathOrUrl)) return pathOrUrl;
   return `${API_ORIGIN}/${pathOrUrl.replace(/^\/+/, "")}`;
+}
+
+/**
+ * Resolves author/mention avatar paths on comments fetched from the API.
+ * Call this in the loader/action that loads the comments, never from the
+ * CommentThread component itself — resolveMediaUrl lives here in
+ * api.server.ts, which must not reach the client bundle.
+ */
+export function resolveCommentAvatars(comments: Comment[]): Comment[] {
+  return comments.map((comment) => ({
+    ...comment,
+    author:
+      typeof comment.author === "object" && comment.author.avatar
+        ? { ...comment.author, avatar: resolveMediaUrl(comment.author.avatar) }
+        : comment.author,
+    mentions: (comment.mentions ?? []).map((m) =>
+      typeof m === "object" && m.avatar
+        ? { ...m, avatar: resolveMediaUrl(m.avatar) }
+        : m,
+    ),
+  }));
 }
 
 export class ApiError extends Error {

@@ -10,7 +10,7 @@ import { Progress } from "~/components/ui/progress";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { FolderKanban, Plus } from "lucide-react";
+import { Eye, FolderKanban, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -139,7 +139,14 @@ export default function AdminClientProjectsIndex({ loaderData }: Route.Component
                 const pm = project.projectManager as ProjectStaffRef;
                 return (
                   <TableRow key={project._id} className="border-white/10">
-                    <TableCell className="text-white font-medium">{project.name}</TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/cpadmin/client-projects/${project._id}`}
+                        className="text-white font-medium hover:text-primary-bright transition-colors"
+                      >
+                        {project.name}
+                      </Link>
+                    </TableCell>
                     <TableCell className="text-white/50">{org?.name ?? "—"}</TableCell>
                     <TableCell className="text-white/50">
                       {pm ? `${pm.firstName} ${pm.lastName}` : "—"}
@@ -156,6 +163,12 @@ export default function AdminClientProjectsIndex({ loaderData }: Route.Component
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right space-x-2">
+                      <Link to={`/cpadmin/client-projects/${project._id}`}>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="size-3.5" />
+                          View
+                        </Button>
+                      </Link>
                       <Link to={`/cpadmin/client-projects/${project._id}/edit`}>
                         <Button variant="outline" size="sm">
                           Edit

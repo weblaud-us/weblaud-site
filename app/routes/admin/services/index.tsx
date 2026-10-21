@@ -8,7 +8,7 @@ import { Button } from "~/components/ui/button";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { Wrench, Plus } from "lucide-react";
+import { Eye, Wrench, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -135,13 +135,24 @@ export default function AdminServicesIndex({
                     <div className="size-12 rounded-md bg-white/5" />
                   )}
                 </TableCell>
-                <TableCell className="text-white font-medium">
-                  {service.title}
+                <TableCell>
+                  <Link
+                    to={`/cpadmin/services/${service._id}`}
+                    className="text-white font-medium hover:text-primary-bright transition-colors"
+                  >
+                    {service.title}
+                  </Link>
                 </TableCell>
                 <TableCell className="text-white/50">
                   {service.features.length}
                 </TableCell>
                 <TableCell className="text-right space-x-2">
+                  <Link to={`/cpadmin/services/${service._id}`}>
+                    <Button variant="ghost" size="sm">
+                      <Eye className="size-3.5" />
+                      View
+                    </Button>
+                  </Link>
                   <Link to={`/cpadmin/services/${service._id}/edit`}>
                     <Button variant="outline" size="sm">
                       Edit

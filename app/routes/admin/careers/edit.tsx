@@ -40,7 +40,7 @@ export default function EditCareer({ loaderData }: Route.ComponentProps) {
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl">
       <AdminPageHeader
         title="Edit Job Post"
         description={career.title}

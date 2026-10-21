@@ -64,7 +64,7 @@ export default function EditService({ loaderData }: Route.ComponentProps) {
   const [replaceImage, setReplaceImage] = useState(false);
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl">
       <AdminPageHeader
         title="Edit Service"
         description={service.title}

@@ -33,6 +33,10 @@
   --color-dark-gray: #98989a;
   --color-secondary: #141414;
   --color-card-bg: #0e0e0e;
+  /* Text-on-dark blue: nav badges, stage pills, KPI accent values. */
+  --color-primary-bright: #5ab0ff;
+  /* Second raised surface tier (hover / nested insets). */
+  --color-surface-2: #161616;
 
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;

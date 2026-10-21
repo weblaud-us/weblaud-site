@@ -1,4 +1,4 @@
-import { useSearchParams, useSubmit, useNavigation } from "react-router";
+import { Link, useSearchParams, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/applicants";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
@@ -12,7 +12,7 @@ import { Button } from "~/components/ui/button";
 import { Select } from "~/components/ui/select";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
-import { ClipboardList, Download, FileText } from "lucide-react";
+import { ClipboardList, Download, Eye, FileText } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -142,7 +142,7 @@ export default function AdminApplicants({ loaderData }: Route.ComponentProps) {
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <Select
           aria-label="Filter by job"
-          className="py-2"
+          className="w-auto py-2"
           value={careerId}
           onChange={(e) => setFilter("careerId", e.target.value)}
         >
@@ -171,7 +171,7 @@ export default function AdminApplicants({ loaderData }: Route.ComponentProps) {
         />
       </div>
 
-      <div className="rounded-lg border border-white/10 bg-white/[0.02] overflow-hidden">
+      <div className="rounded-lg border border-white/10 bg-white/[0.02] overflow-x-auto">
         {result.items.length === 0 ? (
           <EmptyState
             icon={ClipboardList}
@@ -187,6 +187,7 @@ export default function AdminApplicants({ loaderData }: Route.ComponentProps) {
                 <TableHead className="text-white/60">Applied</TableHead>
                 <TableHead className="text-white/60">Resume</TableHead>
                 <TableHead className="text-white/60">Status</TableHead>
+                <TableHead className="text-white/60 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -199,9 +200,12 @@ export default function AdminApplicants({ loaderData }: Route.ComponentProps) {
                   }
                 >
                   <TableCell>
-                    <div className="text-white font-medium">
+                    <Link
+                      to={`/cpadmin/applicants/${applicant._id}`}
+                      className="text-white font-medium hover:text-primary-bright transition-colors"
+                    >
                       {applicant.name}
-                    </div>
+                    </Link>
                     <div className="text-white/50">{applicant.email}</div>
                     <div className="text-white/50">{applicant.phone}</div>
                   </TableCell>
@@ -260,6 +264,16 @@ export default function AdminApplicants({ loaderData }: Route.ComponentProps) {
                         </option>
                       ))}
                     </Select>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {/* "Details", not "View": the Resume column already owns
+                        "View" for opening the CV itself. */}
+                    <Link to={`/cpadmin/applicants/${applicant._id}`}>
+                      <Button variant="ghost" size="sm">
+                        <Eye className="size-3.5" />
+                        Details
+                      </Button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}

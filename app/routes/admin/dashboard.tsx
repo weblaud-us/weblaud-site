@@ -15,6 +15,7 @@ import type {
 import { HEARD_ABOUT_LABEL, LEAD_STAGES } from "~/lib/leads";
 import type { BackendProject } from "~/lib/adapters/project.server";
 import { StatCard } from "~/components/admin/stat-card";
+import { Panel } from "~/components/admin/panel";
 import {
   FolderKanban,
   Newspaper,
@@ -321,15 +322,16 @@ function LeadPipelinePanel({ leads }: { leads: LeadsSummary }) {
   const closed = leads.stages.won + leads.stages.lost;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm font-medium text-white">Sales pipeline</p>
-        <span className="text-xs text-white/40 tabular-nums">
+    <Panel
+      title="Sales pipeline"
+      meta={
+        <span className="tabular-nums">
           {open} open
           {closed > 0 &&
             ` · ${Math.round((leads.stages.won / closed) * 100)}% win rate`}
         </span>
-      </div>
+      }
+    >
 
       {leads.followUpsDue > 0 && (
         <Link
@@ -345,12 +347,12 @@ function LeadPipelinePanel({ leads }: { leads: LeadsSummary }) {
         </Link>
       )}
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {LEAD_STAGES.map((stage) => (
           <Link
             key={stage.value}
             to={`/cpadmin/contact-submissions?stage=${stage.value}`}
-            className="rounded-lg bg-black/20 px-3 py-2.5 hover:bg-black/30 transition-colors"
+            className="rounded-lg bg-white/[0.04] px-3 py-2.5 hover:bg-white/[0.08] transition-colors"
           >
             <p className="text-xl font-semibold text-white leading-none tabular-nums">
               {leads.stages[stage.value]}
@@ -359,7 +361,7 @@ function LeadPipelinePanel({ leads }: { leads: LeadsSummary }) {
           </Link>
         ))}
       </div>
-    </div>
+    </Panel>
   );
 }
 
@@ -385,14 +387,15 @@ function LeadSourcesPanel({ sources }: { sources: LeadsSummary["sources"] }) {
   const max = Math.max(...rows.map((r) => r.count), 1);
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm font-medium text-white">Where leads come from</p>
-        <span className="text-xs text-white/40">
+    <Panel
+      title="Where leads come from"
+      meta={
+        <>
           Last {sources.windowDays} days · {sources.total} lead
           {sources.total === 1 ? "" : "s"}
-        </span>
-      </div>
+        </>
+      }
+    >
 
       {rows.length === 0 ? (
         <p className="text-sm text-white/40">
@@ -413,7 +416,7 @@ function LeadSourcesPanel({ sources }: { sources: LeadsSummary["sources"] }) {
                 <div className="flex-1 h-2 rounded-full bg-white/[0.04] overflow-hidden">
                   <div
                     className={`h-full rounded-full ${
-                      row.key === "unknown" ? "bg-white/20" : "bg-[#0A84FF]/80"
+                      row.key === "unknown" ? "bg-white/20" : "bg-primary/80"
                     }`}
                     style={{ width: `${Math.max(3, Math.round((row.count / max) * 100))}%` }}
                   />
@@ -442,7 +445,7 @@ function LeadSourcesPanel({ sources }: { sources: LeadsSummary["sources"] }) {
           the report.
         </p>
       )}
-    </div>
+    </Panel>
   );
 }
 
@@ -537,10 +540,12 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
     },
   ];
 
+  const overdueAccent = analytics.receivables.overdue.some((a) => a.amount > 0);
+
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-white tracking-tight">Dashboard</h1>
+        <h1 className="text-xl font-semibold text-white tracking-tight">Dashboard</h1>
         <p className="text-sm text-white/50 mt-1">
           Revenue, receivables and what's waiting on someone, plus everything live on weblaud.com.
         </p>
@@ -548,29 +553,46 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
 
       {/* ---------------- Agency OS ---------------- */}
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 mb-6">
-        <StatCard
-          label="Revenue this month"
-          value={formatCurrencyAmounts(analytics.revenue.thisMonth)}
-          icon={Wallet}
-        />
-        <StatCard
-          label="Revenue this quarter"
-          value={formatCurrencyAmounts(analytics.revenue.thisQuarter)}
-          icon={TrendingUp}
-        />
-        <StatCard label="MRR" value={formatCurrencyAmounts(analytics.mrr)} icon={Repeat} />
-        <StatCard
-          label="Outstanding"
-          value={formatCurrencyAmounts(analytics.receivables.outstanding)}
-          icon={Receipt}
-        />
-        <StatCard
-          label="Overdue"
-          value={formatCurrencyAmounts(analytics.receivables.overdue)}
-          icon={AlertTriangle}
-          accent={analytics.receivables.overdue.some((a) => a.amount > 0)}
-        />
+      {/* The five money numbers as one divided instrument strip. */}
+      <div className="mb-6 overflow-hidden rounded-xl border border-white/10 bg-white/10">
+        <div className="grid grid-cols-2 xl:grid-cols-5 gap-px">
+          {[
+            { label: "Revenue this month", value: formatCurrencyAmounts(analytics.revenue.thisMonth), icon: Wallet },
+            { label: "Revenue this quarter", value: formatCurrencyAmounts(analytics.revenue.thisQuarter), icon: TrendingUp },
+            { label: "MRR", value: formatCurrencyAmounts(analytics.mrr), icon: Repeat },
+            { label: "Outstanding", value: formatCurrencyAmounts(analytics.receivables.outstanding), icon: Receipt },
+          ].map((kpi) => {
+            const Icon = kpi.icon;
+            return (
+              <div key={kpi.label} className="bg-card-bg px-4 py-3.5">
+                <div className="flex items-center gap-1.5">
+                  <Icon className="size-3.5 shrink-0 text-white/40" />
+                  <p className="text-xs text-white/50 truncate">{kpi.label}</p>
+                </div>
+                <p className="mt-2 text-2xl font-semibold text-white tabular-nums tracking-tight">
+                  {kpi.value}
+                </p>
+              </div>
+            );
+          })}
+          <div className="col-span-2 bg-card-bg px-4 py-3.5 xl:col-span-1">
+            <div className="flex items-center gap-1.5">
+              <AlertTriangle
+                className={`size-3.5 shrink-0 ${
+                  overdueAccent ? "text-primary-bright" : "text-white/40"
+                }`}
+              />
+              <p className="text-xs text-white/50 truncate">Overdue</p>
+            </div>
+            <p
+              className={`mt-2 text-2xl font-semibold tabular-nums tracking-tight ${
+                overdueAccent ? "text-primary-bright" : "text-white"
+              }`}
+            >
+              {formatCurrencyAmounts(analytics.receivables.overdue)}
+            </p>
+          </div>
+        </div>
       </div>
 
       {leads && (
@@ -581,32 +603,38 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-          <p className="text-sm font-medium text-white mb-4">Receivables aging</p>
-          <AgingBars aging={analytics.receivables.aging} />
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-          <p className="text-sm font-medium text-white mb-4">Needs attention</p>
+        <Panel
+          title="Needs attention"
+          className={
+            actionItems.some((item) => item.count > 0)
+              ? "border-amber-400/20"
+              : undefined
+          }
+        >
           <ActionRequiredList items={actionItems} />
-        </div>
+        </Panel>
+
+        <Panel title="Receivables aging">
+          <AgingBars aging={analytics.receivables.aging} />
+        </Panel>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-10">
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-white">Projects by status</p>
+        <Panel
+          title="Projects by status"
+          meta={
             <Link
               to="/cpadmin/client-projects"
-              className="inline-flex items-center gap-1 text-xs text-white/40 hover:text-white/70 transition-colors"
+              className="inline-flex items-center gap-1 hover:text-white/70 transition-colors"
             >
               <LayoutGrid className="size-3.5" />
               View all
             </Link>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
+          }
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {(Object.keys(PROJECT_STATUS_LABEL) as ClientProjectStatus[]).map((status) => (
-              <div key={status} className="rounded-lg bg-black/20 px-3 py-2.5">
+              <div key={status} className="rounded-lg bg-white/[0.04] px-3 py-2.5">
                 <p className="text-xl font-semibold text-white leading-none tabular-nums">
                   {analytics.projects.byStatus[status]}
                 </p>
@@ -614,17 +642,15 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
               </div>
             ))}
           </div>
-        </div>
+        </Panel>
 
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-white">Over budget</p>
-            {analytics.projects.overBudgetCount > 10 && (
-              <span className="text-xs text-white/40">
-                Showing 10 of {analytics.projects.overBudgetCount}
-              </span>
-            )}
-          </div>
+        <Panel
+          title="Over budget"
+          meta={
+            analytics.projects.overBudgetCount > 10 &&
+            `Showing 10 of ${analytics.projects.overBudgetCount}`
+          }
+        >
           {analytics.projects.overBudget.length === 0 ? (
             <p className="text-sm text-white/40">No project has logged more labor than its budget covers.</p>
           ) : (
@@ -649,10 +675,10 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
               ))}
             </div>
           )}
-        </div>
+        </Panel>
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5 mb-10">
+      <Panel className="mb-10">
         <div className="flex items-center justify-between mb-1">
           <p className="text-sm font-medium text-white">Profitability</p>
           <span className="text-xs text-white/40">Worst margin first</span>
@@ -698,11 +724,11 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
             })}
           </div>
         )}
-      </div>
+      </Panel>
 
       {/* ---------------- Marketing CMS (demoted) ---------------- */}
 
-      <h2 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">
+      <h2 className="text-sm text-white/40 mb-3">
         Site content
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-10">
@@ -742,7 +768,7 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
         />
       </div>
 
-      <h2 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">
+      <h2 className="text-sm text-white/40 mb-3">
         Manage content
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -752,9 +778,9 @@ export default function AdminDashboard({ loaderData }: Route.ComponentProps) {
             <Link
               key={section.to}
               to={section.to}
-              className="group flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4 hover:border-white/20 hover:bg-white/[0.05] transition-colors"
+              className="group flex items-start gap-3 rounded-xl border border-white/10 bg-card-bg p-4 hover:border-white/20 hover:bg-secondary transition-colors"
             >
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/60 group-hover:text-[#0A84FF] transition-colors">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/60 group-hover:text-primary transition-colors">
                 <Icon className="size-4.5" />
               </div>
               <div className="min-w-0 flex-1">

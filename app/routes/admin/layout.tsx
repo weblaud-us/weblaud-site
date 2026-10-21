@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
+import type { ShouldRevalidateFunctionArgs } from "react-router";
 import { Form, Link, Outlet, redirect, useLocation } from "react-router";
 import type { Route } from "./+types/layout";
-import { destroyAdminSession, requireAdminUser } from "~/lib/session.server";
-import { Button } from "~/components/ui/button";
+import { apiFetch, ApiError } from "~/lib/api.server";
+import { callAdminApi, destroyAdminSession, requireAdminUser } from "~/lib/session.server";
+import type { Paginated } from "~/lib/types";
+import { cn } from "~/lib/utils";
+import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
   LayoutDashboard,
   FolderKanban,
@@ -26,6 +30,7 @@ import {
   LayoutGrid,
   Settings,
   ChevronDown,
+  ChevronRight,
   FileSignature,
   Receipt,
   ClipboardCheck,
@@ -38,13 +43,60 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
+/**
+ * Unread count for a paginated admin list via the backend's ?status= filter.
+ * Same pattern as dashboard.tsx — copied here so nav badges don't depend on
+ * the dashboard route. An ApiError hides the badge rather than breaking the
+ * shell; anything else still bubbles up.
+ */
+async function unreadCount(request: Request, path: string): Promise<number> {
+  try {
+    const page = await callAdminApi(request, (accessToken) =>
+      apiFetch<Paginated<unknown>>(`${path}?page=1&limit=1&status=new`, { accessToken }),
+    );
+    return page.meta.total;
+  } catch (err) {
+    if (err instanceof ApiError) return 0;
+    throw err;
+  }
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireAdminUser(request);
-  return { user };
+  const [submissions, estimates, audits, applicants] = await Promise.all([
+    unreadCount(request, "/contact/admin"),
+    unreadCount(request, "/estimates/admin"),
+    unreadCount(request, "/audits/admin"),
+    unreadCount(request, "/careers/admin/applicants"),
+  ]);
+  return {
+    user,
+    leadBadges: {
+      "/cpadmin/contact-submissions": submissions,
+      "/cpadmin/estimate-submissions": estimates,
+      "/cpadmin/audit-submissions": audits,
+      "/cpadmin/applicants": applicants,
+    } as Record<string, number>,
+  };
+}
+
+/**
+ * The badge counts above cost four list queries, and this is a layout loader,
+ * so without this it would re-run them on every move between admin pages.
+ * Counts only change behind a mutation, so refresh them then (and on a fresh
+ * load), not on plain navigation.
+ */
+export function shouldRevalidate({
+  formMethod,
+  defaultShouldRevalidate,
+}: ShouldRevalidateFunctionArgs) {
+  if (formMethod && formMethod !== "GET") return defaultShouldRevalidate;
+  return false;
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -120,7 +172,7 @@ function getInitials(firstName: string, lastName: string) {
 }
 
 export default function AdminLayout({ loaderData }: Route.ComponentProps) {
-  const { user } = loaderData;
+  const { user, leadBadges } = loaderData;
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -130,10 +182,30 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
         ? location.pathname === item.to
         : location.pathname.startsWith(item.to),
     ) ?? ALL_ITEMS[0];
+  const activeGroup = NAV_GROUPS.find((group) => group.items.includes(activeItem));
+
+  // The nav has 23 items, so groups start collapsed except the one holding
+  // the current page — the rail fits on one screen without scrolling.
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(() => {
+    const initial = new Set<string>();
+    for (const group of NAV_GROUPS) {
+      if (!group.items.includes(activeItem)) initial.add(group.label);
+    }
+    return initial;
+  });
 
   useEffect(() => {
     setIsSidebarOpen(false);
-  }, [location.pathname]);
+    // Follow navigation: opening a page always reveals its group.
+    if (activeGroup) {
+      setCollapsedGroups((prev) => {
+        if (!prev.has(activeGroup.label)) return prev;
+        const next = new Set(prev);
+        next.delete(activeGroup.label);
+        return next;
+      });
+    }
+  }, [location.pathname, activeGroup]);
 
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "unset";
@@ -142,12 +214,23 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
     };
   }, [isSidebarOpen]);
 
+  const toggleGroup = (label: string) =>
+    setCollapsedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) {
+        next.delete(label);
+      } else {
+        next.add(label);
+      }
+      return next;
+    });
+
   return (
     <div className="dark min-h-screen bg-black text-white flex font-sans">
       {isSidebarOpen && (
         <div
           onClick={() => setIsSidebarOpen(false)}
-          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+          className="md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
         />
       )}
 
@@ -159,7 +242,7 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
       >
         <div className="px-5 py-5 border-b border-white/10 flex items-center justify-between">
           <Link to="/cpadmin" className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-md bg-[#0A84FF] text-xs font-bold text-white">
+            <div className="flex size-7 items-center justify-center rounded-md bg-primary-solid text-xs font-bold text-white">
               W
             </div>
             <p className="font-semibold text-sm tracking-tight">Weblaud Admin</p>
@@ -173,42 +256,79 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
-          {NAV_GROUPS.map((group) => (
-            <div key={group.label}>
-              <p className="px-2 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/30">
-                {group.label}
-              </p>
-              <div className="space-y-0.5">
-                {group.items.map((item) => {
-                  const isActive = item.end
-                    ? location.pathname === item.to
-                    : location.pathname.startsWith(item.to);
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className={
-                        "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors " +
-                        (isActive
-                          ? "bg-[#0A84FF]/15 text-white font-medium"
-                          : "text-white/55 hover:bg-white/5 hover:text-white")
-                      }
-                    >
-                      <Icon
-                        className={
-                          "size-4 shrink-0 " +
-                          (isActive ? "text-[#0A84FF]" : "text-white/40")
-                        }
-                      />
-                      {item.label}
-                    </Link>
-                  );
-                })}
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-4">
+          {NAV_GROUPS.map((group) => {
+            const isCollapsed = collapsedGroups.has(group.label);
+            // A collapsed group still surfaces its unread leads, rolled up
+            // into one pill on the header so nothing hides.
+            const groupBadge = isCollapsed
+              ? group.items.reduce((sum, item) => sum + (leadBadges[item.to] ?? 0), 0)
+              : 0;
+            return (
+              <div key={group.label}>
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.label)}
+                  aria-expanded={!isCollapsed}
+                  className="w-full flex items-center justify-between px-2 mb-1.5 text-xs text-white/35 hover:text-white/60 transition-colors cursor-pointer"
+                >
+                  <span className="flex items-center gap-1.5">
+                    {group.label}
+                    {groupBadge > 0 && (
+                      <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-primary-bright">
+                        {groupBadge}
+                      </span>
+                    )}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      "size-3 text-white/25 transition-transform duration-200",
+                      isCollapsed && "-rotate-90",
+                    )}
+                  />
+                </button>
+                {!isCollapsed && (
+                  <div className="space-y-0.5">
+                    {group.items.map((item) => {
+                      const isActive = item.end
+                        ? location.pathname === item.to
+                        : location.pathname.startsWith(item.to);
+                      const badge = leadBadges[item.to];
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          className={cn(
+                            "relative flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition-colors",
+                            isActive
+                              ? "bg-primary/15 text-white font-medium"
+                              : "text-white/55 hover:bg-white/5 hover:text-white",
+                          )}
+                        >
+                          {isActive && (
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-primary" />
+                          )}
+                          <Icon
+                            className={cn(
+                              "size-4 shrink-0",
+                              isActive ? "text-primary" : "text-white/40",
+                            )}
+                          />
+                          {item.label}
+                          {badge != null && badge > 0 && (
+                            <span className="ml-auto rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-primary-bright">
+                              {badge}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </nav>
 
         <div className="p-3 border-t border-white/10 space-y-2">
@@ -216,7 +336,7 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
             href="/"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-white/55 hover:bg-white/5 hover:text-white transition-colors"
+            className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm text-white/55 hover:bg-white/5 hover:text-white transition-colors"
           >
             <ExternalLink className="size-4 shrink-0 text-white/40" />
             View live site
@@ -225,7 +345,7 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
             href="/portal"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-white/55 hover:bg-white/5 hover:text-white transition-colors"
+            className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm text-white/55 hover:bg-white/5 hover:text-white transition-colors"
           >
             <ExternalLink className="size-4 shrink-0 text-white/40" />
             Open client portal
@@ -243,15 +363,27 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
             >
               <Menu className="size-5" />
             </button>
-            <p className="text-sm font-medium text-white/80 truncate">{activeItem.label}</p>
+            <nav className="flex items-center gap-1.5 min-w-0" aria-label="Breadcrumb">
+              {activeGroup && (
+                <>
+                  <span className="text-xs text-white/40 truncate">{activeGroup.label}</span>
+                  <ChevronRight className="size-3 text-white/25 shrink-0" />
+                </>
+              )}
+              <span className="text-sm font-medium text-white/80 truncate">
+                {activeItem.label}
+              </span>
+            </nav>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 rounded-md px-1.5 py-1 hover:bg-white/5 transition-colors">
-                  <div className="flex size-7 items-center justify-center rounded-full bg-white/10 text-[11px] font-medium text-white/80">
-                    {getInitials(user.firstName, user.lastName)}
-                  </div>
+                <button className="flex items-center gap-2 rounded-lg px-1.5 py-1 hover:bg-white/5 transition-colors">
+                  <Avatar className="size-7">
+                    <AvatarFallback className="bg-white/10 text-[11px] font-medium text-white/80">
+                      {getInitials(user.firstName, user.lastName)}
+                    </AvatarFallback>
+                  </Avatar>
                   <span className="text-xs text-white/50 hidden sm:inline">
                     {user.firstName} {user.lastName}
                   </span>
@@ -259,6 +391,11 @@ export default function AdminLayout({ loaderData }: Route.ComponentProps) {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuLabel>
+                  <p className="text-sm font-medium">{user.firstName} {user.lastName}</p>
+                  <p className="text-xs text-white/50 font-normal">Admin</p>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link to="/cpadmin/settings">
                     <Settings className="size-4" />

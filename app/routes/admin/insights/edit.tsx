@@ -85,7 +85,7 @@ export default function EditInsight({ loaderData }: Route.ComponentProps) {
   );
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-5xl">
       <AdminPageHeader
         title="Edit Insight"
         description={insight.title}
@@ -93,174 +93,176 @@ export default function EditInsight({ loaderData }: Route.ComponentProps) {
       />
 
       <Form method="post" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Overview</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" name="title" required defaultValue={insight.title} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="summary">Summary</Label>
-              <Textarea
-                id="summary"
-                name="summary"
-                className="h-20"
-                required
-                defaultValue={insight.summary}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-6 lg:grid-cols-2 items-start">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Overview</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select
-                  id="category"
-                  name="category"
-                  required
-                  defaultValue={insight.category}
-                >
-                  {INSIGHT_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </Select>
+                <Label htmlFor="title">Title</Label>
+                <Input id="title" name="title" required defaultValue={insight.title} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="readTime">Read time</Label>
-                <Input
-                  id="readTime"
-                  name="readTime"
-                  required
-                  defaultValue={insight.readTime}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="publishedAt">Published date</Label>
-              <Input
-                id="publishedAt"
-                name="publishedAt"
-                type="date"
-                required
-                defaultValue={insight.publishedAt.slice(0, 10)}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Author</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="authorName">Author name</Label>
-                <Input
-                  id="authorName"
-                  name="authorName"
-                  required
-                  defaultValue={insight.author.name}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="authorRole">Author role</Label>
-                <Input
-                  id="authorRole"
-                  name="authorRole"
-                  required
-                  defaultValue={insight.author.role}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="authorAvatarUrl">Avatar URL</Label>
-                <Input
-                  id="authorAvatarUrl"
-                  name="authorAvatarUrl"
-                  defaultValue={insight.author.avatarUrl}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">AEO summary</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="directAnswer">Direct answer</Label>
-              <Textarea
-                id="directAnswer"
-                name="directAnswer"
-                className="h-24"
-                required
-                defaultValue={insight.directAnswer}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="keyTakeaways">Key takeaways (one per line)</Label>
-              <Textarea
-                id="keyTakeaways"
-                name="keyTakeaways"
-                className="h-24"
-                defaultValue={insight.keyTakeaways.join("\n")}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-base">Content sections</CardTitle>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setSections((s) => [...s, (s.at(-1) ?? -1) + 1])}
-            >
-              <Plus className="size-4" />
-              Add section
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {sections.map((key, i) => (
-              <div
-                key={key}
-                className="space-y-2 border-t border-white/10 pt-3 first:border-0 first:pt-0"
-              >
-                <Input
-                  name="content.heading"
-                  placeholder="Heading"
-                  defaultValue={insight.content[i]?.heading ?? ""}
-                />
+                <Label htmlFor="summary">Summary</Label>
                 <Textarea
-                  name="content.text"
-                  placeholder="Text"
+                  id="summary"
+                  name="summary"
                   className="h-20"
-                  defaultValue={insight.content[i]?.text ?? ""}
+                  required
+                  defaultValue={insight.summary}
                 />
-                {sections.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      setSections((s) => s.filter((_, idx) => idx !== i))
-                    }
-                  >
-                    <X className="size-4" />
-                    Remove section
-                  </Button>
-                )}
               </div>
-            ))}
-          </CardContent>
-        </Card>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Select
+                    id="category"
+                    name="category"
+                    required
+                    defaultValue={insight.category}
+                  >
+                    {INSIGHT_CATEGORIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="readTime">Read time</Label>
+                  <Input
+                    id="readTime"
+                    name="readTime"
+                    required
+                    defaultValue={insight.readTime}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="publishedAt">Published date</Label>
+                <Input
+                  id="publishedAt"
+                  name="publishedAt"
+                  type="date"
+                  required
+                  defaultValue={insight.publishedAt.slice(0, 10)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Author</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="authorName">Author name</Label>
+                  <Input
+                    id="authorName"
+                    name="authorName"
+                    required
+                    defaultValue={insight.author.name}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="authorRole">Author role</Label>
+                  <Input
+                    id="authorRole"
+                    name="authorRole"
+                    required
+                    defaultValue={insight.author.role}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="authorAvatarUrl">Avatar URL</Label>
+                  <Input
+                    id="authorAvatarUrl"
+                    name="authorAvatarUrl"
+                    defaultValue={insight.author.avatarUrl}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">AEO summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="directAnswer">Direct answer</Label>
+                <Textarea
+                  id="directAnswer"
+                  name="directAnswer"
+                  className="h-24"
+                  required
+                  defaultValue={insight.directAnswer}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="keyTakeaways">Key takeaways (one per line)</Label>
+                <Textarea
+                  id="keyTakeaways"
+                  name="keyTakeaways"
+                  className="h-24"
+                  defaultValue={insight.keyTakeaways.join("\n")}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex items-center justify-between">
+              <CardTitle className="text-base">Content sections</CardTitle>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setSections((s) => [...s, (s.at(-1) ?? -1) + 1])}
+              >
+                <Plus className="size-4" />
+                Add section
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {sections.map((key, i) => (
+                <div
+                  key={key}
+                  className="space-y-2 border-t border-white/10 pt-3 first:border-0 first:pt-0"
+                >
+                  <Input
+                    name="content.heading"
+                    placeholder="Heading"
+                    defaultValue={insight.content[i]?.heading ?? ""}
+                  />
+                  <Textarea
+                    name="content.text"
+                    placeholder="Text"
+                    className="h-20"
+                    defaultValue={insight.content[i]?.text ?? ""}
+                  />
+                  {sections.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        setSections((s) => s.filter((_, idx) => idx !== i))
+                      }
+                    >
+                      <X className="size-4" />
+                      Remove section
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
 
         <label className="flex items-center gap-2 text-sm text-white/70">
           <Checkbox name="isActive" defaultChecked={insight.isActive} />

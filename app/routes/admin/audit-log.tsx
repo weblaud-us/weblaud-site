@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import type { Route } from "./+types/audit-log";
 import { apiFetch } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
 import type { AuditLogActorRef, AuditLogEntry } from "~/lib/types";
+import { Button } from "~/components/ui/button";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { History } from "lucide-react";
+import { Eye, History } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -89,12 +91,13 @@ export default function AdminAuditLog({ loaderData }: Route.ComponentProps) {
                   <TableHead className="text-white/60">Action</TableHead>
                   <TableHead className="text-white/60">Entity</TableHead>
                   <TableHead className="text-white/60">Details</TableHead>
+                  <TableHead className="text-white/60 text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.length === 0 && (
                   <TableRow className="border-white/10">
-                    <TableCell colSpan={5} className="text-white/40 py-8 text-center">
+                    <TableCell colSpan={6} className="text-white/40 py-8 text-center">
                       No entries match "{query}".
                     </TableCell>
                   </TableRow>
@@ -105,12 +108,27 @@ export default function AdminAuditLog({ loaderData }: Route.ComponentProps) {
                       <LocalTime value={entry.at} withTime />
                     </TableCell>
                     <TableCell className="text-white whitespace-nowrap">{actorName(entry.actor)}</TableCell>
-                    <TableCell className="text-white/80 whitespace-nowrap">{actionLabel(entry.action)}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <Link
+                        to={`/cpadmin/audit-log/${entry._id}`}
+                        className="text-white/80 hover:text-primary-bright transition-colors"
+                      >
+                        {actionLabel(entry.action)}
+                      </Link>
+                    </TableCell>
                     <TableCell className="text-white/50 whitespace-nowrap">
                       {entry.entityType} · <span className="text-white/30">{entry.entityId.slice(-8)}</span>
                     </TableCell>
                     <TableCell className="text-white/40 text-xs max-w-md">
                       {metaSummary(entry.meta) ?? "—"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Link to={`/cpadmin/audit-log/${entry._id}`}>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="size-3.5" />
+                          View
+                        </Button>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}

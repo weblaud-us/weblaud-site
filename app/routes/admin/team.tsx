@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFetcher } from "react-router";
+import { Link, useFetcher } from "react-router";
 import type { Route } from "./+types/team";
 import { apiFetch, ApiError, resolveMediaUrl } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
@@ -12,7 +12,7 @@ import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { Users, Plus, UserRound } from "lucide-react";
+import { Users, Plus, UserRound, Eye } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -184,8 +184,13 @@ export default function AdminTeam({ loaderData }: Route.ComponentProps) {
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="text-white font-medium">
-                  {member.name}
+                <TableCell>
+                  <Link
+                    to={`/cpadmin/team/${member._id}`}
+                    className="text-white font-medium hover:text-primary-bright transition-colors"
+                  >
+                    {member.name}
+                  </Link>
                 </TableCell>
                 <TableCell className="text-white/50">{member.title}</TableCell>
                 <TableCell>
@@ -194,6 +199,12 @@ export default function AdminTeam({ loaderData }: Route.ComponentProps) {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
+                  <Link to={`/cpadmin/team/${member._id}`}>
+                    <Button variant="ghost" size="sm">
+                      <Eye className="size-3.5" />
+                      View
+                    </Button>
+                  </Link>
                   <Button
                     variant="outline"
                     size="sm"

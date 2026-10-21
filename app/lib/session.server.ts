@@ -1,6 +1,7 @@
 import { createCookieSessionStorage, redirect } from "react-router";
 import { apiFetch, ApiError, withClientContext } from "./api.server";
 import type { PortalUser } from "./types";
+import { requestPageUrl } from "./request-url";
 
 // Falls back to SESSION_SECRET if ADMIN_SESSION_SECRET isn't set, so an
 // existing deployment doesn't break on upgrade — but that fallback also
@@ -94,7 +95,7 @@ async function runAdminApi<T>(
       });
       session.set("accessToken", tokens.accessToken);
       session.set("refreshToken", tokens.refreshToken);
-      throw redirect(request.url, {
+      throw redirect(requestPageUrl(request).href, {
         headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
       });
     } catch (refreshErr) {

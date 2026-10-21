@@ -58,7 +58,7 @@ export default function AdminSettings({ loaderData }: Route.ComponentProps) {
   const { user, avatarUrl } = loaderData;
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl">
       <AdminPageHeader title="Settings" description="Manage your profile and password." />
       <div className="space-y-6">
         <ProfileForm user={user} avatarUrl={avatarUrl} />

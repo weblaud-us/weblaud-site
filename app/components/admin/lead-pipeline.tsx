@@ -30,7 +30,7 @@ type ActionResult = { ok: true; message?: string } | { error: string } | null;
 
 /** Pill colours per stage — open stages blue-ish, closed ones green/grey. */
 const STAGE_STYLE: Record<LeadStage, string> = {
-  new: "bg-[#0A84FF]/15 text-[#5AB0FF] border-[#0A84FF]/30",
+  new: "bg-primary/15 text-primary-bright border-primary/30",
   contacted: "bg-violet-500/15 text-violet-300 border-violet-500/30",
   call_booked: "bg-amber-500/15 text-amber-300 border-amber-500/30",
   proposal_sent: "bg-orange-500/15 text-orange-300 border-orange-500/30",

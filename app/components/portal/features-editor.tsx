@@ -90,7 +90,7 @@ export function FeaturesEditor({
 
       {rows.map((row, index) => (
         <div key={row._id ?? `new-${index}`} className="rounded-lg border border-white/10 p-3 space-y-2">
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <div className="flex-1 space-y-1.5">
               <Label htmlFor={`feature-title-${index}`} className="text-xs">
                 Title
@@ -102,7 +102,7 @@ export function FeaturesEditor({
                 placeholder="e.g. Checkout flow"
               />
             </div>
-            <div className="w-40 space-y-1.5">
+            <div className="w-full sm:w-40 space-y-1.5">
               <Label htmlFor={`feature-status-${index}`} className="text-xs">
                 Status
               </Label>
@@ -118,7 +118,7 @@ export function FeaturesEditor({
                 ))}
               </Select>
             </div>
-            <div className="pt-6">
+            <div className="pt-6 w-full sm:w-auto">
               <Button type="button" variant="outline" size="sm" onClick={() => remove(index)} aria-label="Remove feature">
                 <X className="size-3.5" />
               </Button>

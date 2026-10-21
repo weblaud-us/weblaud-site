@@ -406,7 +406,7 @@ export default function AdminCalculatorConfig({
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="baseCost">Base cost ($)</Label>
+                <Label htmlFor="baseCost" className="text-xs text-white/50">Base cost ($)</Label>
                 <Input
                   id="baseCost"
                   name="baseCost"
@@ -418,7 +418,7 @@ export default function AdminCalculatorConfig({
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="rangeSpreadPct">Range spread</Label>
+                <Label htmlFor="rangeSpreadPct" className="text-xs text-white/50">Range spread</Label>
                 <Input
                   id="rangeSpreadPct"
                   name="rangeSpreadPct"
@@ -431,7 +431,7 @@ export default function AdminCalculatorConfig({
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="roundToNearest">Round to nearest ($)</Label>
+                <Label htmlFor="roundToNearest" className="text-xs text-white/50">Round to nearest ($)</Label>
                 <Input
                   id="roundToNearest"
                   name="roundToNearest"

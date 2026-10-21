@@ -70,7 +70,7 @@ export function MilestonesEditor({
       {rows.length === 0 && <p className="text-xs text-white/40">No milestones yet.</p>}
 
       {rows.map((row, index) => (
-        <div key={index} className="flex items-end gap-2 rounded-lg border border-white/10 p-3">
+        <div key={index} className="flex flex-col sm:flex-row sm:items-end gap-2 rounded-lg border border-white/10 p-3">
           <div className="flex-1 space-y-1.5">
             <Label htmlFor={`milestone-title-${index}`} className="text-xs">
               Title
@@ -82,7 +82,7 @@ export function MilestonesEditor({
               placeholder="e.g. Design sign-off"
             />
           </div>
-          <div className="w-40 space-y-1.5">
+          <div className="w-full sm:w-40 space-y-1.5">
             <Label htmlFor={`milestone-due-${index}`} className="text-xs">
               Due date
             </Label>
@@ -93,7 +93,7 @@ export function MilestonesEditor({
               onChange={(e) => update(index, { dueDate: e.target.value })}
             />
           </div>
-          <div className="w-36 space-y-1.5">
+          <div className="w-full sm:w-36 space-y-1.5">
             <Label htmlFor={`milestone-status-${index}`} className="text-xs">
               Status
             </Label>
@@ -109,9 +109,11 @@ export function MilestonesEditor({
               ))}
             </Select>
           </div>
-          <Button type="button" variant="outline" size="sm" onClick={() => remove(index)} aria-label="Remove milestone">
-            <X className="size-3.5" />
-          </Button>
+          <div className="w-full sm:w-auto shrink-0 flex items-end pb-0.5">
+            <Button type="button" variant="outline" size="sm" onClick={() => remove(index)} aria-label="Remove milestone" className="w-full sm:w-auto">
+              <X className="size-3.5" />
+            </Button>
+          </div>
         </div>
       ))}
 

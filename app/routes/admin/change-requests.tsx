@@ -4,11 +4,12 @@ import type { Route } from "./+types/change-requests";
 import { apiFetch } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
 import type { ChangeRequest, ChangeRequestProjectRef, Organization, UpdateAuthorRef } from "~/lib/types";
+import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { Repeat } from "lucide-react";
+import { Eye, Repeat } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -102,12 +103,13 @@ export default function AdminChangeRequests({ loaderData }: Route.ComponentProps
                 <TableHead className="text-white/60">Requested by</TableHead>
                 <TableHead className="text-white/60">Status</TableHead>
                 <TableHead className="text-white/60">Invoice</TableHead>
+                <TableHead className="text-white/60 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.length === 0 && (
                 <TableRow className="border-white/10">
-                  <TableCell colSpan={6} className="text-white/40 py-8 text-center">
+                  <TableCell colSpan={7} className="text-white/40 py-8 text-center">
                     No change requests match "{query}".
                   </TableCell>
                 </TableRow>
@@ -118,10 +120,17 @@ export default function AdminChangeRequests({ loaderData }: Route.ComponentProps
                 const orgName = typeof org === "object" ? (org as Organization)?.name : undefined;
                 return (
                   <TableRow key={cr._id} className="border-white/10">
-                    <TableCell className="text-white font-medium">{cr.title}</TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/cpadmin/change-requests/${cr._id}`}
+                        className="text-white font-medium hover:text-primary-bright transition-colors"
+                      >
+                        {cr.title}
+                      </Link>
+                    </TableCell>
                     <TableCell className="text-white/50">
                       {project ? (
-                        <Link to={`/cpadmin/client-projects/${project._id}/edit`} className="hover:text-white transition-colors">
+                        <Link to={`/cpadmin/client-projects/${project._id}`} className="hover:text-white transition-colors">
                           {project.name}
                         </Link>
                       ) : (
@@ -148,6 +157,14 @@ export default function AdminChangeRequests({ loaderData }: Route.ComponentProps
                       ) : (
                         <span className="text-white/30">—</span>
                       )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Link to={`/cpadmin/change-requests/${cr._id}`}>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="size-3.5" />
+                          View
+                        </Button>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 );

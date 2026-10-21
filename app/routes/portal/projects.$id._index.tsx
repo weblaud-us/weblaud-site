@@ -13,11 +13,14 @@ import {
   ArrowRight,
   CheckCircle2,
   ClipboardCheck,
+  FileText,
   Flag,
   FolderOpen,
   History,
   Megaphone,
+  MessageCircle,
   ReceiptText,
+  Scale,
   Users,
   Wallet,
   type LucideIcon,
@@ -68,6 +71,9 @@ const ACTIVITY_ICON: Record<ProjectActivityItem["type"], LucideIcon> = {
   file_shared: FolderOpen,
   approval_decided: ClipboardCheck,
   invoice_paid: ReceiptText,
+  comment_posted: MessageCircle,
+  contract_signed: FileText,
+  change_request_approved: Scale,
 };
 
 function Card({

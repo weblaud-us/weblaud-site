@@ -1,6 +1,7 @@
 import { createCookieSessionStorage, redirect } from "react-router";
 import { apiFetch, ApiError, withClientContext } from "./api.server";
 import type { PortalUser } from "./types";
+import { requestPageUrl } from "./request-url";
 
 /**
  * Separate cookie from the admin panel's __weblaud_admin_session — the two
@@ -101,7 +102,7 @@ async function runPortalApi<T>(
       });
       session.set("accessToken", tokens.accessToken);
       session.set("refreshToken", tokens.refreshToken);
-      throw redirect(request.url, {
+      throw redirect(requestPageUrl(request).href, {
         headers: { "Set-Cookie": await portalSessionStorage.commitSession(session) },
       });
     } catch (refreshErr) {

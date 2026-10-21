@@ -48,7 +48,7 @@ export default function NewService() {
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl">
       <AdminPageHeader
         title="New Service"
         description="Add a service card to show on /services."

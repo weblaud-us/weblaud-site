@@ -11,18 +11,27 @@ interface StatCardProps {
 }
 
 export function StatCard({ label, value, icon: Icon, to, accent }: StatCardProps) {
-  const content = (
-    <div className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-white/20 hover:bg-white/[0.05]">
+  const content = (linked: boolean) => (
+    <div
+      className={cn(
+        "flex items-center gap-4 rounded-xl border border-white/10 bg-card-bg p-4 transition-colors",
+        linked
+          ? "group-hover:border-white/20 group-hover:bg-secondary"
+          : "hover:border-white/20 hover:bg-secondary",
+      )}
+    >
       <div
         className={cn(
-          "flex size-10 shrink-0 items-center justify-center rounded-lg",
-          accent ? "bg-[#0A84FF]/15 text-[#0A84FF]" : "bg-white/5 text-white/60",
+          "flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors",
+          accent
+            ? "bg-primary/15 text-primary"
+            : cn("bg-white/5 text-white/60", linked && "group-hover:text-primary"),
         )}
       >
         <Icon className="size-5" />
       </div>
       <div className="min-w-0">
-        <p className="text-2xl font-semibold text-white leading-none">{value}</p>
+        <p className="text-2xl font-semibold text-white leading-none tabular-nums">{value}</p>
         <p className="text-xs text-white/50 mt-1.5 truncate">{label}</p>
       </div>
     </div>
@@ -30,10 +39,10 @@ export function StatCard({ label, value, icon: Icon, to, accent }: StatCardProps
 
   if (to) {
     return (
-      <Link to={to} className="block">
-        {content}
+      <Link to={to} className="group block">
+        {content(true)}
       </Link>
     );
   }
-  return content;
+  return content(false);
 }

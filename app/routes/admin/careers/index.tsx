@@ -9,7 +9,7 @@ import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { Briefcase, Plus } from "lucide-react";
+import { Briefcase, Eye, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -142,8 +142,13 @@ export default function AdminCareersIndex({ loaderData }: Route.ComponentProps) 
               )}
               {filtered.map((job) => (
                 <TableRow key={job._id} className="border-white/10">
-                  <TableCell className="text-white font-medium">
-                    {job.title}
+                  <TableCell>
+                    <Link
+                      to={`/cpadmin/careers/${job._id}`}
+                      className="text-white font-medium hover:text-primary-bright transition-colors"
+                    >
+                      {job.title}
+                    </Link>
                   </TableCell>
                   <TableCell className="text-white/50">
                     {job.department || "—"}
@@ -161,6 +166,12 @@ export default function AdminCareersIndex({ loaderData }: Route.ComponentProps) 
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right space-x-2">
+                    <Link to={`/cpadmin/careers/${job._id}`}>
+                      <Button variant="ghost" size="sm">
+                        <Eye className="size-3.5" />
+                        View
+                      </Button>
+                    </Link>
                     <Link to={`/cpadmin/careers/${job._id}/edit`}>
                       <Button variant="outline" size="sm">
                         Edit
@@ -206,7 +217,7 @@ export default function AdminCareersIndex({ loaderData }: Route.ComponentProps) 
 
       {result.meta.totalPages > 1 && (
         <Pagination className="mt-6 justify-start">
-          <PaginationContent>
+          <PaginationContent className="flex-wrap">
             {Array.from({ length: result.meta.totalPages }, (_, i) => i + 1).map(
               (p) => {
                 const params = new URLSearchParams(searchParams);

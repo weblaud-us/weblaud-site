@@ -216,7 +216,7 @@ function MemberRow({ member, isSelf, canManage }: { member: TeamMember; isSelf: 
             id={`role-${member._id}`}
             value={member.orgRole ?? "client_viewer"}
             disabled={busy || member.status === "deactivated"}
-            className="py-1.5"
+            className="py-1.5 w-auto"
             onChange={(e) =>
               fetcher.submit({ intent: "role", id: member._id, orgRole: e.target.value }, { method: "post" })
             }

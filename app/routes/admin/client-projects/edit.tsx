@@ -88,7 +88,7 @@ export default function EditClientProject({ loaderData }: Route.ComponentProps) 
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-5xl">
       <AdminPageHeader
         title="Edit Client Project"
         description={project.name}

@@ -209,24 +209,15 @@ export interface CalculatorConfig {
  * backend source of truth is backend/src/modules/leads/lead.constants.ts.
  */
 export type LeadStage =
-  | "new"
-  | "contacted"
-  | "call_booked"
-  | "proposal_sent"
-  | "won"
-  | "lost";
+  "new" | "contacted" | "call_booked" | "proposal_sent" | "won" | "lost";
 
 /** Self-reported "How did you hear about us?" answer. */
 export type HeardAbout =
-  | "google"
-  | "ai_assistant"
-  | "clutch"
-  | "linkedin"
-  | "referral"
-  | "other";
+  "google" | "ai_assistant" | "clutch" | "linkedin" | "referral" | "other";
 
 /** Optional contact-form qualifiers. Labels and option order live in app/lib/leads.ts. */
-export type BudgetBand = "under_5k" | "5k_10k" | "10k_20k" | "20k_plus" | "not_sure";
+export type BudgetBand =
+  "under_5k" | "5k_10k" | "10k_20k" | "20k_plus" | "not_sure";
 export type LeadTimeline = "asap" | "1_3_months" | "3_6_months" | "exploring";
 
 /** First-touch marketing source, captured by app/lib/attribution.ts. */
@@ -488,11 +479,7 @@ export interface PortalUser {
 }
 
 export type ClientProjectStatus =
-  | "planning"
-  | "active"
-  | "on_hold"
-  | "completed"
-  | "cancelled";
+  "planning" | "active" | "on_hold" | "completed" | "cancelled";
 
 export type FeatureStatus = "planned" | "in_progress" | "done";
 export type MilestoneStatus = "pending" | "in_progress" | "done";
@@ -566,7 +553,8 @@ export interface ClientProject {
 // Task board (Phase 6). See backend/src/modules/task.
 // ---------------------------------------------------------------------------
 
-export type TaskStatus = "backlog" | "todo" | "in_progress" | "in_review" | "done";
+export type TaskStatus =
+  "backlog" | "todo" | "in_progress" | "in_review" | "done";
 
 export interface Task {
   _id: string;
@@ -777,10 +765,21 @@ export interface TeamMember {
 /** One row of a project's recent activity (GET /portal/projects/:id/activity). */
 export interface ProjectActivityItem {
   _id: string;
-  type: "update_published" | "file_shared" | "approval_decided" | "invoice_paid";
+  type:
+    | "update_published"
+    | "file_shared"
+    | "approval_decided"
+    | "invoice_paid"
+    | "comment_posted"
+    | "contract_signed"
+    | "change_request_approved";
   title: string;
   at: string;
   link: string;
+  /** Populated for comment_posted events — the first 120 chars of the comment body. */
+  excerpt?: string;
+  /** Populated for events with an actor — avoids a separate user lookup on the frontend. */
+  actor?: UpdateAuthorRef;
 }
 
 // ---------------------------------------------------------------------------
@@ -817,7 +816,8 @@ export interface Contract {
   updatedAt: string;
 }
 
-export type ChangeRequestStatus = "requested" | "quoted" | "client_approved" | "rejected" | "invoiced";
+export type ChangeRequestStatus =
+  "requested" | "quoted" | "client_approved" | "rejected" | "invoiced";
 
 /** Populated shape only on the admin cross-project list (GET /change-requests) — the portal's per-project endpoints already know the project from the URL and never populate it. */
 export interface ChangeRequestProjectRef {
@@ -843,7 +843,8 @@ export interface ChangeRequest {
   createdAt: string;
 }
 
-export type ApprovalSubjectType = "deliverable" | "milestone" | "change_request" | "invoice";
+export type ApprovalSubjectType =
+  "deliverable" | "milestone" | "change_request" | "invoice";
 export type ApprovalStatus = "pending" | "approved" | "rejected";
 
 export interface Approval {
@@ -862,7 +863,8 @@ export interface Approval {
 }
 
 export type InvoiceType = "one_off" | "deposit" | "milestone" | "retainer";
-export type InvoiceStatus = "draft" | "sent" | "paid" | "partially_paid" | "overdue" | "void";
+export type InvoiceStatus =
+  "draft" | "sent" | "paid" | "partially_paid" | "overdue" | "void";
 
 export interface InvoiceLineItem {
   description: string;

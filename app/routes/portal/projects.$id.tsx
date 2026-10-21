@@ -16,8 +16,10 @@ import {
   ArrowLeft,
   Clock,
   FolderOpen,
+  History,
   LayoutGrid,
   ListTodo,
+  MessageCircle,
   MessagesSquare,
   Scale,
   Settings2,
@@ -47,7 +49,9 @@ export interface ProjectWorkspaceContext {
 
 /** Resolves projectManager/team avatar paths server-side, mirroring admin/team.tsx's loader. */
 function withResolvedAvatars(staff: ProjectStaffRef): ProjectStaffRef {
-  return staff.avatar ? { ...staff, avatar: resolveMediaUrl(staff.avatar) } : staff;
+  return staff.avatar
+    ? { ...staff, avatar: resolveMediaUrl(staff.avatar) }
+    : staff;
 }
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -58,15 +62,22 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     ),
     // Badges are a nicety — a failure here must never take the project down.
     callPortalApi(request, (accessToken) =>
-      apiFetch<ProjectAttention>(`/portal/projects/${params.id}/attention`, { accessToken }),
+      apiFetch<ProjectAttention>(`/portal/projects/${params.id}/attention`, {
+        accessToken,
+      }),
     ).catch((err) => {
       if (err instanceof ApiError) return null;
       throw err;
     }),
   ]);
 
-  const pmId = typeof project.projectManager === "object" ? project.projectManager._id : project.projectManager;
-  const teamIds = (project.team as ProjectStaffRef[]).map((m) => (typeof m === "object" ? m._id : m));
+  const pmId =
+    typeof project.projectManager === "object"
+      ? project.projectManager._id
+      : project.projectManager;
+  const teamIds = (project.team as ProjectStaffRef[]).map((m) =>
+    typeof m === "object" ? m._id : m,
+  );
 
   // Computed server-side once here rather than re-derived in every tab: who
   // can manage this project (PM or admin) and who can author updates for it
@@ -131,7 +142,14 @@ const TAB_DEFS: {
 }[] = [
   { path: "", label: "Overview", icon: LayoutGrid },
   { path: "/work", label: "Work", icon: ListTodo, badge: "work" },
-  { path: "/updates", label: "Updates", icon: MessagesSquare, badge: "updates" },
+  {
+    path: "/updates",
+    label: "Updates",
+    icon: MessagesSquare,
+    badge: "updates",
+  },
+  { path: "/discussion", label: "Discussion", icon: MessageCircle },
+  { path: "/activity", label: "Activity", icon: History },
   { path: "/files", label: "Files", icon: FolderOpen, badge: "files" },
   { path: "/decisions", label: "Decisions", icon: Scale, badge: "decisions" },
   { path: "/billing", label: "Billing", icon: Wallet, badge: "billing" },
@@ -145,21 +163,21 @@ function projectTabs(
   counts: ProjectAttentionCounts | undefined,
 ): ProjectTab[] {
   const base = projectPath(projectId);
-  return TAB_DEFS.filter((t) => (t.show === "pm" ? isPm : t.show === "staff" ? isStaffOnProject : true)).map(
-    (t) => ({
-      to: base + t.path,
-      label: t.label,
-      icon: t.icon,
-      end: t.path === "",
-      count: t.badge ? (counts?.[t.badge] ?? 0) : 0,
-    }),
-  );
+  return TAB_DEFS.filter((t) =>
+    t.show === "pm" ? isPm : t.show === "staff" ? isStaffOnProject : true,
+  ).map((t) => ({
+    to: base + t.path,
+    label: t.label,
+    icon: t.icon,
+    end: t.path === "",
+    count: t.badge ? (counts?.[t.badge] ?? 0) : 0,
+  }));
 }
 
 /**
- * Six tabs for clients, up to eight for staff. Below the sm breakpoint they
- * wrap into a 3- or 4-column grid (two rows), so nothing scrolls sideways at
- * 360 px; from sm up they're a single underlined row.
+ * Eight tabs for clients, up to ten for staff. Below the sm breakpoint they
+ * wrap into a 4-column grid (two-to-three rows), so nothing scrolls sideways
+ * at 360 px; from sm up they're a single underlined row.
  */
 function ProjectTabs({ tabs }: { tabs: ProjectTab[] }) {
   return (
@@ -167,7 +185,11 @@ function ProjectTabs({ tabs }: { tabs: ProjectTab[] }) {
       aria-label="Project sections"
       className={cn(
         "mb-6 grid gap-1 sm:flex sm:gap-1 sm:border-b sm:border-white/10",
-        tabs.length > 6 ? "grid-cols-4" : "grid-cols-3",
+        tabs.length > 8
+          ? "grid-cols-4"
+          : tabs.length > 5
+            ? "grid-cols-3"
+            : "grid-cols-2",
       )}
     >
       {tabs.map((tab) => (
@@ -185,7 +207,10 @@ function ProjectTabs({ tabs }: { tabs: ProjectTab[] }) {
             )
           }
         >
-          <tab.icon className="hidden sm:block size-4 shrink-0 opacity-70" aria-hidden="true" />
+          <tab.icon
+            className="hidden sm:block size-4 shrink-0 opacity-70"
+            aria-hidden="true"
+          />
           <span className="truncate">{tab.label}</span>
           {tab.count > 0 && (
             <span className="shrink-0 rounded-full bg-[#0A84FF] px-1.5 text-[10px] font-semibold leading-4 text-white">
@@ -199,10 +224,17 @@ function ProjectTabs({ tabs }: { tabs: ProjectTab[] }) {
   );
 }
 
-export default function PortalProjectLayout({ loaderData, params }: Route.ComponentProps) {
+export default function PortalProjectLayout({
+  loaderData,
+  params,
+}: Route.ComponentProps) {
   const { project, isPm, isStaffOnProject, attention } = loaderData;
   const org = project.organization as Organization;
-  const tabs = projectTabs(params.id, { isPm, isStaffOnProject }, attention?.counts);
+  const tabs = projectTabs(
+    params.id,
+    { isPm, isStaffOnProject },
+    attention?.counts,
+  );
 
   return (
     <div>
@@ -216,10 +248,16 @@ export default function PortalProjectLayout({ loaderData, params }: Route.Compon
 
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold text-white tracking-tight">{project.name}</h1>
-          {org?.name && <p className="text-sm text-white/50 mt-1">{org.name}</p>}
+          <h1 className="text-2xl font-semibold text-white tracking-tight">
+            {project.name}
+          </h1>
+          {org?.name && (
+            <p className="text-sm text-white/50 mt-1">{org.name}</p>
+          )}
         </div>
-        <Badge variant={STATUS_VARIANT[project.status]}>{STATUS_LABEL[project.status]}</Badge>
+        <Badge variant={STATUS_VARIANT[project.status]}>
+          {STATUS_LABEL[project.status]}
+        </Badge>
       </div>
 
       <div className="mb-6">
@@ -227,7 +265,11 @@ export default function PortalProjectLayout({ loaderData, params }: Route.Compon
           <span>Overall progress</span>
           <span>{project.progress}%</span>
         </div>
-        <Progress value={project.progress} className="h-2" aria-label="Overall progress" />
+        <Progress
+          value={project.progress}
+          className="h-2"
+          aria-label="Overall progress"
+        />
       </div>
 
       <ProjectTabs tabs={tabs} />

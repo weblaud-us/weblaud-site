@@ -251,7 +251,7 @@ export default function AdminInvoiceDetail({ loaderData }: Route.ComponentProps)
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl">
       <AdminPageHeader
         title={invoice.number}
         description={`${org?.name ?? "—"} · ${project?.name ?? "—"}`}
@@ -385,7 +385,7 @@ export default function AdminInvoiceDetail({ loaderData }: Route.ComponentProps)
             </CardHeader>
             <CardContent className="space-y-3">
               {rows.map((row, i) => (
-                <div key={row.key} className="flex items-end gap-2">
+                <div key={row.key} className="flex flex-col gap-2 sm:flex-row sm:items-end">
                   <div className="flex-1 space-y-1.5">
                     {i === 0 && <Label className="text-xs">Description</Label>}
                     <Input

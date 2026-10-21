@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFetcher, useSearchParams } from "react-router";
+import { Link, useFetcher, useSearchParams } from "react-router";
 import type { Route } from "./+types/testimonials";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
@@ -13,7 +13,7 @@ import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { Quote, Plus } from "lucide-react";
+import { Quote, Plus, Eye } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -175,8 +175,13 @@ export default function AdminTestimonials({
             )}
             {filtered.map((testimonial) => (
               <TableRow key={testimonial._id} className="border-white/10">
-                <TableCell className="text-white max-w-md truncate">
-                  {testimonial.quote}
+                <TableCell className="max-w-md">
+                  <Link
+                    to={`/cpadmin/testimonials/${testimonial._id}`}
+                    className="block truncate text-white font-medium hover:text-primary-bright transition-colors"
+                  >
+                    {testimonial.quote}
+                  </Link>
                 </TableCell>
                 <TableCell className="text-white/50">
                   {testimonial.authorName}
@@ -193,6 +198,12 @@ export default function AdminTestimonials({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
+                  <Link to={`/cpadmin/testimonials/${testimonial._id}`}>
+                    <Button variant="ghost" size="sm">
+                      <Eye className="size-3.5" />
+                      View
+                    </Button>
+                  </Link>
                   <Button
                     variant="outline"
                     size="sm"
@@ -241,7 +252,7 @@ export default function AdminTestimonials({
 
       {result.meta.totalPages > 1 && (
         <Pagination className="mt-6 justify-start">
-          <PaginationContent>
+          <PaginationContent className="flex-wrap">
             {Array.from(
               { length: result.meta.totalPages },
               (_, i) => i + 1,

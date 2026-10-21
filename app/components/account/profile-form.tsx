@@ -75,7 +75,7 @@ export function ProfileForm({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
               <Input id="firstName" name="firstName" required defaultValue={user.firstName} />
@@ -92,7 +92,7 @@ export function ProfileForm({
             <p className="text-xs text-white/30">Contact an admin to change your email.</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
               <Input id="title" name="title" defaultValue={user.title} placeholder="e.g. Project Manager" />

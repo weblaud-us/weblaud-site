@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFetcher, useSearchParams } from "react-router";
+import { Link, useFetcher, useSearchParams } from "react-router";
 import type { Route } from "./+types/faqs";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
@@ -13,7 +13,7 @@ import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { HelpCircle, Plus } from "lucide-react";
+import { Eye, HelpCircle, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -172,8 +172,13 @@ export default function AdminFaqs({ loaderData }: Route.ComponentProps) {
             )}
             {filtered.map((faq) => (
               <TableRow key={faq._id} className="border-white/10">
-                <TableCell className="text-white max-w-md truncate">
-                  {faq.question}
+                <TableCell className="max-w-md truncate">
+                  <Link
+                    to={`/cpadmin/faqs/${faq._id}`}
+                    className="text-white font-medium hover:text-primary-bright transition-colors"
+                  >
+                    {faq.question}
+                  </Link>
                 </TableCell>
                 <TableCell className="text-white/50">{faq.order}</TableCell>
                 <TableCell>
@@ -182,6 +187,12 @@ export default function AdminFaqs({ loaderData }: Route.ComponentProps) {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
+                  <Link to={`/cpadmin/faqs/${faq._id}`}>
+                    <Button variant="ghost" size="sm">
+                      <Eye className="size-3.5" />
+                      View
+                    </Button>
+                  </Link>
                   <Button
                     variant="outline"
                     size="sm"
@@ -228,7 +239,7 @@ export default function AdminFaqs({ loaderData }: Route.ComponentProps) {
 
       {result.meta.totalPages > 1 && (
         <Pagination className="mt-6 justify-start">
-          <PaginationContent>
+          <PaginationContent className="flex-wrap">
             {Array.from(
               { length: result.meta.totalPages },
               (_, i) => i + 1,

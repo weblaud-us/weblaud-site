@@ -3,6 +3,7 @@ import type { Route } from "./+types/invoices.$id";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callPortalApi } from "~/lib/portal.server";
 import { projectPath } from "~/lib/portal-paths";
+import { requestPageUrl } from "~/lib/request-url";
 
 /**
  * /portal/invoices/:id is where every invoice notification (sent, overdue,
@@ -19,7 +20,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       }),
     );
     const projectId = typeof invoice.project === "string" ? invoice.project : invoice.project._id;
-    const { search } = new URL(request.url);
+    const { search } = requestPageUrl(request);
     return redirect(`${projectPath(projectId, "invoices")}${search}`);
   } catch (err) {
     if (err instanceof Response) throw err;

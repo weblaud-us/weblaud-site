@@ -73,7 +73,7 @@ export default function NewInsight() {
   const [sections, setSections] = useState<number[]>([0]);
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-5xl">
       <AdminPageHeader
         title="New Insight"
         description="Publish an article to show on /insights."
@@ -81,119 +81,121 @@ export default function NewInsight() {
       />
 
       <Form method="post" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Overview</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" name="title" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="summary">Summary</Label>
-              <Textarea id="summary" name="summary" className="h-20" required />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-6 lg:grid-cols-2 items-start">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Overview</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select id="category" name="category" required defaultValue="">
-                  <option value="" disabled>
-                    Select a category
-                  </option>
-                  {INSIGHT_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
+                <Label htmlFor="title">Title</Label>
+                <Input id="title" name="title" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="summary">Summary</Label>
+                <Textarea id="summary" name="summary" className="h-20" required />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Select id="category" name="category" required defaultValue="">
+                    <option value="" disabled>
+                      Select a category
                     </option>
-                  ))}
-                </Select>
+                    {INSIGHT_CATEGORIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="readTime">Read time</Label>
+                  <Input id="readTime" name="readTime" placeholder="5 min read" required />
+                </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="readTime">Read time</Label>
-                <Input id="readTime" name="readTime" placeholder="5 min read" required />
+                <Label htmlFor="publishedAt">Published date</Label>
+                <Input id="publishedAt" name="publishedAt" type="date" required />
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="publishedAt">Published date</Label>
-              <Input id="publishedAt" name="publishedAt" type="date" required />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Author</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="authorName">Author name</Label>
-                <Input id="authorName" name="authorName" required />
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Author</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="authorName">Author name</Label>
+                  <Input id="authorName" name="authorName" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="authorRole">Author role</Label>
+                  <Input id="authorRole" name="authorRole" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="authorAvatarUrl">Avatar URL</Label>
+                  <Input id="authorAvatarUrl" name="authorAvatarUrl" />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="authorRole">Author role</Label>
-                <Input id="authorRole" name="authorRole" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="authorAvatarUrl">Avatar URL</Label>
-                <Input id="authorAvatarUrl" name="authorAvatarUrl" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">AEO summary</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="directAnswer">Direct answer</Label>
-              <Textarea id="directAnswer" name="directAnswer" className="h-24" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="keyTakeaways">Key takeaways (one per line)</Label>
-              <Textarea id="keyTakeaways" name="keyTakeaways" className="h-24" />
-            </div>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">AEO summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="directAnswer">Direct answer</Label>
+                <Textarea id="directAnswer" name="directAnswer" className="h-24" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="keyTakeaways">Key takeaways (one per line)</Label>
+                <Textarea id="keyTakeaways" name="keyTakeaways" className="h-24" />
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-base">Content sections</CardTitle>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setSections((s) => [...s, s.length])}
-            >
-              <Plus className="size-4" />
-              Add section
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {sections.map((key, i) => (
-              <div
-                key={key}
-                className="space-y-2 border-t border-white/10 pt-3 first:border-0 first:pt-0"
+          <Card>
+            <CardHeader className="flex items-center justify-between">
+              <CardTitle className="text-base">Content sections</CardTitle>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setSections((s) => [...s, s.length])}
               >
-                <Input name="content.heading" placeholder="Heading" defaultValue="" />
-                <Textarea name="content.text" placeholder="Text" className="h-20" />
-                {sections.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSections((s) => s.filter((_, idx) => idx !== i))}
-                  >
-                    <X className="size-4" />
-                    Remove section
-                  </Button>
-                )}
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+                <Plus className="size-4" />
+                Add section
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {sections.map((key, i) => (
+                <div
+                  key={key}
+                  className="space-y-2 border-t border-white/10 pt-3 first:border-0 first:pt-0"
+                >
+                  <Input name="content.heading" placeholder="Heading" defaultValue="" />
+                  <Textarea name="content.text" placeholder="Text" className="h-20" />
+                  {sections.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSections((s) => s.filter((_, idx) => idx !== i))}
+                    >
+                      <X className="size-4" />
+                      Remove section
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
 
         <label className="flex items-center gap-2 text-sm text-white/70">
           <Checkbox name="isActive" defaultChecked />

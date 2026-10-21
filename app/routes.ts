@@ -39,42 +39,60 @@ export default [
     index("routes/admin/dashboard.tsx"),
     route("projects", "routes/admin/projects/index.tsx"),
     route("projects/new", "routes/admin/projects/new.tsx"),
+    route("projects/:id", "routes/admin/projects/$id.tsx"),
     route("projects/:id/edit", "routes/admin/projects/edit.tsx"),
     route("insights", "routes/admin/insights/index.tsx"),
     route("insights/new", "routes/admin/insights/new.tsx"),
+    route("insights/:id", "routes/admin/insights/$id.tsx"),
     route("insights/:id/edit", "routes/admin/insights/edit.tsx"),
     route("services", "routes/admin/services/index.tsx"),
     route("services/new", "routes/admin/services/new.tsx"),
+    route("services/:id", "routes/admin/services/$id.tsx"),
     route("services/:id/edit", "routes/admin/services/edit.tsx"),
     route("careers", "routes/admin/careers/index.tsx"),
     route("careers/new", "routes/admin/careers/new.tsx"),
+    route("careers/:id", "routes/admin/careers/$id.tsx"),
     route("careers/:id/edit", "routes/admin/careers/edit.tsx"),
     route("team", "routes/admin/team.tsx"),
+    route("team/:id", "routes/admin/team.$id.tsx"),
     route("testimonials", "routes/admin/testimonials.tsx"),
+    route("testimonials/:id", "routes/admin/testimonials.$id.tsx"),
     route("faqs", "routes/admin/faqs.tsx"),
+    route("faqs/:id", "routes/admin/faqs.$id.tsx"),
     route("about", "routes/admin/about.tsx"),
     route("calculator-config", "routes/admin/calculator-config.tsx"),
     route("contact-info", "routes/admin/contact-info.tsx"),
     route("contact-submissions", "routes/admin/contact-submissions.tsx"),
+    route("contact-submissions/:id", "routes/admin/contact-submissions.$id.tsx"),
     route("estimate-submissions", "routes/admin/estimate-submissions.tsx"),
+    route("estimate-submissions/:id", "routes/admin/estimate-submissions.$id.tsx"),
     route("audit-submissions", "routes/admin/audit-submissions.tsx"),
+    route("audit-submissions/:id", "routes/admin/audit-submissions.$id.tsx"),
     route("applicants", "routes/admin/applicants.tsx"),
+    route("applicants/:id", "routes/admin/applicants.$id.tsx"),
 
     // Client portal / agency OS management.
     route("organizations", "routes/admin/organizations.tsx"),
+    route("organizations/:id", "routes/admin/organizations.$id.tsx"),
     route("people", "routes/admin/people.tsx"),
+    route("people/:id", "routes/admin/people.$id.tsx"),
     route("client-projects", "routes/admin/client-projects/index.tsx"),
     route("client-projects/new", "routes/admin/client-projects/new.tsx"),
+    route("client-projects/:id", "routes/admin/client-projects/$id.tsx"),
     route("client-projects/:id/edit", "routes/admin/client-projects/edit.tsx"),
     route("contracts", "routes/admin/contracts/index.tsx"),
     route("contracts/new", "routes/admin/contracts/new.tsx"),
+    route("contracts/:id", "routes/admin/contracts/$id.tsx"),
     route("contracts/:id/edit", "routes/admin/contracts/edit.tsx"),
     route("invoices", "routes/admin/invoices/index.tsx"),
     route("invoices/new", "routes/admin/invoices/new.tsx"),
     route("invoices/:id", "routes/admin/invoices/$id.tsx"),
     route("approvals", "routes/admin/approvals.tsx"),
+    route("approvals/:id", "routes/admin/approvals.$id.tsx"),
     route("change-requests", "routes/admin/change-requests.tsx"),
+    route("change-requests/:id", "routes/admin/change-requests.$id.tsx"),
     route("audit-log", "routes/admin/audit-log.tsx"),
+    route("audit-log/:id", "routes/admin/audit-log.$id.tsx"),
     route("settings", "routes/admin/settings.tsx"),
     // Not in the nav: a deliberate-error button to confirm Sentry works. See LOCAL_TESTING.md.
     route("sentry-test", "routes/admin/sentry-test.tsx"),
@@ -99,12 +117,13 @@ export default [
     route("settings", "routes/portal/settings.tsx"),
     // A client org's own people — client admins invite and manage; see portal-team.controller.ts.
     route("team", "routes/portal/team.tsx"),
-    // Six top-level tabs (Overview, Work, Updates, Files, Decisions,
-    // Billing) plus Time and Manage for staff; tabs with sub-pages are
-    // layout routes. Every page reads the parent's already-fetched project
-    // via useOutletContext() (see ProjectWorkspaceContext in projects.$id.tsx)
-    // and the section layouts forward that context unchanged. URLs mirror the
-    // backend's portal-links.util.ts — see app/lib/portal-paths.ts.
+    // Eight top-level tabs (Overview, Work, Updates, Discussion, Activity,
+    // Files, Decisions, Billing) plus Time and Manage for staff; tabs with
+    // sub-pages are layout routes. Every page reads the parent's
+    // already-fetched project via useOutletContext() (see
+    // ProjectWorkspaceContext in projects.$id.tsx) and the section layouts
+    // forward that context unchanged. URLs mirror the backend's
+    // portal-links.util.ts — see app/lib/portal-paths.ts.
     route("projects/:id", "routes/portal/projects.$id.tsx", { id: "portal-project" }, [
       index("routes/portal/projects.$id._index.tsx"),
       route("work", "routes/portal/projects.$id.work.tsx", [
@@ -112,15 +131,14 @@ export default [
         route("tasks", "routes/portal/projects.$id.tasks.tsx"),
         route("timeline", "routes/portal/projects.$id.work.timeline.tsx"),
       ]),
-      route("updates", "routes/portal/projects.$id.updates-section.tsx", [
-        index("routes/portal/projects.$id.updates.tsx"),
-        route("discussion", "routes/portal/projects.$id.discussion.tsx"),
-      ]),
+      route("updates", "routes/portal/projects.$id.updates.tsx"),
+      route("discussion", "routes/portal/projects.$id.discussion.tsx"),
+      route("activity", "routes/portal/projects.$id.activity.tsx"),
       route("files", "routes/portal/projects.$id.files.tsx"),
       route("decisions", "routes/portal/projects.$id.decisions.tsx", [
         index("routes/portal/projects.$id.section-index.ts", { id: "portal-decisions-index" }),
         route("approvals", "routes/portal/projects.$id.approvals.tsx"),
-        route("changes", "routes/portal/projects.$id.change-requests.tsx"),
+        route("change-requests", "routes/portal/projects.$id.change-requests.tsx"),
         route("questions", "routes/portal/projects.$id.requests.tsx"),
       ]),
       route("billing", "routes/portal/projects.$id.billing.tsx", [
@@ -134,7 +152,8 @@ export default [
   ]),
   // PERMANENT: the pre-2026-10 flat project tabs. Notification links stored
   // in the database and in emails already sent point here — never remove.
-  ...(["tasks", "discussion", "approvals", "change-requests", "requests", "invoices", "contract"] as const).map(
+  // (No "discussion": its old URL is the current URL — see LEGACY_SECTIONS.)
+  ...(["tasks", "approvals", "change-requests", "requests", "invoices", "contract"] as const).map(
     (old) => route(`portal/projects/:id/${old}`, "routes/portal/projects.$id.legacy.ts", { id: `portal-legacy-${old}` }),
   ),
   // Outside the portal layout: resource routes with no component.

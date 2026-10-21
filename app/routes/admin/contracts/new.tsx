@@ -56,7 +56,7 @@ export default function NewContract({ loaderData }: Route.ComponentProps) {
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className="max-w-xl">
+    <div className="max-w-3xl">
       <AdminPageHeader
         title="New Contract"
         description="Draft a contract or SOW for a client to review and sign."

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFetcher } from "react-router";
+import { Link, useFetcher } from "react-router";
 import type { Route } from "./+types/organizations";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
@@ -11,7 +11,7 @@ import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { Building2, Plus } from "lucide-react";
+import { Building2, Eye, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -155,7 +155,14 @@ export default function AdminOrganizations({ loaderData }: Route.ComponentProps)
               )}
               {filtered.map((org) => (
                 <TableRow key={org._id} className="border-white/10">
-                  <TableCell className="text-white font-medium">{org.name}</TableCell>
+                  <TableCell>
+                    <Link
+                      to={`/cpadmin/organizations/${org._id}`}
+                      className="text-white font-medium hover:text-primary-bright transition-colors"
+                    >
+                      {org.name}
+                    </Link>
+                  </TableCell>
                   <TableCell className="text-white/50">{org.billingEmail}</TableCell>
                   <TableCell className="text-white/50">{org.defaultCurrency}</TableCell>
                   <TableCell>
@@ -164,6 +171,12 @@ export default function AdminOrganizations({ loaderData }: Route.ComponentProps)
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right space-x-2">
+                    <Link to={`/cpadmin/organizations/${org._id}`}>
+                      <Button variant="ghost" size="sm">
+                        <Eye className="size-3.5" />
+                        View
+                      </Button>
+                    </Link>
                     <Button variant="outline" size="sm" onClick={() => setEditing(org)}>
                       Edit
                     </Button>

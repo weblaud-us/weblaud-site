@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFetcher, useSearchParams } from "react-router";
+import { Link, useFetcher, useSearchParams } from "react-router";
 import type { Route } from "./+types/people";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
@@ -12,7 +12,7 @@ import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { UserPlus, Mail, Users2, Pencil, Ban, RotateCcw, Trash2 } from "lucide-react";
+import { UserPlus, Mail, Users2, Pencil, Ban, RotateCcw, Trash2, Eye } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -262,8 +262,13 @@ export default function AdminPeople({ loaderData }: Route.ComponentProps) {
               )}
               {filtered.map((person) => (
                 <TableRow key={person._id} className="border-white/10">
-                  <TableCell className="text-white font-medium">
-                    {person.firstName} {person.lastName}
+                  <TableCell>
+                    <Link
+                      to={`/cpadmin/people/${person._id}`}
+                      className="text-white font-medium hover:text-primary-bright transition-colors"
+                    >
+                      {person.firstName} {person.lastName}
+                    </Link>
                   </TableCell>
                   <TableCell className="text-white/50">{person.email}</TableCell>
                   <TableCell className="text-white/50">
@@ -282,6 +287,12 @@ export default function AdminPeople({ loaderData }: Route.ComponentProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
+                      <Link to={`/cpadmin/people/${person._id}`}>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="size-3.5" />
+                          View
+                        </Button>
+                      </Link>
                       {!person.isActive && (
                         <Button
                           variant="outline"

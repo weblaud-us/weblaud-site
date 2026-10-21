@@ -76,7 +76,7 @@ export default function EditContract({ loaderData }: Route.ComponentProps) {
   const isLocked = contract.status === "accepted";
 
   return (
-    <div className="max-w-xl">
+    <div className="max-w-3xl">
       <AdminPageHeader
         title="Edit Contract"
         description={org?.name ?? contract.title}

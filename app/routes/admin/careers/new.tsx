@@ -29,7 +29,7 @@ export default function NewCareer() {
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl">
       <AdminPageHeader
         title="New Job Post"
         description="Publish an opening to /career."

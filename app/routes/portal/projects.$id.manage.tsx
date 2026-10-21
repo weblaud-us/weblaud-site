@@ -128,7 +128,7 @@ export default function PortalProjectManage({ loaderData }: Route.ComponentProps
   const assignableStaff = staff.filter((s) => s._id !== pmId);
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 max-w-3xl">
       <fetcher.Form method="post" className="space-y-6">
         <input type="hidden" name="intent" value="details" />
 
@@ -168,10 +168,12 @@ export default function PortalProjectManage({ loaderData }: Route.ComponentProps
                 <p className="text-xs text-white/40">No other staff to assign yet.</p>
               )}
               {assignableStaff.map((member) => (
-                <label key={member._id} className="flex items-center gap-2 text-sm text-white/70">
+                <label key={member._id} className="flex items-center gap-2 text-sm text-white/70 min-w-0">
                   <Checkbox name="team" value={member._id} defaultChecked={teamIds.includes(member._id)} />
-                  {member.firstName} {member.lastName}
-                  <span className="text-white/30 text-xs">{member.email}</span>
+                  <span className="truncate whitespace-nowrap">
+                    {member.firstName} {member.lastName}
+                  </span>
+                  <span className="text-white/30 text-xs ml-auto truncate">{member.email}</span>
                 </label>
               ))}
             </div>

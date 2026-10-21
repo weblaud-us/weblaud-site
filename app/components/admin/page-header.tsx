@@ -17,7 +17,7 @@ export function AdminPageHeader({
   actions,
 }: AdminPageHeaderProps) {
   return (
-    <div className="flex items-start justify-between gap-4 mb-6">
+    <div className="flex items-start justify-between gap-4 mb-5">
       <div>
         {backTo && (
           <Link
@@ -28,7 +28,7 @@ export function AdminPageHeader({
             Back
           </Link>
         )}
-        <h1 className="text-2xl font-semibold text-white tracking-tight">
+        <h1 className="text-xl font-semibold text-white tracking-tight">
           {title}
         </h1>
         {description && (

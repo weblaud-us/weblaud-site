@@ -64,7 +64,7 @@ export default function NewClientProject({ loaderData }: Route.ComponentProps) {
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-5xl">
       <AdminPageHeader
         title="New Client Project"
         description="Set up a project the client will see in their portal."

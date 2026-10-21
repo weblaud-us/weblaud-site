@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams, useSubmit, useNavigation } from "react-router";
+import { Link, useSearchParams, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/audit-submissions";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
@@ -18,7 +18,7 @@ import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { Gauge } from "lucide-react";
+import { Eye, Gauge } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -199,8 +199,13 @@ export default function AdminAuditSubmissions({ loaderData }: Route.ComponentPro
                   key={lead._id}
                   className={"border-white/10 " + (lead.status === "new" ? "bg-[#0A84FF]/[0.04]" : "")}
                 >
-                  <TableCell className="text-white font-medium">
-                    <div>{lead.name}</div>
+                  <TableCell>
+                    <Link
+                      to={`/cpadmin/audit-submissions/${lead._id}`}
+                      className="text-white font-medium hover:text-primary-bright transition-colors"
+                    >
+                      {lead.name}
+                    </Link>
                     {lead.company && <div className="text-white/40 text-xs">{lead.company}</div>}
                   </TableCell>
                   <TableCell className="text-white/50">{lead.email}</TableCell>
@@ -236,6 +241,12 @@ export default function AdminAuditSubmissions({ loaderData }: Route.ComponentPro
                     <LeadPipelineSummary lead={lead} />
                   </TableCell>
                   <TableCell className="text-right space-x-2 space-y-2">
+                    <Link to={`/cpadmin/audit-submissions/${lead._id}`}>
+                      <Button variant="ghost" size="sm">
+                        <Eye className="size-3.5" />
+                        View
+                      </Button>
+                    </Link>
                     <LeadPipelineActions
                       lead={lead}
                       leadId={lead._id}

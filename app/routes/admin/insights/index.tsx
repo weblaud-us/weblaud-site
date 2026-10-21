@@ -9,7 +9,7 @@ import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
-import { Newspaper, Plus } from "lucide-react";
+import { Eye, Newspaper, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -140,8 +140,13 @@ export default function AdminInsightsIndex({
             )}
             {filtered.map((insight) => (
               <TableRow key={insight._id} className="border-white/10">
-                <TableCell className="text-white font-medium">
-                  {insight.title}
+                <TableCell>
+                  <Link
+                    to={`/cpadmin/insights/${insight._id}`}
+                    className="text-white font-medium hover:text-primary-bright transition-colors"
+                  >
+                    {insight.title}
+                  </Link>
                 </TableCell>
                 <TableCell className="text-white/50">
                   {insight.category}
@@ -155,6 +160,12 @@ export default function AdminInsightsIndex({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
+                  <Link to={`/cpadmin/insights/${insight._id}`}>
+                    <Button variant="ghost" size="sm">
+                      <Eye className="size-3.5" />
+                      View
+                    </Button>
+                  </Link>
                   <Link to={`/cpadmin/insights/${insight._id}/edit`}>
                     <Button variant="outline" size="sm">
                       Edit
@@ -200,7 +211,7 @@ export default function AdminInsightsIndex({
 
       {result.meta.totalPages > 1 && (
         <Pagination className="mt-6 justify-start">
-          <PaginationContent>
+          <PaginationContent className="flex-wrap">
             {Array.from({ length: result.meta.totalPages }, (_, i) => i + 1).map(
               (p) => {
                 const params = new URLSearchParams(searchParams);
