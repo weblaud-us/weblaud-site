@@ -16,7 +16,7 @@ if (result.error) console.error(result.error.message);
 if (result.status !== 0) process.exit(result.status ?? 1);
 // A client-only build can look successful while every SSR route is missing.
 // Refuse to deploy absent/stale adapter output.
-for (const path of ["../.netlify/v1/functions/react-router-server.mjs", "../build-netlify/server/server.js"]) {
+for (const path of ["../.netlify/v1/functions/react-router-server.mjs", "../build-netlify/server/index.js"]) {
   try {
     if (statSync(new URL(path, import.meta.url)).mtimeMs < startedAt - 2000) throw new Error("stale output");
   } catch {
