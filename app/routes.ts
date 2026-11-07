@@ -161,6 +161,7 @@ export default [
   route("portal/contracts/:id/certificate", "routes/portal/contracts.$id.certificate.ts"),
   route("portal/contracts/:id/document", "routes/portal/contracts.$id.document.ts"),
   route("portal/notifications/count", "routes/portal/notifications.count.ts"),
+  route("portal/push", "routes/portal/push.ts"),
   route("portal/files/:id/download", "routes/portal/files.$id.download.ts"),
   // Redirect-only routes for links in notification emails. Invoices and
   // contracts have no standalone portal page (they live on a project's tabs),

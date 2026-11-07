@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link, useSearchParams, useSubmit, useNavigation } from "react-router";
+import { Link, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/index";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
+import { readPageParams, redirectPastLastPage } from "~/lib/pagination";
+import { AdminPagination } from "~/components/admin/pagination";
 import type { Career, Paginated } from "~/lib/types";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
@@ -19,12 +21,6 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "~/components/ui/pagination";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -38,13 +34,14 @@ import {
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  const page = url.searchParams.get("page") ?? "1";
+  const { page, limit } = readPageParams(url);
   const result = await callAdminApi(request, (accessToken) =>
-    apiFetch<Paginated<Career>>(`/careers/admin?page=${page}&limit=20`, {
+    apiFetch<Paginated<Career>>(`/careers/admin?page=${page}&limit=${limit}`, {
       accessToken,
     }),
   );
-  return { result, page: Number(page) };
+  redirectPastLastPage(url, result.meta);
+  return { result };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -63,8 +60,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function AdminCareersIndex({ loaderData }: Route.ComponentProps) {
-  const { result, page } = loaderData;
-  const [searchParams] = useSearchParams();
+  const { result } = loaderData;
   const submit = useSubmit();
   const navigation = useNavigation();
   const deletingId = navigation.formData?.get("id")
@@ -215,28 +211,7 @@ export default function AdminCareersIndex({ loaderData }: Route.ComponentProps) 
         )}
       </div>
 
-      {result.meta.totalPages > 1 && (
-        <Pagination className="mt-6 justify-start">
-          <PaginationContent className="flex-wrap">
-            {Array.from({ length: result.meta.totalPages }, (_, i) => i + 1).map(
-              (p) => {
-                const params = new URLSearchParams(searchParams);
-                params.set("page", String(p));
-                return (
-                  <PaginationItem key={p}>
-                    <PaginationLink
-                      href={`?${params.toString()}`}
-                      isActive={p === page}
-                    >
-                      {p}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              },
-            )}
-          </PaginationContent>
-        </Pagination>
-      )}
+      <AdminPagination meta={result.meta} noun="jobs" />
     </div>
   );
 }

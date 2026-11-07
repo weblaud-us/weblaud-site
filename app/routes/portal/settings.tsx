@@ -5,6 +5,7 @@ import { AdminPageHeader } from "~/components/admin/page-header";
 import { ProfileForm } from "~/components/account/profile-form";
 import { ChangePasswordForm } from "~/components/account/change-password-form";
 import { EmailPreferencesForm } from "~/components/account/email-preferences-form";
+import { PushNotificationsCard } from "~/components/portal/push-notifications";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requirePortalUser(request);
@@ -68,9 +69,10 @@ export default function PortalSettings({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="max-w-2xl">
-      <AdminPageHeader title="Settings" description="Manage your profile and password." />
+      <AdminPageHeader title="Settings" description="Manage your profile, notifications and password." />
       <div className="space-y-6">
         <ProfileForm user={user} avatarUrl={avatarUrl} />
+        <PushNotificationsCard />
         <EmailPreferencesForm preferences={user.emailPreferences} />
         <ChangePasswordForm />
       </div>

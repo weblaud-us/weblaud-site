@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useFetcher, useSearchParams } from "react-router";
+import { Link, useFetcher } from "react-router";
 import type { Route } from "./+types/people";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
+import { readPageParams, redirectPastLastPage } from "~/lib/pagination";
+import { AdminPagination } from "~/components/admin/pagination";
 import type { Organization, OrgRole, PlatformRole, PortalUser } from "~/lib/types";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -39,12 +41,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "~/components/ui/pagination";
 
 interface UsersListResponse {
   items: PortalUser[];
@@ -53,27 +49,28 @@ interface UsersListResponse {
   limit: number;
 }
 
-const PAGE_SIZE = 20;
-
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  const page = Number(url.searchParams.get("page") ?? "1");
+  const { page, limit } = readPageParams(url);
 
   const [users, organizations] = await Promise.all([
     callAdminApi(request, (accessToken) =>
-      apiFetch<UsersListResponse>(`/users?page=${page}&limit=${PAGE_SIZE}`, { accessToken }),
+      apiFetch<UsersListResponse>(`/users?page=${page}&limit=${limit}`, { accessToken }),
     ),
     callAdminApi(request, (accessToken) =>
       apiFetch<Organization[]>("/organizations", { accessToken }),
     ),
   ]);
 
-  return {
-    people: users.items,
-    organizations,
+  const meta = {
     page,
-    totalPages: Math.max(1, Math.ceil(users.total / PAGE_SIZE)),
+    limit,
+    total: users.total,
+    totalPages: Math.ceil(users.total / limit),
   };
+  redirectPastLastPage(url, meta);
+
+  return { people: users.items, organizations, meta };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -184,8 +181,7 @@ function orgId(user: PortalUser) {
 }
 
 export default function AdminPeople({ loaderData }: Route.ComponentProps) {
-  const { people, organizations, page, totalPages } = loaderData;
-  const [searchParams] = useSearchParams();
+  const { people, organizations, meta } = loaderData;
   const fetcher = useFetcher<typeof action>();
   const [isInviting, setIsInviting] = useState(false);
   const [inviteRole, setInviteRole] = useState<PlatformRole>("user");
@@ -383,23 +379,7 @@ export default function AdminPeople({ loaderData }: Route.ComponentProps) {
         )}
       </div>
 
-      {totalPages > 1 && (
-        <Pagination className="mt-6 justify-start">
-          <PaginationContent>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
-              const params = new URLSearchParams(searchParams);
-              params.set("page", String(p));
-              return (
-                <PaginationItem key={p}>
-                  <PaginationLink href={`?${params.toString()}`} isActive={p === page}>
-                    {p}
-                  </PaginationLink>
-                </PaginationItem>
-              );
-            })}
-          </PaginationContent>
-        </Pagination>
-      )}
+      <AdminPagination meta={meta} noun="people" />
 
       <Dialog open={isInviting} onOpenChange={setIsInviting}>
         <DialogContent>

@@ -80,6 +80,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.png", type: "image/png" },
+  { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
   // Only the face every page's <h1> renders in. Preloading more fonts would
   // compete with the CSS and hero image for a phone's first round trips.
   {

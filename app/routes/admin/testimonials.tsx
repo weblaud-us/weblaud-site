@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useFetcher, useSearchParams } from "react-router";
+import { Link, useFetcher } from "react-router";
 import type { Route } from "./+types/testimonials";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
+import { readPageParams, redirectPastLastPage } from "~/lib/pagination";
+import { AdminPagination } from "~/components/admin/pagination";
 import type { Paginated, Testimonial } from "~/lib/types";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -40,23 +42,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "~/components/ui/pagination";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  const page = url.searchParams.get("page") ?? "1";
+  const { page, limit } = readPageParams(url);
   const result = await callAdminApi(request, (accessToken) =>
     apiFetch<Paginated<Testimonial>>(
-      `/testimonials/admin?page=${page}&limit=20`,
+      `/testimonials/admin?page=${page}&limit=${limit}`,
       { accessToken },
     ),
   );
-  return { result, page: Number(page) };
+  redirectPastLastPage(url, result.meta);
+  return { result };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -104,8 +101,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function AdminTestimonials({
   loaderData,
 }: Route.ComponentProps) {
-  const { result, page } = loaderData;
-  const [searchParams] = useSearchParams();
+  const { result } = loaderData;
   const fetcher = useFetcher<typeof action>();
   const [editing, setEditing] = useState<Testimonial | "new" | null>(null);
 
@@ -250,29 +246,7 @@ export default function AdminTestimonials({
         )}
       </div>
 
-      {result.meta.totalPages > 1 && (
-        <Pagination className="mt-6 justify-start">
-          <PaginationContent className="flex-wrap">
-            {Array.from(
-              { length: result.meta.totalPages },
-              (_, i) => i + 1,
-            ).map((p) => {
-              const params = new URLSearchParams(searchParams);
-              params.set("page", String(p));
-              return (
-                <PaginationItem key={p}>
-                  <PaginationLink
-                    href={`?${params.toString()}`}
-                    isActive={p === page}
-                  >
-                    {p}
-                  </PaginationLink>
-                </PaginationItem>
-              );
-            })}
-          </PaginationContent>
-        </Pagination>
-      )}
+      <AdminPagination meta={result.meta} noun="testimonials" />
 
       <Dialog
         open={editing !== null}

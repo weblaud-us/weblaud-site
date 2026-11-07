@@ -25,7 +25,15 @@ import {
   Wallet,
 } from "lucide-react";
 import { cn } from "~/lib/utils";
+import { forgetPushOnThisDevice } from "~/lib/push.client";
+import { PushPromptBanner } from "~/components/portal/push-notifications";
 import weblaudLogo from "~/assets/weblaud-logo.svg";
+
+// The portal is installable as its own app (PWA) — only from portal pages,
+// so the marketing site never offers to "install" the client portal.
+export const links: Route.LinksFunction = () => [
+  { rel: "manifest", href: "/manifest.webmanifest" },
+];
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requirePortalUser(request);
@@ -388,7 +396,7 @@ export default function PortalLayout({ loaderData }: Route.ComponentProps) {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <Form method="post">
+                <Form method="post" onSubmit={() => void forgetPushOnThisDevice()}>
                   <input type="hidden" name="intent" value="logout" />
                   <DropdownMenuItem asChild>
                     <button type="submit" className="w-full">
@@ -403,6 +411,7 @@ export default function PortalLayout({ loaderData }: Route.ComponentProps) {
         </header>
 
         <main className="flex-1 min-w-0 p-4 sm:p-6 md:p-8 overflow-y-auto">
+          <PushPromptBanner />
           <Outlet />
         </main>
       </div>

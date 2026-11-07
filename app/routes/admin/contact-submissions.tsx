@@ -1,20 +1,21 @@
 import { useState } from "react";
-import { Link, useSearchParams, useSubmit, useNavigation } from "react-router";
+import { Link, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/contact-submissions";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
 import { handleLeadPipelineIntent } from "~/lib/lead-actions.server";
 import { BUDGET_LABEL, TIMELINE_LABEL, isLeadStage } from "~/lib/leads";
+import { readPageParams, redirectPastLastPage } from "~/lib/pagination";
 import type { ContactSubmission, Paginated } from "~/lib/types";
 import {
-  LeadPipelineActions,
   LeadPipelineSummary,
+  LeadRowMenu,
   LeadSource,
   StageFilter,
 } from "~/components/admin/lead-pipeline";
 import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
 import { AdminPageHeader } from "~/components/admin/page-header";
+import { AdminPagination } from "~/components/admin/pagination";
 import { EmptyState } from "~/components/admin/empty-state";
 import { ListSearch } from "~/components/admin/list-search";
 import { Eye, Inbox } from "lucide-react";
@@ -26,41 +27,25 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "~/components/ui/pagination";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
 import { LocalTime } from "~/components/ui/local-time";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  const page = url.searchParams.get("page") ?? "1";
+  const { page, limit } = readPageParams(url);
   // The backend leaves spam out of the default list; the Spam tab asks for it.
   const showSpam = url.searchParams.get("view") === "spam";
   const stageParam = url.searchParams.get("stage");
   const stage = !showSpam && isLeadStage(stageParam) ? stageParam : null;
   const result = await callAdminApi(request, (accessToken) =>
     apiFetch<Paginated<ContactSubmission>>(
-      `/contact/admin?page=${page}&limit=20${showSpam ? "&status=spam" : ""}${
+      `/contact/admin?page=${page}&limit=${limit}${showSpam ? "&status=spam" : ""}${
         stage ? `&stage=${stage}` : ""
       }`,
       { accessToken },
     ),
   );
-  return { result, page: Number(page), showSpam, stage };
+  redirectPastLastPage(url, result.meta);
+  return { result, showSpam, stage };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -105,11 +90,16 @@ export async function action({ request }: Route.ActionArgs) {
   return null;
 }
 
+const STATUS_DOT: Record<ContactSubmission["status"], string> = {
+  new: "bg-[#0A84FF]",
+  read: "bg-white/25",
+  spam: "bg-red-400",
+};
+
 export default function AdminContactSubmissions({
   loaderData,
 }: Route.ComponentProps) {
-  const { result, page, showSpam, stage } = loaderData;
-  const [searchParams] = useSearchParams();
+  const { result, showSpam, stage } = loaderData;
   const submit = useSubmit();
   const navigation = useNavigation();
   const busyId =
@@ -164,7 +154,7 @@ export default function AdminContactSubmissions({
         <ListSearch
           value={query}
           onChange={setQuery}
-          placeholder="Search this page..."
+          placeholder="Filter this page by name or email..."
           className="mb-4"
         />
       )}
@@ -193,15 +183,14 @@ export default function AdminContactSubmissions({
           <TableHeader>
             <TableRow className="border-white/10 hover:bg-transparent">
               <TableHead className="text-white/60">From</TableHead>
-              <TableHead className="text-white/60">Contact</TableHead>
               <TableHead className="text-white/60">Message</TableHead>
               <TableHead className="text-white/60">Source</TableHead>
               <TableHead className="text-white/60">Received</TableHead>
               {!showSpam && (
                 <TableHead className="text-white/60">Pipeline</TableHead>
               )}
-              <TableHead className="text-white/60 text-right">
-                Actions
+              <TableHead className="text-right">
+                <span className="sr-only">Actions</span>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -209,177 +198,102 @@ export default function AdminContactSubmissions({
             {filtered.length === 0 && (
               <TableRow className="border-white/10">
                 <TableCell
-                  colSpan={showSpam ? 6 : 7}
+                  colSpan={showSpam ? 5 : 6}
                   className="text-white/40 py-8 text-center"
                 >
                   No submissions match "{query}".
                 </TableCell>
               </TableRow>
             )}
-            {filtered.map((lead) => (
-              <TableRow
-                key={lead._id}
-                className={
-                  "border-white/10 " +
-                  (lead.status === "new" ? "bg-[#0A84FF]/[0.04]" : "")
-                }
-              >
-                <TableCell>
-                  <Link
-                    to={`/cpadmin/contact-submissions/${lead._id}`}
-                    className="text-white font-medium hover:text-primary-bright transition-colors"
-                  >
-                    {lead.firstName} {lead.lastName}
-                  </Link>
-                </TableCell>
-                <TableCell className="text-white/50">
-                  <div>{lead.email}</div>
-                  {lead.phone && <div>{lead.phone}</div>}
-                </TableCell>
-                <TableCell className="text-white/50 max-w-sm whitespace-normal">
-                  {lead.message}
-                  {(lead.budget || lead.timeline) && (
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {lead.budget && (
-                        <Badge variant="outline">Budget: {BUDGET_LABEL[lead.budget]}</Badge>
-                      )}
-                      {lead.timeline && (
-                        <Badge variant="outline">{TIMELINE_LABEL[lead.timeline]}</Badge>
-                      )}
+            {filtered.map((lead) => {
+              const name = `${lead.firstName} ${lead.lastName}`.trim();
+              return (
+                <TableRow
+                  key={lead._id}
+                  className={
+                    "border-white/10 align-top " +
+                    (lead.status === "new" ? "bg-[#0A84FF]/[0.04]" : "")
+                  }
+                >
+                  <TableCell className="max-w-[220px]">
+                    <Link
+                      to={`/cpadmin/contact-submissions/${lead._id}`}
+                      className="block truncate text-white font-medium hover:text-primary-bright transition-colors"
+                      title={name}
+                    >
+                      {name}
+                    </Link>
+                    <div className="truncate text-xs text-white/50" title={lead.email}>
+                      {lead.email}
                     </div>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <LeadSource lead={lead} />
-                </TableCell>
-                <TableCell className="text-white/50">
-                  <div><LocalTime value={lead.createdAt} /></div>
-                  <Badge
-                    className="mt-1"
-                    variant={lead.status === "new" ? "default" : "secondary"}
-                  >
-                    {lead.status}
-                  </Badge>
-                  {lead.spamReason && (
-                    <div className="text-xs text-white/40 mt-1">
-                      {lead.spamReason}
-                    </div>
-                  )}
-                </TableCell>
-                {!showSpam && (
-                  <TableCell>
-                    <LeadPipelineSummary lead={lead} />
+                    {lead.phone && (
+                      <div className="text-xs text-white/40">{lead.phone}</div>
+                    )}
                   </TableCell>
-                )}
-                <TableCell className="text-right space-x-2 space-y-2">
-                  <Link to={`/cpadmin/contact-submissions/${lead._id}`}>
-                    <Button variant="ghost" size="sm">
-                      <Eye className="size-3.5" />
-                      View
-                    </Button>
-                  </Link>
-                  {lead.status !== "spam" && (
-                    <LeadPipelineActions
-                      lead={lead}
-                      leadId={lead._id}
-                      name={`${lead.firstName} ${lead.lastName}`.trim()}
-                      email={lead.email}
-                    />
-                  )}
-                  {lead.status === "spam" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={busyId === lead._id}
-                      onClick={() =>
-                        submit(
-                          { intent: "not-spam", id: lead._id },
-                          { method: "post" },
-                        )
-                      }
-                    >
-                      Not spam
-                    </Button>
-                  )}
-                  {lead.status === "new" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={busyId === lead._id}
-                      onClick={() =>
-                        submit(
-                          { intent: "read", id: lead._id },
-                          { method: "post" },
-                        )
-                      }
-                    >
-                      Mark read
-                    </Button>
-                  )}
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        disabled={busyId === lead._id}
+                  <TableCell className="text-white/60 max-w-md min-w-[260px] whitespace-normal">
+                    <p className="line-clamp-2 text-sm" title={lead.message}>
+                      {lead.message}
+                    </p>
+                    {(lead.budget || lead.timeline) && (
+                      <div className="mt-1 flex flex-wrap gap-x-3 text-xs text-white/40">
+                        {lead.budget && <span>Budget: {BUDGET_LABEL[lead.budget]}</span>}
+                        {lead.timeline && <span>{TIMELINE_LABEL[lead.timeline]}</span>}
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <LeadSource lead={lead} />
+                  </TableCell>
+                  <TableCell className="text-white/50 text-sm">
+                    <LocalTime value={lead.createdAt} />
+                    <div className="mt-1 flex items-center gap-1.5 text-xs capitalize">
+                      <span className={`size-1.5 rounded-full ${STATUS_DOT[lead.status]}`} />
+                      {lead.status}
+                    </div>
+                    {lead.spamReason && (
+                      <div
+                        className="text-xs text-white/40 mt-1 max-w-[180px] truncate"
+                        title={lead.spamReason}
                       >
-                        Delete
+                        {lead.spamReason}
+                      </div>
+                    )}
+                  </TableCell>
+                  {!showSpam && (
+                    <TableCell>
+                      <LeadPipelineSummary lead={lead} />
+                    </TableCell>
+                  )}
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={`/cpadmin/contact-submissions/${lead._id}`}>
+                          <Eye className="size-3.5" />
+                          View
+                        </Link>
                       </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete submission?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This permanently removes the message from{" "}
-                          {lead.firstName} {lead.lastName}.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() =>
-                            submit(
-                              { intent: "delete", id: lead._id },
-                              { method: "post" },
-                            )
-                          }
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
-            ))}
+                      <LeadRowMenu
+                        lead={lead}
+                        leadId={lead._id}
+                        name={name}
+                        email={lead.email}
+                        status={lead.status}
+                        disabled={busyId === lead._id}
+                        onIntent={(intent) =>
+                          submit({ intent, id: lead._id }, { method: "post" })
+                        }
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
         )}
       </div>
 
-      {result.meta.totalPages > 1 && (
-        <Pagination className="mt-6 justify-start">
-          <PaginationContent>
-            {Array.from(
-              { length: result.meta.totalPages },
-              (_, i) => i + 1,
-            ).map((p) => {
-              const params = new URLSearchParams(searchParams);
-              params.set("page", String(p));
-              return (
-                <PaginationItem key={p}>
-                  <PaginationLink
-                    href={`?${params.toString()}`}
-                    isActive={p === page}
-                  >
-                    {p}
-                  </PaginationLink>
-                </PaginationItem>
-              );
-            })}
-          </PaginationContent>
-        </Pagination>
-      )}
+      <AdminPagination meta={result.meta} noun="submissions" />
     </div>
   );
 }

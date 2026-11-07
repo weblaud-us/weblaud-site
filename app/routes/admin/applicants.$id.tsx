@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/applicants.$id";
-import { apiFetch } from "~/lib/api.server";
+import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
 import type { ApplicationStatus, JobApplication } from "~/lib/types";
+import { ApplicantEmailDialog } from "~/components/admin/applicant-email-dialog";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import {
@@ -14,7 +16,7 @@ import {
 } from "~/components/ui/card";
 import { AdminPageHeader } from "~/components/admin/page-header";
 import { LocalTime } from "~/components/ui/local-time";
-import { Download } from "lucide-react";
+import { CalendarClock, Download, ExternalLink, Mail } from "lucide-react";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const applicant = await callAdminApi(request, (accessToken) =>
@@ -24,6 +26,38 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   // /cpadmin/applicants/:id/resume (admin-only, real filename and type).
   const { resumeUrl, ...rest } = applicant;
   return { applicant: { ...rest, hasResume: !!resumeUrl } };
+}
+
+export async function action({ request, params }: Route.ActionArgs) {
+  const formData = await request.formData();
+  if (formData.get("intent") !== "email") return null;
+
+  const optional = (key: string) => {
+    const value = String(formData.get(key) ?? "").trim();
+    return value || undefined;
+  };
+
+  try {
+    await callAdminApi(request, (accessToken) =>
+      apiFetch(`/careers/admin/applicants/${params.id}/email`, {
+        method: "POST",
+        accessToken,
+        body: {
+          subject: String(formData.get("subject") ?? ""),
+          message: String(formData.get("message") ?? ""),
+          taskUrl: optional("taskUrl"),
+          dueAt: optional("dueAt"),
+          timeZone: optional("timeZone"),
+          setStatus: optional("setStatus"),
+        },
+      }),
+    );
+  } catch (err) {
+    if (err instanceof Response) throw err;
+    if (err instanceof ApiError) return { error: err.message };
+    return { error: "Something went wrong." };
+  }
+  return { ok: true as const, message: "Email sent." };
 }
 
 const STATUS_LABEL: Record<ApplicationStatus, string> = {
@@ -47,6 +81,8 @@ const STATUS_VARIANT: Record<
 
 export default function AdminApplicantDetail({ loaderData }: Route.ComponentProps) {
   const { applicant } = loaderData;
+  const [emailing, setEmailing] = useState(false);
+  const emails = [...(applicant.emails ?? [])].reverse();
 
   return (
     <div className="max-w-5xl">
@@ -59,6 +95,10 @@ export default function AdminApplicantDetail({ loaderData }: Route.ComponentProp
             <Badge variant={STATUS_VARIANT[applicant.status]}>
               {STATUS_LABEL[applicant.status]}
             </Badge>
+            <Button size="sm" onClick={() => setEmailing(true)}>
+              <Mail className="size-3.5" />
+              Email applicant
+            </Button>
             {applicant.hasResume && (
               <a href={`/cpadmin/applicants/${applicant._id}/resume?download=1`}>
                 <Button variant="outline" size="sm">
@@ -97,6 +137,63 @@ export default function AdminApplicantDetail({ loaderData }: Route.ComponentProp
               </CardContent>
             </Card>
           )}
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Emails sent</CardTitle>
+              <CardDescription>
+                Tasks, invites and replies sent from here, newest first.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {emails.length === 0 ? (
+                <p className="text-sm text-white/40">
+                  Nothing sent yet. Use "Email applicant" to send a task or an
+                  interview invite.
+                </p>
+              ) : (
+                <ul className="divide-y divide-white/10">
+                  {emails.map((email) => (
+                    <li key={email._id} className="py-3 first:pt-0 last:pb-0">
+                      <div className="flex flex-wrap items-baseline justify-between gap-2">
+                        <p className="text-sm font-medium text-white/90">{email.subject}</p>
+                        <span className="text-xs text-white/40">
+                          <LocalTime value={email.sentAt} withTime />
+                        </span>
+                      </div>
+                      <p
+                        className="mt-1 text-sm text-white/50 line-clamp-2 whitespace-pre-wrap"
+                        title={email.message}
+                      >
+                        {email.message}
+                      </p>
+                      {(email.taskUrl || email.dueAt) && (
+                        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                          {email.taskUrl && (
+                            <a
+                              href={email.taskUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-[#0A84FF] hover:underline"
+                            >
+                              <ExternalLink className="size-3" />
+                              Task link
+                            </a>
+                          )}
+                          {email.dueAt && (
+                            <span className="inline-flex items-center gap-1 text-white/50">
+                              <CalendarClock className="size-3" />
+                              Due <LocalTime value={email.dueAt} withTime />
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-6">
@@ -201,6 +298,14 @@ export default function AdminApplicantDetail({ loaderData }: Route.ComponentProp
           ← Back to applicants
         </Link>
       </p>
+
+      <ApplicantEmailDialog
+        open={emailing}
+        onOpenChange={setEmailing}
+        applicantName={applicant.name}
+        applicantEmail={applicant.email}
+        role={applicant.careerId?.title ?? "open"}
+      />
     </div>
   );
 }

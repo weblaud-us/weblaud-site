@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link, useSearchParams, useSubmit, useNavigation } from "react-router";
+import { Link, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/audit-submissions";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
+import { readPageParams, redirectPastLastPage } from "~/lib/pagination";
+import { AdminPagination } from "~/components/admin/pagination";
 import { handleLeadPipelineIntent } from "~/lib/lead-actions.server";
 import { isLeadStage } from "~/lib/leads";
 import { SCORE_BAND_LABEL, scoreBand } from "~/lib/audit";
@@ -28,12 +30,6 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "~/components/ui/pagination";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -48,16 +44,17 @@ import { LocalTime } from "~/components/ui/local-time";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  const page = url.searchParams.get("page") ?? "1";
+  const { page, limit } = readPageParams(url);
   const stageParam = url.searchParams.get("stage");
   const stage = isLeadStage(stageParam) ? stageParam : null;
   const result = await callAdminApi(request, (accessToken) =>
     apiFetch<Paginated<AuditSubmission>>(
-      `/audits/admin?page=${page}&limit=20${stage ? `&stage=${stage}` : ""}`,
+      `/audits/admin?page=${page}&limit=${limit}${stage ? `&stage=${stage}` : ""}`,
       { accessToken },
     ),
   );
-  return { result, page: Number(page), stage };
+  redirectPastLastPage(url, result.meta);
+  return { result, stage };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -125,8 +122,7 @@ function ScoreStrip({ scores }: { scores?: AuditScores }) {
 }
 
 export default function AdminAuditSubmissions({ loaderData }: Route.ComponentProps) {
-  const { result, page, stage } = loaderData;
-  const [searchParams] = useSearchParams();
+  const { result, stage } = loaderData;
   const submit = useSubmit();
   const navigation = useNavigation();
   const busyId =
@@ -295,23 +291,7 @@ export default function AdminAuditSubmissions({ loaderData }: Route.ComponentPro
         )}
       </div>
 
-      {result.meta.totalPages > 1 && (
-        <Pagination className="mt-6 justify-start">
-          <PaginationContent>
-            {Array.from({ length: result.meta.totalPages }, (_, i) => i + 1).map((p) => {
-              const params = new URLSearchParams(searchParams);
-              params.set("page", String(p));
-              return (
-                <PaginationItem key={p}>
-                  <PaginationLink href={`?${params.toString()}`} isActive={p === page}>
-                    {p}
-                  </PaginationLink>
-                </PaginationItem>
-              );
-            })}
-          </PaginationContent>
-        </Pagination>
-      )}
+      <AdminPagination meta={result.meta} noun="submissions" />
     </div>
   );
 }

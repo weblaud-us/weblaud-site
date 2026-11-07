@@ -113,7 +113,18 @@ export interface JobApplication {
   coverLetter?: string;
   resumeUrl?: string;
   status: ApplicationStatus;
+  /** Emails sent from the admin (task, interview invite...), oldest first. */
+  emails?: ApplicantEmail[];
   createdAt: string;
+}
+
+export interface ApplicantEmail {
+  _id: string;
+  subject: string;
+  message: string;
+  taskUrl?: string;
+  dueAt?: string;
+  sentAt: string;
 }
 
 export interface AdminService {

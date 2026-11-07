@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useFetcher, useSearchParams } from "react-router";
 import { toast } from "sonner";
-import { CalendarClock, UserPlus } from "lucide-react";
+import {
+  CalendarClock,
+  Check,
+  Inbox,
+  SquareKanban,
+  MoreHorizontal,
+  Trash2,
+  UserPlus,
+} from "lucide-react";
 import type { LeadPipelineFields, LeadStage } from "~/lib/types";
 import {
   HEARD_ABOUT_LABEL,
@@ -25,6 +33,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 
 type ActionResult = { ok: true; message?: string } | { error: string } | null;
 
@@ -409,6 +434,124 @@ export function LeadPipelineActions({
         open={converting}
         onOpenChange={setConverting}
       />
+    </>
+  );
+}
+
+export type LeadRowIntent = "read" | "not-spam" | "delete";
+
+/**
+ * Compact "⋯" menu for a lead row: Pipeline, Convert, Mark read / Not spam,
+ * Delete. Menu items only flip state; the dialogs render outside the menu so
+ * Radix doesn't fight over focus when one opens from a menu item.
+ */
+export function LeadRowMenu({
+  lead,
+  leadId,
+  name,
+  email,
+  company,
+  status,
+  disabled,
+  onIntent,
+}: {
+  lead: LeadPipelineFields;
+  leadId: string;
+  name: string;
+  email: string;
+  company?: string;
+  status?: "new" | "read" | "spam";
+  disabled?: boolean;
+  onIntent: (intent: LeadRowIntent) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [converting, setConverting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const isSpam = status === "spam";
+  const canConvert = !isSpam && lead.stage !== "won" && lead.stage !== "lost";
+
+  return (
+    <>
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8 text-white/60 hover:text-white"
+            disabled={disabled}
+            aria-label={`More actions for ${name}`}
+          >
+            <MoreHorizontal className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          {!isSpam && (
+            <DropdownMenuItem onSelect={() => setEditing(true)}>
+              <SquareKanban />
+              Pipeline…
+            </DropdownMenuItem>
+          )}
+          {canConvert && (
+            <DropdownMenuItem onSelect={() => setConverting(true)}>
+              <UserPlus />
+              Convert to client…
+            </DropdownMenuItem>
+          )}
+          {status === "new" && (
+            <DropdownMenuItem onSelect={() => onIntent("read")}>
+              <Check />
+              Mark read
+            </DropdownMenuItem>
+          )}
+          {isSpam && (
+            <DropdownMenuItem onSelect={() => onIntent("not-spam")}>
+              <Inbox />
+              Not spam
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onSelect={() => setDeleting(true)}>
+            <Trash2 />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {!isSpam && (
+        <LeadPipelineDialog
+          lead={lead}
+          leadId={leadId}
+          leadName={name}
+          open={editing}
+          onOpenChange={setEditing}
+        />
+      )}
+      {canConvert && (
+        <ConvertToClientDialog
+          leadId={leadId}
+          name={name}
+          email={email}
+          company={company}
+          open={converting}
+          onOpenChange={setConverting}
+        />
+      )}
+      <AlertDialog open={deleting} onOpenChange={setDeleting}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete submission?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes the message from {name}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => onIntent("delete")}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

@@ -15,6 +15,12 @@ import weblaudLogo from "~/assets/weblaud-logo.svg";
 import { apiFetch, ApiError, withClientContext } from "~/lib/api.server";
 import { createPortalSession, getPortalSession } from "~/lib/portal.server";
 
+// Same manifest as the portal layout: iOS reads it at "Add to Home Screen"
+// time, and clients often do that from this page.
+export const links: Route.LinksFunction = () => [
+  { rel: "manifest", href: "/manifest.webmanifest" },
+];
+
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getPortalSession(request);
   if (session.get("accessToken")) {

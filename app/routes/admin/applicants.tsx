@@ -2,6 +2,8 @@ import { Link, useSearchParams, useSubmit, useNavigation } from "react-router";
 import type { Route } from "./+types/applicants";
 import { apiFetch, ApiError } from "~/lib/api.server";
 import { callAdminApi } from "~/lib/session.server";
+import { readPageParams, redirectPastLastPage } from "~/lib/pagination";
+import { AdminPagination } from "~/components/admin/pagination";
 import {
   APPLICATION_STATUSES,
   type Career,
@@ -21,12 +23,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "~/components/ui/pagination";
 import { LocalTime } from "~/components/ui/local-time";
 
 /** The filters the backend's applicant listing understands. */
@@ -41,11 +37,11 @@ function filterQuery(searchParams: URLSearchParams) {
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  const page = url.searchParams.get("page") ?? "1";
+  const { page, limit } = readPageParams(url);
 
   const query = filterQuery(url.searchParams);
-  query.set("page", page);
-  query.set("limit", "20");
+  query.set("page", String(page));
+  query.set("limit", String(limit));
 
   const [result, jobs] = await Promise.all([
     callAdminApi(request, (accessToken) =>
@@ -61,6 +57,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     ),
   ]);
 
+  redirectPastLastPage(url, result.meta);
+
   return {
     result: {
       ...result,
@@ -73,7 +71,6 @@ export async function loader({ request }: Route.LoaderArgs) {
       })),
     },
     jobs: jobs.items,
-    page: Number(page),
   };
 }
 
@@ -99,7 +96,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function AdminApplicants({ loaderData }: Route.ComponentProps) {
-  const { result, jobs, page } = loaderData;
+  const { result, jobs } = loaderData;
   const [searchParams, setSearchParams] = useSearchParams();
   const submit = useSubmit();
   const navigation = useNavigation();
@@ -282,28 +279,7 @@ export default function AdminApplicants({ loaderData }: Route.ComponentProps) {
         )}
       </div>
 
-      {result.meta.totalPages > 1 && (
-        <Pagination className="mt-6 justify-start">
-          <PaginationContent>
-            {Array.from({ length: result.meta.totalPages }, (_, i) => i + 1).map(
-              (p) => {
-                const params = new URLSearchParams(searchParams);
-                params.set("page", String(p));
-                return (
-                  <PaginationItem key={p}>
-                    <PaginationLink
-                      href={`?${params.toString()}`}
-                      isActive={p === page}
-                    >
-                      {p}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              },
-            )}
-          </PaginationContent>
-        </Pagination>
-      )}
+      <AdminPagination meta={result.meta} noun="applicants" />
     </div>
   );
 }
