@@ -1,0 +1,16 @@
+# Separate team-review project only. No Git connection or custom domain needed.
+# Normal Node/PM2 deployment continues to use `npm run build` and ./build.
+[build]
+command = "npm run build:netlify"
+publish = "build-netlify/client"
+
+[build.environment]
+NODE_VERSION = "22"
+WEBLAUD_DEPLOY_TARGET = "netlify"
+
+# This project is a review copy. Remove this rule only when deliberately
+# promoting a separately reviewed Netlify project to the public website.
+[[headers]]
+for = "/*"
+  [headers.values]
+  X-Robots-Tag = "noindex, nofollow, noarchive"

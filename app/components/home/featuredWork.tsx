@@ -21,7 +21,7 @@ export default function FeaturedWork({ projects }: FeaturedWorkProps) {
   if (projects.length === 0) return null;
 
   return (
-    <section className="bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-14 sm:py-16 md:py-20">
+    <section id="work" className="scroll-mt-24 bg-black px-4 sm:px-6 lg:px-8 xl:px-10 py-14 sm:py-16 md:py-20">
       <div className="max-w-7xl mx-auto">
         <div
           ref={titleRef}

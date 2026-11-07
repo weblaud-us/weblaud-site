@@ -65,6 +65,18 @@ export const SAVINGS = {
 export const RESULTS_DISCLOSURE =
   "Figures shown are representative of typical engagement outcomes. Individual results vary with scope, data quality, and existing systems.";
 
+/**
+ * Share of repetitive admin hours that automation removes. The home page ROI
+ * calculator multiplies by `share`; the bottleneck selector quotes
+ * `percentLabel`. One number, so the two cards cannot disagree.
+ */
+export const AUTOMATION = {
+  /** Fraction, for arithmetic. */
+  share: 0.75,
+  /** "75% less manual work" framing. */
+  percentLabel: "75%",
+} as const;
+
 export const TIMELINE = {
   min: 4,
   max: 14,

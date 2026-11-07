@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
-import SectionBadge from "~/components/ui/section-badge";
-import { Cpu } from "lucide-react";
+import { HomeSectionHeading } from "./homeSectionHeading";
 import {
   SiGooglecloud,
   SiReplit,
@@ -293,7 +292,6 @@ const PartnerLogoCard = ({
 };
 
 const TrustedPartnerships = () => {
-  const [titleRef, isTitleVisible] = useBlurAnimation<HTMLDivElement>();
   const [marqueeRef, isMarqueeVisible] = useBlurAnimation<HTMLDivElement>();
 
   // Tripled lists so seamless looping never shows a seam
@@ -309,27 +307,13 @@ const TrustedPartnerships = () => {
       </div>
 
       {/* Section Header */}
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
-        <div
-          ref={titleRef}
-          className={`text-center mb-8 sm:mb-10 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
-        >
-          <SectionBadge
-            icon={<Cpu className="w-3.5 h-3.5" />}
-            text="Our Technology Stack"
-            badgeLabel="Modern Infrastructure"
-            color="#0a84ff"
-            className="mb-3 sm:mb-4"
-          />
-
-          <h2 className="text-white font-barlow text-xl sm:text-2xl md:text-4xl font-bold tracking-tight">
-            Platforms & Tools We Build With
-          </h2>
-          <p className="text-gray-400 text-xs sm:text-sm md:text-base font-barlow mt-2 sm:mt-3 max-w-2xl mx-auto leading-relaxed">
-            We engineer on modern, industry-standard cloud, AI, and payment
-            infrastructure — no legacy stacks, no vendor lock-in.
-          </p>
-        </div>
+      <div id="stack" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 scroll-mt-24">
+        <HomeSectionHeading
+          eyebrow="Modern AI & Cloud Infrastructure"
+          title="Platforms & Models We Engineer With"
+          subtitle="We pair frontier AI models and voice synthesis engines with type-safe, enterprise-grade backend and cloud infrastructure—no legacy stacks, no vendor lock-in."
+          className="mb-8 sm:mb-10 md:mb-12"
+        />
       </div>
 
       {/* Dual Direction Marquee Container with Smooth Edge Mask */}

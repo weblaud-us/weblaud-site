@@ -1,78 +1,64 @@
 import { motion } from "framer-motion";
 import { useBlurAnimation } from "~/hooks/useBlurAnimation";
 import { getBlurAnimationClasses } from "~/lib/animations";
-import SectionBadge from "~/components/ui/section-badge";
-import { Target, Zap, Users, ShieldCheck, Clock } from "lucide-react";
+import { Zap, Users, ShieldCheck, Clock } from "lucide-react";
+import { TIMELINE } from "~/lib/constants";
+import { HomeSectionHeading } from "./homeSectionHeading";
 
 const reasons = [
   {
-    tag: "Next-Gen Tech",
-    title: "Innovation",
+    tag: "Innovation",
+    title: "AI-Native + Full-Stack Depth",
     description:
-      "Pushing boundaries with modern AI workflows, resilient cloud infrastructure, and scalable system design.",
+      "Most AI agencies can't build scalable backends, and traditional dev shops bolt AI on as an afterthought. We architect production software and autonomous AI under one roof.",
     icon: Zap,
     number: "01",
     highlightLabel: "Focus",
-    highlightValue: "Cloud & AI Stacks",
+    highlightValue: "Cloud, AI & Full-Stack",
   },
   {
-    tag: "Direct Access",
-    title: "Collaboration",
+    tag: "Collaboration",
+    title: "Direct Engineer Access",
     description:
-      "Direct engineer communication with dedicated Slack channels, weekly demos, and transparent roadmap visibility.",
+      "Skip account managers and game-of-telephone delays. Work directly with senior engineers via dedicated Slack channels, transparent trackers, and weekly live demos.",
     icon: Users,
     number: "02",
     highlightLabel: "Cadence",
-    highlightValue: "Weekly Demos",
+    highlightValue: "Weekly Live Demos",
   },
   {
-    tag: "Clean Architecture",
-    title: "Excellence",
+    tag: "Excellence",
+    title: "Clean, Type-Safe Architecture",
     description:
-      "Strict engineering benchmarks, automated CI/CD test suites, and maintainable type-safe production codebases.",
+      "Strict engineering benchmarks, modular microservices, automated CI/CD test suites, and maintainable production codebases built to pass technical due diligence.",
     icon: ShieldCheck,
     number: "03",
     highlightLabel: "Standard",
     highlightValue: "Zero Tech Debt",
   },
   {
-    tag: "Fast Turnaround",
-    title: "Reliable Delivery",
+    tag: "Reliable Delivery",
+    title: "Fast, Predictable Turnaround",
     description:
-      "Fixed-scope milestone planning with predictable shipping sprints and guaranteed turnaround timelines.",
+      "Fixed-scope milestone planning with predictable shipping sprints and guaranteed turnaround timelines—no runaway hourly billing.",
     icon: Clock,
     number: "04",
     highlightLabel: "Timeline",
-    highlightValue: "Fixed Milestones",
+    highlightValue: `${TIMELINE.min}–${TIMELINE.max} Week Sprints`,
   },
 ];
 
 const WhyChooseUs = () => {
-  const [titleRef, isTitleVisible] = useBlurAnimation();
   const [cardsRef, areCardsVisible] = useBlurAnimation();
 
   return (
-    <section className="bg-black px-4 sm:px-6 md:px-8 lg:px-6 xl:px-10 py-16 sm:py-20 md:py-24 relative overflow-hidden">
+    <section id="why-weblaud" className="scroll-mt-24 bg-black px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
-        <div
-          ref={titleRef}
-          className={`text-center mb-12 md:mb-16 ${getBlurAnimationClasses(isTitleVisible)}`}
-        >
-          <SectionBadge
-            icon={<Target className="w-3.5 h-3.5" />}
-            text="The Weblaud Advantage"
-            badgeLabel="Our Edge"
-            color="#0a84ff"
-            className="mb-4"
-          />
-          <h2 className="text-white font-barlow text-2xl md:text-4xl font-bold tracking-tight">
-            Why Choose Us
-          </h2>
-        </div>
+        <HomeSectionHeading eyebrow="Our Edge" title="Why High-Growth Teams Choose Weblaud" />
 
         <div
           ref={cardsRef}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
         >
           {reasons.map((reason, index) => {
             const Icon = reason.icon;
@@ -80,7 +66,7 @@ const WhyChooseUs = () => {
               <div
                 key={reason.title}
                 style={{ transitionDelay: `${index * 90}ms` }}
-                className={`group relative rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-700 hover:-translate-y-1 flex flex-col justify-between cursor-default ${getBlurAnimationClasses(areCardsVisible)}`}
+                className={`group relative rounded-2xl p-6 lg:p-7 bg-[#0e0e0e] border border-[#1f1f1f] hover:border-primary/40 transition-all duration-700 hover:-translate-y-1 flex flex-col justify-between cursor-default ${getBlurAnimationClasses(areCardsVisible)}`}
               >
                 <div>
                   {/* Top Row: Icon Box + Step Index */}
@@ -95,27 +81,27 @@ const WhyChooseUs = () => {
                   </div>
 
                   {/* Category Tag */}
-                  <span className="text-[9px] sm:text-[10px] md:text-[11px] font-mono tracking-wider uppercase text-primary block mb-1 sm:mb-2 font-medium">
+                  <span className="text-[11px] font-mono tracking-wider uppercase text-primary block mb-1 sm:mb-2 font-medium">
                     {reason.tag}
                   </span>
 
                   {/* Title */}
-                  <h3 className="text-sm sm:text-base md:text-lg font-bold font-barlow text-white tracking-tight mb-2 group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-lg font-bold font-barlow text-white tracking-tight mb-2 group-hover:text-primary transition-colors duration-300">
                     {reason.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-gray-400 font-barlow text-xs sm:text-sm leading-relaxed mb-4">
+                  <p className="text-gray-400 font-barlow text-sm leading-relaxed mb-4">
                     {reason.description}
                   </p>
                 </div>
 
                 {/* Structured Metadata Bottom Bar */}
                 <div className="pt-3 sm:pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
-                  <span className="text-white/35 uppercase tracking-wider text-[9px] sm:text-[11px]">
+                  <span className="text-white/35 uppercase tracking-wider text-[11px]">
                     {reason.highlightLabel}
                   </span>
-                  <span className="text-primary font-medium tracking-wide text-[9px] sm:text-[11px]">
+                  <span className="text-primary font-medium tracking-wide text-[11px]">
                     {reason.highlightValue}
                   </span>
                 </div>

@@ -1,0 +1,190 @@
+/*
+ * Light / dark theme for the public site.
+ *
+ * Dark is the default for every visitor; light applies only after an explicit
+ * toggle (see app/lib/theme.ts, which sets html[data-theme] before first paint).
+ *
+ * /portal and /cpadmin are dark-only and put `dark` on <body>, so every light
+ * rule is guarded by :not(:has(body.dark)).
+ *
+ * Most of the site hard-codes dark colours as Tailwind palette classes
+ * (bg-black, text-white, text-gray-400, border-white/[0.08]…). Tailwind v4
+ * compiles those to var(--color-*), so remapping the variables here flips them
+ * all, including /opacity, hover: and gradient variants. Arbitrary hex values
+ * (bg-[#0e0e0e]) have no variable and get explicit rules below.
+ */
+
+/* Surface tokens for components written against them (the ROI cards). */
+:root {
+  --bg-primary: #000000;
+  --bg-surface: #12151a;
+  --bg-elevated: #1a1e25;
+  --text-primary: #f1f3f6;
+  --text-muted: #9ba3b1;
+}
+
+html[data-theme="light"]:not(:has(body.dark)) {
+  color-scheme: light;
+
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-muted: #475569;
+
+  /* "black" is the page, "white" is ink. */
+  --color-black: #f8fafc;
+  --color-white: #0f172a;
+  --color-card-bg: #ffffff;
+  --color-secondary: #f1f5f9;
+  --color-light-black: #e2e8f0;
+  --color-dark-gray: #64748b;
+  --color-gray: #334155;
+
+  /* Greys were picked as light-on-black; mirror them onto slate. Each text
+     shade stays ≥4.5:1 on #f8fafc (gray-500 → #64748b is 4.6:1). */
+  --color-gray-100: #1e293b;
+  --color-gray-200: #1e293b;
+  --color-gray-300: #334155;
+  --color-gray-400: #475569;
+  --color-gray-500: #64748b;
+  --color-gray-600: #94a3b8;
+  --color-gray-700: #cbd5e1;
+  --color-gray-800: #e2e8f0;
+  --color-gray-900: #f1f5f9;
+
+  /* #0a84ff is 3.6:1 on white: too light for text. One darker blue serves
+     text and fills (white on #0062cc is 5.9:1). */
+  --color-primary: #0062cc;
+  --color-primary-solid: #0062cc;
+  --color-primary-solid-hover: #0052ad;
+  --color-blue-400: #2563eb;
+  --color-blue-500: #1d4ed8;
+  /* Success text (payback figures) at ≥4.5:1 on white. */
+  --color-emerald-400: #047857;
+
+  /* Accent fills keep real white text and icons. */
+  .bg-primary,
+  .bg-primary-solid,
+  .bg-blue-400,
+  .bg-blue-500,
+  .bg-blue-600,
+  .bg-destructive,
+  .bg-gray-500,
+  .bg-\[\#0A84FF\],
+  .bg-\[\#0066FF\],
+  .hover\:bg-primary-solid-hover:hover,
+  .wl-on-accent {
+    --color-white: #ffffff;
+  }
+
+  /* Arbitrary dark hex values. */
+  .bg-\[\#0e0e0e\],
+  .bg-\[\#0c0c0c\],
+  .bg-\[\#050505\],
+  .bg-\[\#111111\],
+  .bg-\[\#121212\],
+  .bg-\[\#161616\],
+  .bg-\[\#141414\] {
+    background-color: #ffffff;
+  }
+  .bg-\[\#0e0e0e\]\/95 {
+    background-color: rgb(255 255 255 / 0.95);
+  }
+  .bg-\[\#222222\] {
+    background-color: #e2e8f0;
+  }
+  .border-\[\#1f1f1f\],
+  .border-\[\#222222\] {
+    border-color: #e2e8f0;
+  }
+  .text-\[\#cfcfcf\] {
+    color: #334155;
+  }
+  .text-\[\#8a8a8a\] {
+    color: #64748b;
+  }
+  .text-\[\#141414\] {
+    color: #f8fafc;
+  }
+  .text-\[\#5ab0ff\] {
+    color: #0052cc;
+  }
+  .from-\[\#0c1424\],
+  .from-\[\#292929\] {
+    --tw-gradient-from: #eef4ff;
+  }
+  .via-\[\#090e1a\],
+  .via-\[\#0e0e0e\] {
+    --tw-gradient-via: #f8fafc;
+  }
+  .to-\[\#070707\],
+  .to-\[\#0e0e0e\],
+  .to-\[\#0a0a0a\] {
+    --tw-gradient-to: #ffffff;
+  }
+
+  /* Hero accent line: darker stops keep every part ≥4.5:1 on #f8fafc. */
+  .wl-hero-gradient {
+    background-image: linear-gradient(90deg, #0062cc 0%, #0e7490 45%, #0f766e 70%, #0062cc 100%);
+  }
+  /* Hero diagram: white glass cards and quieter glows. The orb stays dark
+     blue with white text (.wl-on-accent). */
+  .wl-hero-core {
+    --core-trace: rgba(0, 98, 204, 0.28);
+    --core-trace-hot: #0a84ff;
+    --core-glow: rgba(10, 132, 255, 0.2);
+    --core-card-bg: rgb(255 255 255 / 0.9);
+    --core-card-border: rgba(0, 98, 204, 0.22);
+  }
+
+  /* White line-art assets (hero's dashed arrow) would vanish on a light page. */
+  img[src*="dashed-arrow"] {
+    filter: invert(1) opacity(0.5);
+  }
+
+  /* Plain-CSS decoration in app.css drawn in white for a black page. */
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(to right, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+  }
+  .grid-ripple-box {
+    background: rgba(15, 23, 42, 0.05);
+    border-color: rgba(15, 23, 42, 0.1);
+  }
+  * {
+    scrollbar-color: rgba(15, 23, 42, 0.25) transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(15, 23, 42, 0.22);
+  }
+}
+
+/* Theme toggle: both icons are server-rendered; CSS shows the right one before
+   hydration, so the button never flashes the wrong state. */
+.wl-theme-icon-moon {
+  display: none;
+}
+html[data-theme="light"]:not(:has(body.dark)) .wl-theme-icon-sun {
+  display: none;
+}
+html[data-theme="light"]:not(:has(body.dark)) .wl-theme-icon-moon {
+  display: block;
+}
+
+/* Process-step line art (processIllustrations.tsx) uses neon accents picked
+ for black; deepen them so teal and green still read on white. */
+html[data-theme="light"]:not(:has(body.dark)) .wl-process-art {
+  color: color-mix(in oklab, var(--art-color) 72%, #000);
+}
+
+/* Toggling only: colours ease across the page rather than snapping. */
+html.wl-theme-switching *,
+html.wl-theme-switching *::before,
+html.wl-theme-switching *::after {
+  transition:
+    background-color 250ms ease,
+    border-color 250ms ease,
+    color 250ms ease !important;
+}

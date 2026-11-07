@@ -1,17 +1,56 @@
-import { useState, useEffect } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
-import { ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import weblaudLogo from "~/assets/weblaud-logo.svg";
-import logo from "~/assets/weblaud.com.svg";
-import { Button } from "./button";
 import { LazyBookingModal as BookingModal } from "~/components/ui/lazy-booking-modal";
+import { ThemeToggle } from "~/components/ui/theme-toggle";
+import { cn } from "~/lib/utils";
+
+type NavItem = { name: string; href: string; children?: { name: string; href: string; description: string }[] };
+
+// Contact, Free Audit and the client portal live in the drawer's secondary
+// row and the footer; the top level is for people hiring us.
+const NAV_ITEMS: NavItem[] = [
+  { name: "Services", href: "/services" },
+  // /projects, not /#work: the home page's featured-work block only renders
+  // when the CMS has published case studies, so the anchor can be missing.
+  { name: "Our Work", href: "/projects" },
+  { name: "Process", href: "/#process" },
+  {
+    name: "Pricing & Estimator",
+    href: "/software-development-cost",
+    children: [
+      { name: "Pricing guide", href: "/software-development-cost", description: "How milestone pricing works" },
+      { name: "Project estimator", href: "/calculator", description: "A ballpark in about two minutes" },
+    ],
+  },
+  { name: "About", href: "/aboutus" },
+  { name: "Insights", href: "/insights" },
+];
+
+const SECONDARY_LINKS = [
+  { name: "Contact", href: "/contact" },
+  { name: "Free Audit", href: "/audit" },
+  { name: "Client Login", href: "/portal/login" },
+];
+
+const CTA = { label: "Discuss Your Project", href: "/#discuss" };
+
+function isActive(pathname: string, item: { href: string; children?: { href: string }[] }) {
+  if (item.href.startsWith("/#")) return false;
+  const hrefs = item.children ? item.children.map((child) => child.href) : [item.href];
+  return hrefs.some((href) => pathname.startsWith(href));
+}
 
 const NavBar = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const drawerId = useId();
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   // No entrance animation: the navbar used to render hidden (opacity 0 +
   // blur) until hydration flipped it visible, so the logo — the page's
@@ -33,233 +72,226 @@ const NavBar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close the drawer on any navigation, including hash links on the same page.
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    setIsMobileMenuOpen(false);
+  }, [location.key]);
+
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "unset";
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
 
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "About Us", href: "/aboutus" },
-    { name: "Services", href: "/services" },
-    { name: "Projects", href: "/projects" },
-    { name: "Insights", href: "/insights" },
-    // Career lives in the footer; the main nav is for people hiring us.
-    { name: "Pricing", href: "/software-development-cost" },
-    { name: "Free Audit", href: "/audit" },
-    { name: "Contact", href: "/contact" },
-  ];
+  // Focus moves into the drawer when it opens and back to its toggle when it closes.
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      // Next frame: the drawer is still visibility:hidden in this commit.
+      const frame = requestAnimationFrame(() => drawerRef.current?.querySelector<HTMLElement>("a, button")?.focus());
+      wasOpen.current = true;
+      return () => cancelAnimationFrame(frame);
+    } else if (wasOpen.current) {
+      menuButtonRef.current?.focus();
+    }
+    wasOpen.current = isMobileMenuOpen;
+  }, [isMobileMenuOpen]);
+
+  // While open: Escape closes, and Tab cycles through the toggle and the
+  // drawer only, since the page behind is covered by the scrim.
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+        return;
+      }
+      if (event.key !== "Tab" || !drawerRef.current || !menuButtonRef.current) return;
+      const focusables = [
+        menuButtonRef.current,
+        ...drawerRef.current.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
+      ];
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const current = document.activeElement as HTMLElement | null;
+      if (event.shiftKey && (current === first || !focusables.includes(current!))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (current === last || !focusables.includes(current!))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isMobileMenuOpen]);
 
   return (
     <>
       {isMobileMenuOpen && (
         <div
+          aria-hidden="true"
           onClick={() => setIsMobileMenuOpen(false)}
           className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-[fadeIn_0.3s_ease-out]"
         />
       )}
 
       <nav
+        aria-label="Main"
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
           isScrolled ? "py-2 md:py-3" : "py-3 md:py-4"
         }`}
       >
         <div className="px-4 sm:px-6 lg:px-8 xl:px-10">
           <div
-            className={`flex items-center justify-between transition-all duration-1000 ease-out ${
+            className={`flex items-center justify-between gap-3 transition-all duration-1000 ease-out ${
               isScrolled
-                ? "bg-[#0e0e0e] border border-light-black/50 rounded-2xl px-4 md:px-6 py-2 md:py-3 shadow-lg shadow-black/50"
-                : "bg-[#0e0e0e] border border-white/[0.08] md:border-light-black rounded-2xl md:rounded-3xl px-4 sm:px-6 md:px-8 py-2.5 md:py-4 shadow-lg shadow-black/40"
+                ? "bg-[#0e0e0e] border border-light-black/50 rounded-2xl px-3 md:px-5 py-2 shadow-lg shadow-black/50"
+                : "bg-[#0e0e0e] border border-white/[0.08] md:border-light-black rounded-2xl md:rounded-3xl px-3 sm:px-5 py-2 md:py-2.5 shadow-lg shadow-black/40"
             }`}
           >
-            <div className="shrink-0">
-              <Link
-                to="/"
-                className={`transition-all duration-300 flex items-center ${
-                  isScrolled ? "h-7 sm:h-8" : "h-8 sm:h-9 md:h-10"
-                }`}
-              >
-                <img
-                  src={weblaudLogo}
-                  alt="Weblaud Logo"
-                  className="h-full w-auto object-contain"
-                  style={{ transitionDelay: "100ms" }}
-                />
-              </Link>
-            </div>
+            <Link to="/" aria-label="Weblaud home" className="flex min-h-11 shrink-0 items-center">
+              <img
+                src={weblaudLogo}
+                alt=""
+                className={`w-auto object-contain transition-all duration-300 ${isScrolled ? "h-6 sm:h-7" : "h-6 sm:h-8 xl:h-9"}`}
+              />
+            </Link>
 
-            <div className="hidden lg:flex items-center space-x-1">
-              {navLinks.map((link) => {
-                const isActive =
-                  link.href === "/"
-                    ? location.pathname === "/"
-                    : location.pathname.startsWith(link.href);
+            <ul className="hidden lg:flex items-center">
+              {NAV_ITEMS.map((item) => {
+                const active = isActive(location.pathname, item);
                 return (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    viewTransition
-                    className={`relative text-white font-barlow font-medium px-3.5 py-2 rounded-lg hover:text-blue-500 transition-all duration-300 group ${
-                      isScrolled ? "text-sm" : "text-base"
-                    } ${isActive ? "text-blue-500" : ""}`}
-                  >
-                    <span className="relative">
-                      {link.name}
-                      <span
-                        className={`absolute rounded-full left-0 -bottom-1 h-[1.5px] bg-primary transition-all duration-300 origin-left ${
-                          isActive
-                            ? "w-[80%] opacity-100"
-                            : "w-0 opacity-0 group-hover:w-[80%] group-hover:opacity-100"
-                        }`}
-                      />
-                    </span>
-                  </Link>
+                  <li key={item.name}>
+                    {item.children ? (
+                      <NavDropdown item={item} active={active} />
+                    ) : (
+                      <Link
+                        to={item.href}
+                        viewTransition={!item.href.startsWith("/#")}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "relative group inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-2 xl:px-3 font-barlow text-[15px] font-medium transition-colors duration-300",
+                          active ? "text-primary" : "text-white hover:text-primary",
+                        )}
+                      >
+                        <span className="relative">
+                          {item.name}
+                          <span
+                            aria-hidden="true"
+                            className={cn(
+                              "absolute rounded-full left-0 -bottom-1 h-[1.5px] bg-primary transition-all duration-300 origin-left",
+                              active ? "w-full opacity-100" : "w-0 opacity-0 group-hover:w-full group-hover:opacity-100",
+                            )}
+                          />
+                        </span>
+                      </Link>
+                    )}
+                  </li>
                 );
               })}
-            </div>
+            </ul>
 
-            {/* Dedicated Cost Estimator button on the right side */}
-            <div className="hidden lg:flex items-center">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <ThemeToggle />
               <Link
-                to="/calculator"
-                className={`relative group inline-flex items-center justify-center font-barlow font-semibold text-white bg-primary-solid hover:bg-primary-solid-hover transition-all duration-300 rounded-xl shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] hover:-translate-y-[1px] active:translate-y-0 ${
-                  isScrolled ? "px-5 py-2 text-xs" : "px-6 py-2.5 text-sm"
-                }`}
+                to={CTA.href}
+                className="hidden sm:inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-xl px-4 xl:px-5 font-barlow font-semibold text-sm text-white bg-primary-solid hover:bg-primary-solid-hover shadow-[0_2px_12px_rgba(10,132,255,0.4)] hover:shadow-[0_4px_20px_rgba(10,132,255,0.5)] transition-all duration-300"
               >
-                <span>Cost Estimator</span>
-              </Link>
-            </div>
-            {/* Below lg the desktop CTA is hidden, so phones get their own
-                compact one next to the menu toggle — most traffic is mobile. */}
-            <div className="lg:hidden flex items-center gap-2">
-              <Link
-                to="/calculator"
-                className="inline-flex items-center justify-center h-9 sm:h-10 px-3.5 sm:px-4 rounded-xl font-barlow font-semibold text-xs sm:text-sm text-white bg-primary-solid hover:bg-primary-solid-hover transition-colors duration-300 shadow-[0_2px_12px_rgba(10,132,255,0.35)] whitespace-nowrap"
-              >
-                Get estimate
+                {CTA.label}
               </Link>
               <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden text-white cursor-pointer p-2 sm:p-2.5 bg-white/[0.08] hover:bg-white/[0.14] border border-white/[0.1] hover:border-white/[0.2] rounded-xl backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden group shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
-                aria-label="Toggle menu"
+                ref={menuButtonRef}
+                type="button"
+                onClick={() => setIsMobileMenuOpen((open) => !open)}
+                className="lg:hidden inline-flex size-11 shrink-0 cursor-pointer items-center justify-center text-white bg-white/[0.08] hover:bg-white/[0.14] border border-white/[0.1] hover:border-white/[0.2] rounded-xl transition-colors duration-300"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls={drawerId}
               >
-                <div className="absolute inset-0 bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0 group-hover:translate-x-full transition-transform duration-700"></div>
-                <div
-                  className={`relative transition-transform duration-300 ${isMobileMenuOpen ? "rotate-90" : "rotate-0"}`}
-                >
-                  {isMobileMenuOpen ? (
-                    <HiX className="w-5 h-5 sm:w-6 sm:h-6" />
-                  ) : (
-                    <HiMenuAlt3 className="w-5 h-5 sm:w-6 sm:h-6" />
-                  )}
-                </div>
+                {isMobileMenuOpen ? <HiX className="size-5" aria-hidden="true" /> : <HiMenuAlt3 className="size-5" aria-hidden="true" />}
               </button>
             </div>
           </div>
 
           <div
-            className={`lg:hidden fixed right-6.5 top-0 bottom-4 h-fit w-[80%] max-w-sm bg-[#0e0e0e] border border-light-black rounded-xl shadow-2xl shadow-blue-500/10 z-50 transition-all duration-500 ease-out ${
+            id={drawerId}
+            ref={drawerRef}
+            className={`lg:hidden fixed right-4 sm:right-6 z-50 w-[calc(100%-2rem)] max-w-sm overflow-y-auto overscroll-contain bg-[#0e0e0e] border border-light-black rounded-xl shadow-2xl shadow-blue-500/10 ease-out motion-reduce:transition-none ${
+              // Visibility flips instantly on open (so focus can move in) and
+              // only after the slide-out on close.
               isMobileMenuOpen
-                ? "translate-x-0 opacity-100"
-                : "translate-x-[120%] opacity-0"
+                ? "visible translate-x-0 opacity-100 [transition:transform_500ms,opacity_500ms,visibility_0s]"
+                : "invisible translate-x-[120%] opacity-0 [transition:transform_500ms,opacity_500ms,visibility_0s_500ms]"
             }`}
-            style={{ top: isScrolled ? "85px" : "100px" }}
+            style={{ top: isScrolled ? "76px" : "88px", maxHeight: "calc(100dvh - 100px)" }}
           >
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-            </div>
-
-            <div className="relative flex flex-col h-full px-6 py-8">
-              <nav className="flex flex-col space-y-3 mb-8">
-                {navLinks.map((link, index) => {
-                  const isActive =
-                    link.href === "/"
-                      ? location.pathname === "/"
-                      : location.pathname.startsWith(link.href);
+            <div className="flex flex-col p-4">
+              <ul className="mb-4 flex flex-col gap-1.5">
+                {NAV_ITEMS.flatMap((item) =>
+                  item.children ? item.children.map((child) => ({ name: child.name, href: child.href })) : [item],
+                ).map((link, index) => {
+                  const active = isActive(location.pathname, link);
                   return (
-                    <Link
-                      key={link.name}
-                      to={link.href}
-                      viewTransition
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`group relative font-barlow font-semibold text-base sm:text-lg px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl border transition-all duration-300 overflow-hidden flex items-center justify-between ${
-                        isActive
-                          ? "border-blue-500/50 bg-blue-500/10 text-blue-400 shadow-[0_0_15px_rgba(10,132,255,0.15)]"
-                          : "border-white/5 hover:border-blue-500/40 hover:bg-white/[0.04] text-white"
-                      } ${
-                        isMobileMenuOpen
-                          ? "opacity-100 blur-0 translate-x-0 scale-100"
-                          : "opacity-0 blur-sm -translate-x-10 scale-95"
-                      }`}
-                      style={{
-                        transitionDelay: isMobileMenuOpen
-                          ? `${100 + index * 80}ms`
-                          : "0ms",
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-linear-to-r from-transparent via-blue-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-
-                      <div className="flex items-center gap-3">
-                        <span className={`text-xs font-mono font-bold transition-colors duration-300 ${
-                          isActive ? "text-blue-400" : "text-gray-500 group-hover:text-blue-400/70"
-                        }`}>
-                          0{index + 1}
-                        </span>
-
-                        <span className={`transition-colors duration-300 ${
-                          isActive ? "text-blue-400" : "group-hover:text-blue-400"
-                        }`}>
+                    <li key={link.name}>
+                      <Link
+                        to={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "group flex min-h-12 items-center justify-between rounded-xl border px-4 font-barlow font-semibold text-base transition-colors duration-300",
+                          active
+                            ? "border-blue-500/50 bg-blue-500/10 text-blue-400"
+                            : "border-white/5 hover:border-blue-500/40 hover:bg-white/[0.04] text-white",
+                        )}
+                      >
+                        <span className="flex items-center gap-3">
+                          <span className={cn("text-xs font-mono font-bold", active ? "text-blue-400" : "text-gray-500 group-hover:text-blue-400")}>
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
                           {link.name}
                         </span>
-                      </div>
-
-                      <span
-                        className={`transition-all duration-300 ${
-                          isActive
-                            ? "opacity-100 translate-x-0 text-blue-400"
-                            : "opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2 text-blue-500"
-                        }`}
-                      >
-                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
-                      </span>
-                    </Link>
+                        <ChevronRight className={cn("size-4", active ? "text-blue-400" : "text-gray-500")} aria-hidden="true" />
+                      </Link>
+                    </li>
                   );
                 })}
-              </nav>
+              </ul>
 
-              <div
-                className={`space-y-3 transition-all duration-500 ${
-                  isMobileMenuOpen
-                    ? "opacity-100 blur-0 translate-y-0 scale-100"
-                    : "opacity-0 blur-sm translate-y-10 scale-95"
-                }`}
-                style={{ transitionDelay: isMobileMenuOpen ? "500ms" : "0ms" }}
-              >
-                <Button
+              <ul className="mb-4 flex flex-wrap gap-x-1 border-t border-white/[0.08] pt-3">
+                {SECONDARY_LINKS.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      to={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="inline-flex min-h-11 items-center rounded-lg px-3 font-barlow text-sm font-medium text-gray-400 transition-colors duration-300 hover:text-white"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex flex-col gap-2">
+                <Link
+                  to={CTA.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex min-h-12 w-full items-center justify-center rounded-xl bg-primary-solid hover:bg-primary-solid-hover font-barlow font-semibold text-sm text-white transition-colors duration-300"
+                >
+                  {CTA.label}
+                </Link>
+                <button
+                  type="button"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                     setIsModalOpen(true);
                   }}
-                  className="w-full text-sm font-bold px-8 py-4 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-shadow duration-300"
+                  className="flex min-h-12 w-full cursor-pointer items-center justify-center rounded-xl border border-white/10 hover:border-white/25 bg-white/[0.04] font-barlow font-semibold text-sm text-white transition-colors duration-300"
                 >
-                  Book a Call
-                </Button>
-                <Link
-                  to="/calculator"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center w-full rounded-xl border border-white/10 hover:border-white/25 bg-white/[0.04] px-8 py-3.5 font-barlow font-semibold text-sm text-white transition-colors duration-300"
-                >
-                  Get an estimate in 2 minutes
-                </Link>
+                  Book a discovery call
+                </button>
               </div>
-
             </div>
           </div>
         </div>
@@ -268,5 +300,87 @@ const NavBar = () => {
     </>
   );
 };
+
+/**
+ * Disclosure menu (button + list of links), not an ARIA menu: links stay links,
+ * Tab moves through them, Escape and focus leaving the group close it.
+ */
+function NavDropdown({ item, active }: { item: NavItem; active: boolean }) {
+  const [open, setOpen] = useState(false);
+  const panelId = useId();
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const location = useLocation();
+  // A mouse user's click usually lands just after hover opened the menu; that
+  // click should not close it again.
+  const hoverOpenedAt = useRef(0);
+
+  useEffect(() => setOpen(false), [location.key]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!wrapperRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
+
+  return (
+    <div
+      ref={wrapperRef}
+      className="relative"
+      onMouseEnter={() => {
+        hoverOpenedAt.current = Date.now();
+        setOpen(true);
+      }}
+      onMouseLeave={() => setOpen(false)}
+      onBlur={(event) => {
+        if (!wrapperRef.current?.contains(event.relatedTarget as Node)) setOpen(false);
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && open) {
+          event.stopPropagation();
+          setOpen(false);
+          buttonRef.current?.focus();
+        }
+      }}
+    >
+      <button
+        ref={buttonRef}
+        type="button"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => {
+          if (open && Date.now() - hoverOpenedAt.current < 600) return;
+          setOpen((current) => !current);
+        }}
+        className={cn(
+          "inline-flex min-h-11 cursor-pointer items-center gap-1 whitespace-nowrap rounded-lg px-2 xl:px-3 font-barlow text-[15px] font-medium transition-colors duration-300",
+          active || open ? "text-primary" : "text-white hover:text-primary",
+        )}
+      >
+        {item.name}
+        <ChevronDown className={cn("size-3.5 transition-transform duration-200", open && "rotate-180")} aria-hidden="true" />
+      </button>
+      <div id={panelId} hidden={!open} className="absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 pt-2">
+        <ul className="rounded-2xl border border-light-black bg-[#0e0e0e] p-2 shadow-xl shadow-black/40">
+          {item.children?.map((child) => (
+            <li key={child.href}>
+              <Link
+                to={child.href}
+                viewTransition
+                className="flex min-h-11 flex-col justify-center rounded-xl px-3 py-2.5 transition-colors duration-300 hover:bg-white/[0.06]"
+              >
+                <span className="font-barlow text-sm font-semibold text-white">{child.name}</span>
+                <span className="text-xs text-gray-400">{child.description}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 export default NavBar;

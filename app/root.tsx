@@ -21,10 +21,12 @@ import "@fontsource/barlow/400.css";
 import "@fontsource/barlow/500.css";
 import "@fontsource/barlow/600.css";
 import "@fontsource/barlow/700.css";
+import "@fontsource-variable/archivo/wght.css";
 import barlowBoldLatin from "@fontsource/barlow/files/barlow-latin-700-normal.woff2?url";
 
 import type { Route } from "./+types/root";
 import { TIMELINE, COMPANY } from "./lib/constants";
+import { DEFAULT_THEME, themeBootstrapScript } from "./lib/theme";
 import Footer from "./components/ui/footer";
 import "./app.css";
 import NavBar from "./components/ui/navBar";
@@ -231,12 +233,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <html lang="en">
+    // suppressHydrationWarning: themeBootstrapScript sets data-theme before
+    // React hydrates, so a visitor on the light theme differs from the server.
+    <html lang="en" data-theme={DEFAULT_THEME} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        {/* After <Meta />, which renders the theme-color tag this script updates. */}
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
         {rootData?.sentryDsn && (
           <>
             <meta name="sentry-dsn" content={rootData.sentryDsn} />
@@ -332,15 +338,32 @@ export default function App({ loaderData }: Route.ComponentProps) {
     };
   }, []);
 
+  // New page: start at the top, unless the link names a section (/#discuss),
+  // which the hash effect below scrolls to instead.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (lenisRef.current) {
-        lenisRef.current.scrollTo(0, { immediate: true });
-      } else {
-        window.scrollTo(0, 0);
-      }
+    if (typeof window === "undefined" || location.hash) return;
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
     }
   }, [location.pathname]);
+
+  // Section links such as "/#discuss", from this page or another. Keyed on
+  // location.key so a second click on the same link scrolls again.
+  useEffect(() => {
+    if (typeof window === "undefined" || !location.hash) return;
+    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!target) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (lenisRef.current) {
+      // Lenis ignores scroll-margin, so pass the section's own offset.
+      const offset = -parseFloat(getComputedStyle(target).scrollMarginTop || "0");
+      lenisRef.current.scrollTo(target, { offset, immediate: reduce });
+    } else {
+      target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    }
+  }, [location.key]);
 
   const handleLoaderComplete = () => {
     setShowLoader(false);

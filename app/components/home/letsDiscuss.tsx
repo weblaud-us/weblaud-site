@@ -37,7 +37,7 @@ const LetsDiscuss = () => {
   );
 
   return (
-    <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-black overflow-hidden">
+    <section id="discuss" className="relative scroll-mt-24 py-20 px-4 sm:px-6 lg:px-8 bg-black overflow-hidden">
       <div className="relative max-w-7xl mx-auto">
         <div
           ref={containerRef}
@@ -97,7 +97,7 @@ const LetsDiscuss = () => {
                 }}
                 style={{ backgroundSize: "200% 200%" }}
               >
-                LET'S DISCUSS
+                LET'S ARCHITECT YOUR
               </motion.span>
               <br />
               <motion.span
@@ -113,7 +113,7 @@ const LetsDiscuss = () => {
                 }}
                 style={{ backgroundSize: "200% 200%" }}
               >
-                YOUR IDEA
+                NEXT ADVANTAGE
               </motion.span>
             </h2>
 
@@ -125,9 +125,9 @@ const LetsDiscuss = () => {
               )}`}
               style={getBlurAnimationDelay(400)}
             >
-              Book a free {DISCOVERY_CALL.label} strategy call. We'll review your
-              requirements, scope your project, and send a detailed proposal{" "}
-              {RESPONSE_TIME.proposal}.
+              Book a free {DISCOVERY_CALL.label} strategy call. Whether you need an autonomous AI
+              workflow or a full-scale custom platform, we'll review your requirements, scope your
+              milestones, and send a detailed proposal {RESPONSE_TIME.proposal}.
             </p>
 
             <div

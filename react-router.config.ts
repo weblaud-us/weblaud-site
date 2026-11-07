@@ -24,4 +24,8 @@ export default {
    * server, set `app.set("trust proxy", true)` there and this can go away.
    */
   allowedActionOrigins: ["weblaud.com", "www.weblaud.com"],
+  // Keep manual Netlify review builds separate from the existing Node release.
+  ...(process.env.WEBLAUD_DEPLOY_TARGET === "netlify"
+    ? { buildDirectory: "build-netlify" }
+    : {}),
 } satisfies Config;

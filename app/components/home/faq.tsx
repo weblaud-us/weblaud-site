@@ -14,6 +14,7 @@ import {
 import type { Faq } from "~/lib/types";
 import SectionBadge from "~/components/ui/section-badge";
 import { HelpCircle } from "lucide-react";
+import { HomeSectionHeading } from "./homeSectionHeading";
 
 // Bouncy spring transitions
 const ROW_TRANSITION: Transition = {
@@ -192,9 +193,11 @@ function FAQRow({
 
 interface FAQProps {
   faqs: FaqItem[];
+  /** "left" uses the home page's editorial heading; other pages keep the centred badge. */
+  align?: "center" | "left";
 }
 
-export default function FAQ({ faqs }: FAQProps) {
+export default function FAQ({ faqs, align = "center" }: FAQProps) {
   const reduce = useReducedMotion();
   const items = faqs;
   const [openId, setOpenId] = React.useState<string | null>(
@@ -214,12 +217,15 @@ export default function FAQ({ faqs }: FAQProps) {
   if (items.length === 0) return null;
 
   return (
-    <section className="relative py-14 pb-16 bg-black text-white overflow-hidden scroll-mt-24">
+    <section id="faq" className="relative py-14 pb-16 bg-black text-white overflow-hidden scroll-mt-24">
       {/* Ambient Gradient Lights */}
       <motion.div className="absolute top-10 -left-20 w-72 h-72 rounded-full bg-primary/15 blur-[120px] pointer-events-none" />
       <motion.div className="absolute bottom-10 -right-20 w-80 h-80 rounded-full bg-blue-500/15 blur-[140px] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-4 md:px-6 relative z-10">
+        {align === "left" ? (
+          <HomeSectionHeading eyebrow="Got Questions?" title="Frequently Asked Questions" className="mb-8 md:mb-12" />
+        ) : (
         <div
           ref={titleRef}
           className={`text-center mb-8 md:mb-12 ${getBlurAnimationClasses(isTitleVisible)}`}
@@ -235,6 +241,7 @@ export default function FAQ({ faqs }: FAQProps) {
             Frequently Asked Questions
           </h2>
         </div>
+        )}
 
         <ul className="space-y-4">
           {items.map((item, idx) => {

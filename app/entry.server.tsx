@@ -9,6 +9,7 @@ import { renderToPipeableStream } from "react-dom/server";
 import { createSentryHandleError } from "@sentry/react-router";
 // Initialises server-side Sentry when SENTRY_DSN is set; a no-op otherwise.
 import "./lib/sentry.server";
+import { IS_REVIEW_BUILD, REVIEW_ROBOTS_HEADER } from "./lib/review-build";
 
 /**
  * Reports loader/action/render errors to Sentry (skipping aborted requests)
@@ -70,6 +71,7 @@ export default function handleRequest(
           const stream = createReadableStreamFromReadable(body);
 
           responseHeaders.set("Content-Type", "text/html");
+          if (IS_REVIEW_BUILD) responseHeaders.set("X-Robots-Tag", REVIEW_ROBOTS_HEADER);
 
           pipe(body);
 

@@ -7,19 +7,22 @@ import OurSay from "~/components/home/ourSay";
 import FAQ from "~/components/home/faq";
 import LetsDiscuss from "~/components/home/letsDiscuss";
 import FeaturedWork from "~/components/home/featuredWork";
+import RoiCalculatorWidget from "~/components/home/RoiCalculatorWidget";
+import BottleneckSelector from "~/components/home/bottleneckSelector";
+import CoreCapabilities from "~/components/home/coreCapabilities";
+import { HOME_FAQS } from "~/data/home-content";
 import { TIMELINE, COMPANY } from "~/lib/constants";
 import { fetchOptional, resolveMediaUrl } from "~/lib/api.server";
 import { optimizeMediaUrl } from "~/lib/media";
 import { toProject, type BackendProject } from "~/lib/adapters/project.server";
-import type { Testimonial, Faq } from "~/lib/types";
+import type { Testimonial } from "~/lib/types";
 
 /** How many case studies the home page features. */
 const FEATURED_PROJECT_COUNT = 3;
 
 export async function loader() {
-  const [testimonials, faqs, backendProjects] = await Promise.all([
+  const [testimonials, backendProjects] = await Promise.all([
     fetchOptional<Testimonial[]>("/testimonials", []),
-    fetchOptional<Faq[]>("/faqs", []),
     fetchOptional<BackendProject[]>("/projects", []),
   ]);
   const featuredProjects = backendProjects
@@ -27,12 +30,11 @@ export async function loader() {
     .map(toProject)
     // Same card as /projects, which renders ~400 px wide.
     .map((p) => ({ ...p, image: optimizeMediaUrl(resolveMediaUrl(p.image), 800) }));
-  return { testimonials, faqs, featuredProjects };
+  return { testimonials, featuredProjects };
 }
 
-// No manual hero preload here: React already emits one for the hero <img>
-// (fetchPriority="high", with its srcset) — a second one here downloaded the
-// full-size image twice on phones.
+// No hero preload: the hero art is drawn in code (heroCoreDiagram), so the
+// h1 is the LCP element and there is no image to fetch early.
 
 export function headers() {
   return {
@@ -41,27 +43,15 @@ export function headers() {
 }
 
 export function meta({ data }: Route.MetaArgs) {
-  const faqs = data?.faqs ?? [];
-  const faqMainEntity =
-    faqs.length > 0
-      ? faqs.map((faq) => ({
-          "@type": "Question",
-          name: faq.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.answer,
-          },
-        }))
-      : [
-          {
-            "@type": "Question",
-            name: "What services does Weblaud LLC offer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Weblaud LLC provides end-to-end software engineering including custom operations platforms, B2B SaaS web applications, cross-platform mobile apps (React Native & Flutter), production AI/LLM integrations, real-time WebSocket infrastructure, and cloud DevOps management.",
-            },
-          },
-        ];
+  // Same array the FAQ section renders, so the schema matches the visible answers.
+  const faqMainEntity = HOME_FAQS.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  }));
 
   // Review JSON-LD from genuine, attributed client testimonials. Each maps to a
   // real named person who gave the quote — no AggregateRating / star score is
@@ -138,16 +128,25 @@ export function meta({ data }: Route.MetaArgs) {
   ];
 }
 
+/**
+ * Order follows the buyer's questions: what you do and on what stack, which of
+ * it fits my bottleneck, how you deliver, proof, why you over others, what
+ * manual work is costing me, remaining objections, then the call.
+ * FeaturedWork and OurSay render only when the CMS has published entries.
+ */
 export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <BannerHome />
       <TrustedPartnerships />
-      <FeaturedWork projects={loaderData.featuredProjects} />
+      <CoreCapabilities />
+      <BottleneckSelector />
       <OurSpeciality />
+      <FeaturedWork projects={loaderData.featuredProjects} />
       <WhyChooseUs />
       <OurSay testimonials={loaderData.testimonials} />
-      <FAQ faqs={loaderData.faqs} />
+      <RoiCalculatorWidget />
+      <FAQ faqs={HOME_FAQS} align="left" />
       <LetsDiscuss />
     </>
   );

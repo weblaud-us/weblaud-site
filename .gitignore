@@ -5,9 +5,13 @@
 # React Router
 /.react-router/
 /build/
+/build-netlify/
 
 # Local Netlify folder
 .netlify
 .md
 # Headless Chrome / Lighthouse crash-reporter noise
 debug.log
+
+# Generated knowledge graph (graphify)
+graphify-out/
